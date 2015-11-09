@@ -76,14 +76,14 @@
 	</cffunction>
 
 	<cffunction name="getDynamicJSCacheID" output="false" hint="Caches content and returns the hash for it ">
-		<cfset var local = StructCreate( jqueryOnload = "")>
-		<cfsavecontent variable="local.jqueryOnload">
+		<cfset var lcl = StructCreate( jqueryOnload = "")>
+		<cfsavecontent variable="lcl.jqueryOnload">
 		<cfoutput>jQuery( function($) {
 				#getJS().getBodyOnloadJS()#
 			}
 		);</cfoutput>
 		</cfsavecontent>
-		<cfset appendDynamicJS(local.jqueryOnload) />
+		<cfset appendDynamicJS(lcl.jqueryOnload) />
 		<cfreturn getJS().getDynamicCacheID() />
 	</cffunction>
 

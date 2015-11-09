@@ -9,12 +9,12 @@
 	<cffunction name="getObject" access="public" hint="Gets object for given id">
 		<cfargument name="id" type="string" required="true" hint="is the id for the object">
 
-		<cfset var local = StructCreate(object = getKnownObject(arguments.id))>
-		<cfif IsBoolean(local.object)>
-			<cfset local.object = createKnownObject(argumentCollection = arguments)>
-			<cfset ArrayAppend(variables.knownObjects, local.object)>
+		<cfset var lcl = StructCreate(object = getKnownObject(arguments.id))>
+		<cfif IsBoolean(lcl.object)>
+			<cfset lcl.object = createKnownObject(argumentCollection = arguments)>
+			<cfset ArrayAppend(variables.knownObjects, lcl.object)>
 		</cfif>
-		<cfreturn local.object>
+		<cfreturn lcl.object>
 	</cffunction>
 
 	<cffunction name="getKnownObjects" returntype="array" hint="Gets the array of known objects">
@@ -24,10 +24,10 @@
 	<cffunction name="getKnownObject" hint="Gets the object with given id from the array of known objects">
 		<cfargument name="id" type="string" required="true" hint="is the id for the object">
 
-		<cfset var local = StructCreate(iter = iterator(getKnownObjects()))>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfif local.iter.getCurrent().id eq arguments.id>
-				<cfreturn local.iter.getCurrent() />
+		<cfset var lcl = StructCreate(iter = iterator(getKnownObjects()))>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfif lcl.iter.getCurrent().id eq arguments.id>
+				<cfreturn lcl.iter.getCurrent() />
 			</cfif>
 		</cfloop>
 
@@ -37,7 +37,7 @@
 	<cffunction name="createKnownObject" hint="Creates a new known object">
 		<cfargument name="id" type="string" required="true" hint="is the id for the object">
 
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			  id     = arguments.id
 			, object = variables.createMethod(argumentCollection = arguments)
 		) />

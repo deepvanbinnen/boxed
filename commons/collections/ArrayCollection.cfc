@@ -11,18 +11,18 @@
 	<cffunction name="addAll" output="true">
 		<cfargument name="data" type="any" required="true">
 
-		<cfset var local = StructCreate(args = CollectArgs(arguments), data = arguments.data)>
+		<cfset var lcl = StructCreate(args = CollectArgs(arguments), data = arguments.data)>
 
-		<cfif local.args.parseRule("data,delimiter", "string,string")
-			OR local.args.parseRule("data", "string")>
-			<cfset local.args = local.args.getArguments()>
-			<cfif NOT StructKeyExists(local.args, 'delimiter')>
-				<cfset local.args.delimiter = ",">
+		<cfif lcl.args.parseRule("data,delimiter", "string,string")
+			OR lcl.args.parseRule("data", "string")>
+			<cfset lcl.args = lcl.args.getArguments()>
+			<cfif NOT StructKeyExists(lcl.args, 'delimiter')>
+				<cfset lcl.args.delimiter = ",">
 			</cfif>
-			<cfset local.data = ListToArray(local.args.data, local.args.delimiter)>
+			<cfset lcl.data = ListToArray(lcl.args.data, lcl.args.delimiter)>
 		</cfif>
 
-		<cfreturn super.addAll( local.data )>
+		<cfreturn super.addAll( lcl.data )>
 	</cffunction>
 
 </cfcomponent>

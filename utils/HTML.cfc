@@ -20,10 +20,10 @@
 		<cfargument name="text" required="false" type="any" default="">
 		<cfargument name="attr" required="false" type="any"    default="">
 
-		<cfset var local = StructNew()>
-		<cfset local.attr = getArgAttribs(arguments)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.attr = getArgAttribs(arguments)>
 
-		<cfreturn getHTML(LCASE(arguments.tag), _getTextArg(arguments.text), getAttribString(local.attr))>
+		<cfreturn getHTML(LCASE(arguments.tag), _getTextArg(arguments.text), getAttribString(lcl.attr))>
 	</cffunction>
 
 	<cffunction name="write" output="true" hint="outputs html passing arguments to the get method">
@@ -39,29 +39,29 @@
 		<cfargument name="orgArgs" type="struct" required="true">
 
 		<cfset var local      = StructNew()>
-		<cfset local.skip     = "tag,text">
-		<cfset local.attrName = "attr">
-		<cfset local.attrIdx  = "2">
-		<cfset local.attribs  = StructNew()>
+		<cfset lcl.skip     = "tag,text">
+		<cfset lcl.attrName = "attr">
+		<cfset lcl.attrIdx  = "2">
+		<cfset lcl.attribs  = StructNew()>
 
-		<cfloop collection="#arguments.orgArgs#" item="local.key">
+		<cfloop collection="#arguments.orgArgs#" item="lcl.key">
 			<!--- Check for attr argument --->
-			<cfif (IsNumeric(local.key) AND local.key eq local.attrIdx) OR local.key eq local.attrName>
-				<cfif IsSimpleValue(arguments.orgArgs[local.key]) AND NOT arguments.orgArgs[local.key] eq "">
+			<cfif (IsNumeric(lcl.key) AND lcl.key eq lcl.attrIdx) OR lcl.key eq lcl.attrName>
+				<cfif IsSimpleValue(arguments.orgArgs[lcl.key]) AND NOT arguments.orgArgs[lcl.key] eq "">
 					<!---
 					Bail out immediately if given attribs are string and contain a value
 					Processing this type is way too complex
 					--->
-					<cfreturn arguments.orgArgs[local.key]>
-				<cfelseif IsStruct(arguments.orgArgs[local.key])>
-					<cfset StructAppend(local.attribs, arguments.orgArgs[local.key], true)>
+					<cfreturn arguments.orgArgs[lcl.key]>
+				<cfelseif IsStruct(arguments.orgArgs[lcl.key])>
+					<cfset StructAppend(lcl.attribs, arguments.orgArgs[lcl.key], true)>
 				</cfif>
 			<!--- Check for arguments other than [tag,text,attr] --->
-			<cfelseif NOT ListFindNoCase(local.skip, local.key)>
-				<cfset StructInsert(local.attribs, local.key, arguments.orgArgs[local.key], FALSE)>
+			<cfelseif NOT ListFindNoCase(lcl.skip, lcl.key)>
+				<cfset StructInsert(lcl.attribs, lcl.key, arguments.orgArgs[lcl.key], FALSE)>
 			</cfif>
 		</cfloop>
-		<cfreturn local.attribs>
+		<cfreturn lcl.attribs>
 	</cffunction>
 
 	<cffunction name="getAttribString" hint="get a tag's attributes string from struct">
@@ -69,17 +69,17 @@
 		<cfargument name="delimiter" required="false" type="string" default=" ">
 
 		<cfset var local  = StructNew()>
-		<cfset local.attr = ArrayNew(1)>
+		<cfset lcl.attr = ArrayNew(1)>
 		<cfif IsSimpleValue(arguments.attribs)>
-			<cfset ArrayAppend(local.attr,arguments.attribs)>
+			<cfset ArrayAppend(lcl.attr,arguments.attribs)>
 		<cfelseif IsStruct(arguments.attribs)>
-			<cfloop collection="#arguments.attribs#" item="local.key">
-				<cfif IsSimpleValue(arguments.attribs[local.key]) AND (arguments.attribs[local.key] neq "" OR local.key EQ "value")>
-					<cfset ArrayAppend(local.attr, getPair(local.key, arguments.attribs[local.key]))>
+			<cfloop collection="#arguments.attribs#" item="lcl.key">
+				<cfif IsSimpleValue(arguments.attribs[lcl.key]) AND (arguments.attribs[lcl.key] neq "" OR lcl.key EQ "value")>
+					<cfset ArrayAppend(lcl.attr, getPair(lcl.key, arguments.attribs[lcl.key]))>
 				</cfif>
 			</cfloop>
 		</cfif>
-		<cfreturn ArrayToList(local.attr, arguments.delimiter)>
+		<cfreturn ArrayToList(lcl.attr, arguments.delimiter)>
 	</cffunction>
 
 	<cffunction name="getHTML" hint="return a XHTML/XML tag string based on given arguments">
@@ -87,30 +87,30 @@
 		<cfargument name="text" required="false" type="string" default="">
 		<cfargument name="attr" required="false" type="string" default="">
 
-		<cfset var local = StructNew()>
-		<cfset local.html = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.html = ArrayNew(1)>
 
 		<!--- Open tag --->
-		<cfset ArrayAppend(local.html, "<")>
-		<cfset ArrayAppend(local.html, arguments.tag)>
+		<cfset ArrayAppend(lcl.html, "<")>
+		<cfset ArrayAppend(lcl.html, arguments.tag)>
 
 		<!--- Set attributes --->
 		<cfif arguments.attr neq "">
-			<cfset ArrayAppend(local.html, " ")>
-			<cfset ArrayAppend(local.html, arguments.attr)>
+			<cfset ArrayAppend(lcl.html, " ")>
+			<cfset ArrayAppend(lcl.html, arguments.attr)>
 		</cfif>
 
 		<!--- Determine closing and close tag --->
 		<cfif arguments.text neq "" OR ListFindNoCase(variables.SELF_CLOSE,arguments.tag)>
-			<cfset ArrayAppend(local.html, ">")>
-			<cfset ArrayAppend(local.html, arguments.text)>
-			<cfset ArrayAppend(local.html, "</")>
-			<cfset ArrayAppend(local.html, arguments.tag)>
-			<cfset ArrayAppend(local.html, ">")>
+			<cfset ArrayAppend(lcl.html, ">")>
+			<cfset ArrayAppend(lcl.html, arguments.text)>
+			<cfset ArrayAppend(lcl.html, "</")>
+			<cfset ArrayAppend(lcl.html, arguments.tag)>
+			<cfset ArrayAppend(lcl.html, ">")>
 		<cfelse>
-			<cfset ArrayAppend(local.html, " />")>
+			<cfset ArrayAppend(lcl.html, " />")>
 		</cfif>
-		<cfreturn ArrayToList(local.html,"")>
+		<cfreturn ArrayToList(lcl.html,"")>
 	</cffunction>
 
 	<cffunction name="getPair" hint="return a key-value-string suitable for use in tag attributes">

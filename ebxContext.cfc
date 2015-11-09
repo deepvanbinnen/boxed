@@ -212,14 +212,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="_dump" hint="dump instance info">
-		<cfloop collection="#variables#" item="local.i">
-			<cfif IsSimpleValue(variables[local.i])>
-				<cfoutput>#local.i#: #variables[local.i]#<br /></cfoutput>
-			<cfelseif local.i eq "attributes" OR local.i eq "originals">
-				<cfoutput>#local.i#:<br /></cfoutput>
-				<cfloop collection="#variables[local.i]#" item="local.j">
-					<cfif IsSimpleValue(variables[local.i][local.j])>
-						<cfoutput>#local.j#: #variables[local.i][local.j]#<br /></cfoutput>
+		<cfloop collection="#variables#" item="lcl.i">
+			<cfif IsSimpleValue(variables[lcl.i])>
+				<cfoutput>#lcl.i#: #variables[lcl.i]#<br /></cfoutput>
+			<cfelseif lcl.i eq "attributes" OR lcl.i eq "originals">
+				<cfoutput>#lcl.i#:<br /></cfoutput>
+				<cfloop collection="#variables[lcl.i]#" item="lcl.j">
+					<cfif IsSimpleValue(variables[lcl.i][lcl.j])>
+						<cfoutput>#lcl.j#: #variables[lcl.i][lcl.j]#<br /></cfoutput>
 					</cfif>
 				</cfloop>
 			</cfif>

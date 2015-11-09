@@ -204,12 +204,12 @@
 		<cfargument name="class" required="false" type="string" default="">
 		<cfargument name="id"    required="false" type="string" default="">
 
-		<cfset var local = StructNew() />
-		<cfset local.out = ArrayNew(1) />
-		<cfloop from="1" to="#ArrayLen(arguments.text)#" index="local.i">
-			<cfset ArrayAppend(local.out, getLI(argumentCollection=arguments, text=arguments.text[local.i]))>
+		<cfset var lcl = StructNew() />
+		<cfset lcl.out = ArrayNew(1) />
+		<cfloop from="1" to="#ArrayLen(arguments.text)#" index="lcl.i">
+			<cfset ArrayAppend(lcl.out, getLI(argumentCollection=arguments, text=arguments.text[lcl.i]))>
 		</cfloop>
-		<cfreturn ArrayToList(local.out, chr(10)) />
+		<cfreturn ArrayToList(lcl.out, chr(10)) />
 	</cffunction>
 
 
@@ -234,14 +234,14 @@
 		<cfargument name="class" required="false" type="string" default="">
 		<cfargument name="id"    required="false" type="string" default="">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfset arguments.tag = "ul">
 		<cfif IsArray(arguments.text)>
-			<cfset local.text = ArrayToList(arguments.text, chr(10))>
-			<cfif NOT REFind("^<li", local.text)>
+			<cfset lcl.text = ArrayToList(arguments.text, chr(10))>
+			<cfif NOT REFind("^<li", lcl.text)>
 				<cfset arguments.text = eachLI(arguments.text, chr(10))>
 			<cfelse>
-				<cfset arguments.text = ArrayToList(local.text, chr(10))>
+				<cfset arguments.text = ArrayToList(lcl.text, chr(10))>
 			</cfif>
 		</cfif>
 		<cfreturn get(argumentCollection=arguments)>
@@ -353,7 +353,7 @@
 		<cfargument name="type"  required="false" type="string" default="text">
 		<cfargument name="id"    required="false"  type="string" default="#arguments.name#">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfset arguments.tag = "input">
 		<cfif NOT StructKeyExists(arguments, "value") AND getAutoFillFormFields() AND hasFormVar(arguments.name)>
 			<cfset arguments.value = getFormVar(arguments.name) />
@@ -361,31 +361,31 @@
 
 		<cfif StructKeyExists(arguments, "label")>
 			<cfif StructKeyExists(arguments, "labelclass")>
-				<cfset local.label = getLabel( for=arguments.id, text=arguments.label, class=arguments.labelclass ) >
+				<cfset lcl.label = getLabel( for=arguments.id, text=arguments.label, class=arguments.labelclass ) >
 				<cfset StructDelete( arguments, "labelclass") />
 			<cfelse>
-				<cfset local.label = getLabel( for=arguments.id, text=arguments.label ) >
+				<cfset lcl.label = getLabel( for=arguments.id, text=arguments.label ) >
 			</cfif>
 			<cfset StructDelete( arguments, "label") />
 
-			<cfset local.labelright = false />
+			<cfset lcl.labelright = false />
 			<cfif StructKeyExists(arguments, "labelright")>
 				<cfif arguments.labelright>
-					<cfset local.labelright = true />
+					<cfset lcl.labelright = true />
 				</cfif>
 				<cfset StructDelete( arguments, "labelright") />
 			</cfif>
-			<cfset local.input = get(argumentCollection=arguments) />
-			<cfif local.labelright>
-				<cfset local.input = local.input & local.label />
+			<cfset lcl.input = get(argumentCollection=arguments) />
+			<cfif lcl.labelright>
+				<cfset lcl.input = lcl.input & lcl.label />
 			<cfelse>
-				<cfset local.input = local.label & local.input />
+				<cfset lcl.input = lcl.label & lcl.input />
 			</cfif>
 		<cfelse>
-			<cfset local.input = get(argumentCollection=arguments) />
+			<cfset lcl.input = get(argumentCollection=arguments) />
 		</cfif>
 
-		<cfreturn local.input />
+		<cfreturn lcl.input />
 	</cffunction>
 
 	<cffunction name="getTextarea">
@@ -562,7 +562,7 @@
 		<cfargument name="emptytext"  required="false"  type="string"  default=""      hint="empty option text">
 		<cfargument name="delimiter"  required="false"  type="string"  default="#CHR(10)#"      hint="string to use as array to list delimiter">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfreturn ArrayToList(getSelectOptions(argumentCollection = arguments), arguments.delimiter)>
 	</cffunction>
 
@@ -574,28 +574,28 @@
 		<cfargument name="emptyvalue" required="false"  type="string"  default="" hint="empty option value">
 		<cfargument name="emptytext"  required="false"  type="string"  default="" hint="empty option text">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<!--- Option array to return --->
-		<cfset local.options = ArrayNew(1)>
+		<cfset lcl.options = ArrayNew(1)>
 		<cfif IsQuery(arguments.data) AND arguments.keylist neq "">
-			<cfset local.keycol = "">
-			<cfset local.valcol = "">
+			<cfset lcl.keycol = "">
+			<cfset lcl.valcol = "">
 			<cfif ListFindNoCase(arguments.data.columnlist, ListFirst(arguments.keylist))>
-				<cfset local.keycol = ListFirst(arguments.keylist)>
+				<cfset lcl.keycol = ListFirst(arguments.keylist)>
 			</cfif>
 			<cfif ListFindNoCase(arguments.data.columnlist, ListLast(arguments.keylist))>
-				<cfset local.valcol = ListLast(arguments.keylist)>
+				<cfset lcl.valcol = ListLast(arguments.keylist)>
 			</cfif>
-			<cfif local.keycol eq "" OR local.valcol eq "">
+			<cfif lcl.keycol eq "" OR lcl.valcol eq "">
 				<cfreturn _getErrorArr("select options from query")>
 			<cfelse>
 				<cfloop query="arguments.data">
 					<cfset ArrayAppend(
-						  local.options
+						  lcl.options
 						, getOption(
-							  value=arguments.data[local.keycol][currentrow]
-							, text=arguments.data[local.valcol][currentrow]
-							, selected=(arguments.data[local.keycol][currentrow] eq arguments.selected)
+							  value=arguments.data[lcl.keycol][currentrow]
+							, text=arguments.data[lcl.valcol][currentrow]
+							, selected=(arguments.data[lcl.keycol][currentrow] eq arguments.selected)
 						)
 					)>
 				</cfloop>
@@ -604,37 +604,37 @@
 			<cfif NOT ListLen(arguments.keylist)>
 				<cfset arguments.keylist = StructKeyList(arguments.data)>
 			</cfif>
-			<cfloop list="#arguments.keylist#" index="local.thiskey">
-				<cfif StructKeyExists(arguments.data, local.thiskey) AND IsSimpleValue(arguments.data[local.thiskey])>
+			<cfloop list="#arguments.keylist#" index="lcl.thiskey">
+				<cfif StructKeyExists(arguments.data, lcl.thiskey) AND IsSimpleValue(arguments.data[lcl.thiskey])>
 					<cfset ArrayAppend(
-						  local.options
+						  lcl.options
 						, getOption(
-							  value=local.thiskey
-							, text=arguments.data[local.thiskey]
-							, selected=(local.thiskey eq arguments.selected)
+							  value=lcl.thiskey
+							, text=arguments.data[lcl.thiskey]
+							, selected=(lcl.thiskey eq arguments.selected)
 						)
 					)>
 				</cfif>
 			</cfloop>
 		<cfelseif IsArray(arguments.data)>
 		<cfelseif IsSimpleValue(arguments.data)>
-			<cfloop list="#arguments.data#" index="local.value">
+			<cfloop list="#arguments.data#" index="lcl.value">
 				<cfset ArrayAppend(
-						  local.options
+						  lcl.options
 						, getOption(
-							  value=local.value
-							, text=local.value
-							, selected=(local.value eq arguments.selected)
+							  value=lcl.value
+							, text=lcl.value
+							, selected=(lcl.value eq arguments.selected)
 						)
 					)>
 			</cfloop>
 		</cfif>
 
 		<cfif arguments.empty OR Len(arguments.emptyvalue) OR Len(arguments.emptytext)>
-			<cfset ArrayPrepend(local.options, getOption(arguments.emptyvalue, arguments.emptytext))>
+			<cfset ArrayPrepend(lcl.options, getOption(arguments.emptyvalue, arguments.emptytext))>
 		</cfif>
 
-		<cfreturn local.options>
+		<cfreturn lcl.options>
 	</cffunction>
 
 	<cffunction name="getSVG">
@@ -665,7 +665,7 @@
 
 	<cffunction name="_getErrorArr">
 		<cfargument name="message"  required="true" type="string">
-		<cfset var local = ArrayNew(1)>
+		<cfset var lcl = ArrayNew(1)>
 		<cfset ArrayAppend(local, _getErrorString(argumentCollection = arguments))>
 		<cfreturn local>
 	</cffunction>

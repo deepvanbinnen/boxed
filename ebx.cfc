@@ -111,20 +111,20 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="setCircuits" returntype="any" hint="set circuits from struct return instance">
 		<cfargument name="circuits" required="true" type="struct" hint="struct containing circuit to directory mappings">
 
-		<cfset var local = StructNew() />
-		<cfset local.circ = getCircuits() />
-		<cfset StructAppend(local.circ, arguments.circuits, true) />
-		<cfreturn setParameter("circuits", local.circ, true) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.circ = getCircuits() />
+		<cfset StructAppend(lcl.circ, arguments.circuits, true) />
+		<cfreturn setParameter("circuits", lcl.circ, true) />
 	</cffunction>
 
 	<cffunction name="getCircuit"  returntype="string" hint="return the circuit directory from given circuit">
 		<cfargument name="circuit" required="true" type="string" hint="circuit to get directory for">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif hasCircuit(arguments.circuit)>
 			<!--- We need this extra step --->
-			<cfset local.circuits = getCircuits()>
-			<cfreturn local.circuits[arguments.circuit]>
+			<cfset lcl.circuits = getCircuits()>
+			<cfreturn lcl.circuits[arguments.circuit]>
 		</cfif>
 		<cfreturn "">
 	</cffunction>
@@ -138,7 +138,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="circuit" required="true" type="string" hint="circuit to add">
 		<cfargument name="path"    required="true" type="string" hint="circuit path">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif NOT hasCircuit(arguments.circuit)>
 			<cfset StructInsert(getParameter("circuits"), arguments.circuit, arguments.path)>
@@ -151,14 +151,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="addCircuits"  returntype="any" hint="circuits to add">
 		<cfargument name="circuits" required="false" type="struct" default="#StructNew()#" hint="circuit to add">
 
-		<cfset var local = StructNew()>
-		<cfset local.circuits = arguments.circuits />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.circuits = arguments.circuits />
 		<cfset StructDelete(arguments, "circuits") />
-		<cfset StructAppend(local.circuits, arguments, true) />
+		<cfset StructAppend(lcl.circuits, arguments, true) />
 
-		<cfset local.iter = iterator(local.circuits)>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset addCircuit(local.iter.getKey(), local.iter.getValue())>
+		<cfset lcl.iter = iterator(lcl.circuits)>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset addCircuit(lcl.iter.getKey(), lcl.iter.getValue())>
 		</cfloop>
 
 		<cfreturn this>
@@ -172,20 +172,20 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="setPlugins" returntype="any" hint="set plugins from struct return instance">
 		<cfargument name="plugins" required="true" type="struct" hint="struct containing circuit to directory mappings">
 
-		<cfset var local = StructNew() />
-		<cfset local.plug = getPlugins() />
-		<cfset StructAppend(local.plug, arguments.plugins, true) />
-		<cfreturn setParameter("plugins", local.plug, true) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.plug = getPlugins() />
+		<cfset StructAppend(lcl.plug, arguments.plugins, true) />
+		<cfreturn setParameter("plugins", lcl.plug, true) />
 	</cffunction>
 
 	<cffunction name="getPlugin"  returntype="string" hint="return the plugin directory from given plugin">
 		<cfargument name="plugin" required="true" type="string" hint="plugin to get directory for">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif hasPlugin(arguments.plugin)>
 			<!--- We need this extra step --->
-			<cfset local.plugins = getPlugins()>
-			<cfreturn local.plugins[arguments.plugin]>
+			<cfset lcl.plugins = getPlugins()>
+			<cfreturn lcl.plugins[arguments.plugin]>
 		</cfif>
 		<cfreturn "">
 	</cffunction>
@@ -199,7 +199,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="plugin" required="true" type="string" hint="plugin to add">
 		<cfargument name="path"    required="true" type="string" hint="plugin path">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif NOT hasPlugin(arguments.plugin)>
 			<cfset StructInsert(getParameter("plugins"), arguments.plugin, arguments.path)>
@@ -212,14 +212,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="addPlugins"  returntype="any" hint="plugins to add">
 		<cfargument name="plugins" required="false" type="struct" default="#StructNew()#" hint="plugin to add">
 
-		<cfset var local = StructNew()>
-		<cfset local.plugins = arguments.plugins />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.plugins = arguments.plugins />
 		<cfset StructDelete(arguments, "plugins") />
-		<cfset StructAppend(local.plugins, arguments, true) />
+		<cfset StructAppend(lcl.plugins, arguments, true) />
 
-		<cfset local.iter = iterator(local.plugins)>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset addPlugin(local.iter.getKey(), local.iter.getValue())>
+		<cfset lcl.iter = iterator(lcl.plugins)>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset addPlugin(lcl.iter.getKey(), lcl.iter.getValue())>
 		</cfloop>
 
 		<cfreturn this>
@@ -237,12 +237,12 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 
 	<cffunction name="getLayout"  returntype="string" hint="return the layout directory from given layout">
 		<cfargument name="layout" required="true" type="string" hint="layout to get directory for">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif hasLayout(arguments.layout)>
 			<!--- We need this extra step --->
-			<cfset local.layouts = getLayouts()>
-			<cfreturn local.layouts[arguments.layout]>
+			<cfset lcl.layouts = getLayouts()>
+			<cfreturn lcl.layouts[arguments.layout]>
 		</cfif>
 		<cfreturn "">
 	</cffunction>
@@ -256,7 +256,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="layout" required="true" type="string" hint="layout to add">
 		<cfargument name="path"    required="true" type="string" hint="layout path">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif NOT hasLayout(arguments.layout)>
 			<cfset StructInsert(getParameter("layouts"), arguments.layout, arguments.path)>
@@ -269,14 +269,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="addLayouts"  returntype="any" hint="layouts to add">
 		<cfargument name="layouts" required="false" type="struct" default="#StructNew()#" hint="layout to add">
 
-		<cfset var local = StructNew()>
-		<cfset local.layouts = arguments.layouts />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.layouts = arguments.layouts />
 		<cfset StructDelete(arguments, "layouts") />
-		<cfset StructAppend(local.layouts, arguments, true) />
+		<cfset StructAppend(lcl.layouts, arguments, true) />
 
-		<cfset local.iter = iterator(local.layouts)>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset addLayout(local.iter.getKey(), local.iter.getValue())>
+		<cfset lcl.iter = iterator(lcl.layouts)>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset addLayout(lcl.iter.getKey(), lcl.iter.getValue())>
 		</cfloop>
 
 		<cfreturn this>

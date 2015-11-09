@@ -89,7 +89,7 @@
 		<cfargument name="appVarKey" type="string" required="true" />
 		<cfargument name="appVarValue" type="any" required="true" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfset StructInsert( getAppScope(arguments.appKey), arguments.appVarKey, arguments.appVarValue, TRUE) />
 		<cfreturn />
 	</cffunction>
@@ -98,7 +98,7 @@
 		<cfargument name="appKey" type="string" required="true" />
 		<cfargument name="sesVarKey" type="string" required="true" />
 		<cfargument name="sesVarValue" type="any" required="true" />
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfset StructInsert( getSesScope(arguments.appKey), arguments.sesVarKey, arguments.sesVarValue, TRUE) />
 		<cfreturn />
 	</cffunction>
@@ -107,10 +107,10 @@
 		<cfargument name="appKey" type="string" required="true" />
 		<cfargument name="appVarKey" type="string" required="true" />
 
-		<cfset var local = StructNew() />
-		<cfset local.app = getAppScope(arguments.appKey)>
-		<cfif StructKeyExists(local.app, arguments.appVarKey)>
-			<cfreturn local.app[arguments.appVarKey] />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.app = getAppScope(arguments.appKey)>
+		<cfif StructKeyExists(lcl.app, arguments.appVarKey)>
+			<cfreturn lcl.app[arguments.appVarKey] />
 		</cfif>
 		<cfreturn />
 	</cffunction>
@@ -118,10 +118,10 @@
 	<cffunction name="getSesVar" returntype="any" output="false" hint="Gets the session scope for a given application key">
 		<cfargument name="appKey" type="string" required="true" />
 		<cfargument name="sesVarKey" type="string" required="true" />
-		<cfset var local = StructNew() />
-		<cfset local.ses = getSesScope(arguments.appKey)>
-		<cfif StructKeyExists(local.ses, arguments.sesVarKey)>
-			<cfreturn local.ses[arguments.sesVarKey] />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.ses = getSesScope(arguments.appKey)>
+		<cfif StructKeyExists(lcl.ses, arguments.sesVarKey)>
+			<cfreturn lcl.ses[arguments.sesVarKey] />
 		</cfif>
 		<cfreturn />
 	</cffunction>

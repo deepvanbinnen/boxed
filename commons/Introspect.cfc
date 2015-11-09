@@ -27,22 +27,22 @@
 		<cfargument name="cfc" type="any">
 		<cfargument name="func" type="any">
 
-		<cfset var local = StructNew()>
-		<cfset local.cfc  = arguments.cfc>
-		<cfset local.result = false>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.cfc  = arguments.cfc>
+		<cfset lcl.result = false>
 
-		<cfif _isCFC(local.cfc)>
-			<cfset local.fns = getMetaData(local.cfc).functions>
-			<cfloop from="1" to="#ArrayLen(local.fns)#" index="local.i">
-				<cfset local.fn = local.fns[local.i]>
-				<cfif local.fn.name eq arguments.func>
-					<cfset local.result = _getMethodArgs(local.fn.parameters)>
+		<cfif _isCFC(lcl.cfc)>
+			<cfset lcl.fns = getMetaData(lcl.cfc).functions>
+			<cfloop from="1" to="#ArrayLen(lcl.fns)#" index="lcl.i">
+				<cfset lcl.fn = lcl.fns[lcl.i]>
+				<cfif lcl.fn.name eq arguments.func>
+					<cfset lcl.result = _getMethodArgs(lcl.fn.parameters)>
 					<cfbreak>
 				</cfif>
 			</cfloop>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="hasFormVar" returntype="boolean" hint="checks if formvar exists">
@@ -80,15 +80,15 @@
 	<cffunction name="_guessDelimiter" output="false" returntype="string" hint="return delimiter from delimiter-list (CR,SPACE,COMMA,PIPELINE,PLUS) based on first delimiter occurrance in instring">
 		<cfargument name="instring" type="string" required="true" hint="string to return a delimiter for">
 
-		<cfset var local = StructNew()>
-		<cfset local.DELIMITERS = "10,13,32,44,124,43"><!--- CR,SPACE,COMMA,PIPELINE,PLUS, --->
-		<cfset local.instring = TRIM(arguments.instring)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.DELIMITERS = "10,13,32,44,124,43"><!--- CR,SPACE,COMMA,PIPELINE,PLUS, --->
+		<cfset lcl.instring = TRIM(arguments.instring)>
 
-		<cfif local.instring neq "">
-			<cfloop from="1" to="#Len(arguments.instring)#" index="local.i">
-				<cfset local.value = ASC(MID(arguments.instring,local.i,1))>
-				<cfif ListFind(local.DELIMITERS, local.value)>
-					<cfreturn CHR(local.value)>
+		<cfif lcl.instring neq "">
+			<cfloop from="1" to="#Len(arguments.instring)#" index="lcl.i">
+				<cfset lcl.value = ASC(MID(arguments.instring,lcl.i,1))>
+				<cfif ListFind(lcl.DELIMITERS, lcl.value)>
+					<cfreturn CHR(lcl.value)>
 				</cfif>
 			</cfloop>
 		</cfif>
@@ -99,25 +99,25 @@
 	<cffunction name="_getMethods" access="public" hint="gets all methods from given cfc without recursion">
 		<cfargument name="cfc" type="any" required="true">
 
-		<cfset var local = StructNew()>
-		<cfset local.cfc  = arguments.cfc>
-		<cfset local.result = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.cfc  = arguments.cfc>
+		<cfset lcl.result = ArrayNew(1)>
 
-		<cfif IsSimpleValue(local.cfc)>
+		<cfif IsSimpleValue(lcl.cfc)>
 			<cftry>
-				<cfset local.cfc = ObjectCreate(local.cfc) />
+				<cfset lcl.cfc = ObjectCreate(lcl.cfc) />
 				<cfcatch type="any">
 					<cfreturn QueryCreate(error="true", message=cfcatch.message, object=cfcatch) />
 				</cfcatch>
 			</cftry>
 		</cfif>
 
-		<cfif _isCFC(local.cfc)>
-			<cfset local.result = _as2q(_getMethodsArray(getMetaData(local.cfc).functions))>
+		<cfif _isCFC(lcl.cfc)>
+			<cfset lcl.result = _as2q(_getMethodsArray(getMetaData(lcl.cfc).functions))>
 		<cfelse>
-			<cfset local.result = _dumpJavaMethods(local.cfc)>
+			<cfset lcl.result = _dumpJavaMethods(lcl.cfc)>
 		</cfif>
-		<cfreturn local.result />
+		<cfreturn lcl.result />
 	</cffunction>
 
 	<cffunction name="_getReflectedName" output="false" hint="returns the value of the getName method on targetObj. This method by default returns an empty string">
@@ -134,11 +134,11 @@
 		<cfargument name="targetArr" type="any"     required="true">
 		<cfargument name="asList"    type="boolean" required="false" default="false">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = ArrayNew(1)>
 		<cftry>
-			<cfloop from="1" to="#ArrayLen(arguments.targetArr)#" index="local.i">
-				<cfset ArrayAppend(local.result, _getReflectedName(arguments.targetArr[local.i]))>
+			<cfloop from="1" to="#ArrayLen(arguments.targetArr)#" index="lcl.i">
+				<cfset ArrayAppend(lcl.result, _getReflectedName(arguments.targetArr[lcl.i]))>
 			</cfloop>
 			<cfcatch type="any">
 				<cfreturn "">
@@ -146,30 +146,30 @@
 		</cftry>
 
 		<cfif arguments.asList>
-			<cfreturn ArrayToList(local.result)>
+			<cfreturn ArrayToList(lcl.result)>
 		<cfelse>
-			<cfreturn local.result>
+			<cfreturn lcl.result>
 		</cfif>
 	</cffunction>
 
 	<cffunction name="_dumpMethods" access="public" output="false" returntype="query" hint="dump java class">
 		<cfargument name="meth" type="any">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.result = ArrayNew(1)>
+		<cfset lcl.result = ArrayNew(1)>
 
-		<cfset local.m = arguments.meth>
-		<cfloop from="1" to="#ArrayLen(local.m)#" index="local.i">
-			<cfset local.mtemp = local.m[local.i]>
-			<cfset local.st = StructNew()>
-			<cfset local.st.name = _getReflectedName(local.mtemp)>
-			<cfset local.st.args = _getReflectedNames(local.mtemp.getParameterTypes(), true)>
-			<cfset local.st.retv = _getReflectedName(local.mtemp.getReturnType())>
-			<cfset ArrayAppend(local.result, local.st)>
+		<cfset lcl.m = arguments.meth>
+		<cfloop from="1" to="#ArrayLen(lcl.m)#" index="lcl.i">
+			<cfset lcl.mtemp = lcl.m[lcl.i]>
+			<cfset lcl.st = StructNew()>
+			<cfset lcl.st.name = _getReflectedName(lcl.mtemp)>
+			<cfset lcl.st.args = _getReflectedNames(lcl.mtemp.getParameterTypes(), true)>
+			<cfset lcl.st.retv = _getReflectedName(lcl.mtemp.getReturnType())>
+			<cfset ArrayAppend(lcl.result, lcl.st)>
 		</cfloop>
 
-		<cfreturn _as2q(local.result)>
+		<cfreturn _as2q(lcl.result)>
 	</cffunction>
 
 	<cffunction name="_dumpJavaMethods" access="public" output="false" returntype="query" hint="dump java class">
@@ -182,106 +182,106 @@
 		<cfargument name="result" type="array" required="false" default="#ArrayNew(1)#">
 
 		<cfset var local    = StructNew()>
-		<cfset local.meta   = arguments.meta>
-		<cfset local.result = arguments.result>
+		<cfset lcl.meta   = arguments.meta>
+		<cfset lcl.result = arguments.result>
 
-		<cfif StructKeyExists(local.meta, "extends") AND StructKeyExists(local.meta, "functions")>
-			<cfset local.stf = StructNew()>
-			<cfset local.stf.extends   = local.meta.extends.name>
-			<cfset local.stf.name      = local.meta.name>
-			<cfset local.stf.functions = _as2q(_getMethodsArray(local.meta.functions))>
-			<cfif StructKeyExists(local.meta, "hint")>
-				<cfset local.stf.hint =  local.meta.hint>
+		<cfif StructKeyExists(lcl.meta, "extends") AND StructKeyExists(lcl.meta, "functions")>
+			<cfset lcl.stf = StructNew()>
+			<cfset lcl.stf.extends   = lcl.meta.extends.name>
+			<cfset lcl.stf.name      = lcl.meta.name>
+			<cfset lcl.stf.functions = _as2q(_getMethodsArray(lcl.meta.functions))>
+			<cfif StructKeyExists(lcl.meta, "hint")>
+				<cfset lcl.stf.hint =  lcl.meta.hint>
 			<cfelse>
-				<cfset local.stf.hint =  "">
+				<cfset lcl.stf.hint =  "">
 			</cfif>
-			<cfif StructKeyExists(local.meta, "output")>
-				<cfset local.stf.output =  local.meta.output>
+			<cfif StructKeyExists(lcl.meta, "output")>
+				<cfset lcl.stf.output =  lcl.meta.output>
 			<cfelse>
-				<cfset local.stf.output =  true>
+				<cfset lcl.stf.output =  true>
 			</cfif>
-			<cfset ArrayAppend(local.result, local.stf)>
-			<cfreturn _getAllMethods(local.meta.extends, local.result)>
+			<cfset ArrayAppend(lcl.result, lcl.stf)>
+			<cfreturn _getAllMethods(lcl.meta.extends, lcl.result)>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_getMethodList" output="false" access="public" hint="gets all methods as an array">
 		<cfargument name="cfc" type="any" required="true">
-		<cfset var local = StructNew() />
-		<cfset local.m =  _getMethods(arguments.cfc)>
-		<cfreturn ValueList(local.m.name ) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.m =  _getMethods(arguments.cfc)>
+		<cfreturn ValueList(lcl.m.name ) />
 	</cffunction>
 
 	<cffunction name="_getMethodsArray" output="false" access="public" hint="gets all methods as an array">
 		<cfargument name="functions" type="array" required="true">
 
-		<cfset var local = StructNew()>
-		<cfset local.fns  = arguments.functions>
-		<cfset local.result = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.fns  = arguments.functions>
+		<cfset lcl.result = ArrayNew(1)>
 
-		<cfloop from="1" to="#ArrayLen(local.fns)#" index="local.i">
-			<cfset local.fn = local.fns[local.i]>
-			<cfset local.stf = StructNew()>
-			<cfset local.stf.name = local.fn.name>
-			<cfset local.stf.parameters = _getMethodArgs(local.fn.parameters)>
-			<cfif StructKeyExists(local.fn, "returntype")>
-				<cfset local.stf.returntype = local.fn.returntype>
+		<cfloop from="1" to="#ArrayLen(lcl.fns)#" index="lcl.i">
+			<cfset lcl.fn = lcl.fns[lcl.i]>
+			<cfset lcl.stf = StructNew()>
+			<cfset lcl.stf.name = lcl.fn.name>
+			<cfset lcl.stf.parameters = _getMethodArgs(lcl.fn.parameters)>
+			<cfif StructKeyExists(lcl.fn, "returntype")>
+				<cfset lcl.stf.returntype = lcl.fn.returntype>
 			<cfelse>
-				<cfset local.stf.returntype = "any">
+				<cfset lcl.stf.returntype = "any">
 			</cfif>
-			<cfif StructKeyExists(local.fn, "access")>
-				<cfset local.stf.access =  local.fn.access>
+			<cfif StructKeyExists(lcl.fn, "access")>
+				<cfset lcl.stf.access =  lcl.fn.access>
 			<cfelse>
-				<cfset local.stf.access =  "public">
+				<cfset lcl.stf.access =  "public">
 			</cfif>
-			<cfif StructKeyExists(local.fn, "hint")>
-				<cfset local.stf.hint =  local.fn.hint>
+			<cfif StructKeyExists(lcl.fn, "hint")>
+				<cfset lcl.stf.hint =  lcl.fn.hint>
 			<cfelse>
-				<cfset local.stf.hint =  "">
+				<cfset lcl.stf.hint =  "">
 			</cfif>
-			<cfif StructKeyExists(local.fn, "output")>
-				<cfset local.stf.output =  local.fn.output>
+			<cfif StructKeyExists(lcl.fn, "output")>
+				<cfset lcl.stf.output =  lcl.fn.output>
 			<cfelse>
-				<cfset local.stf.output =  "true">
+				<cfset lcl.stf.output =  "true">
 			</cfif>
-			<cfset ArrayAppend(local.result, local.stf)>
+			<cfset ArrayAppend(lcl.result, lcl.stf)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_getMethodArgs" output="false" access="public" hint="gets the argument parameters for method">
 		<cfargument name="args" type="array">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = ArrayNew(1)>
-		<cfloop from="1" to="#ArrayLen(arguments.args)#" index="local.i">
-			<cfset local.param = arguments.args[local.i]>
-			<cfset local.parout = StructCreate(
-				   name = local.param.name
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = ArrayNew(1)>
+		<cfloop from="1" to="#ArrayLen(arguments.args)#" index="lcl.i">
+			<cfset lcl.param = arguments.args[lcl.i]>
+			<cfset lcl.parout = StructCreate(
+				   name = lcl.param.name
 				 , required = false
 				 , type = "any"
 				 , default = ""
 				 , hint = ""
 			)>
-			<cfset StructAppend(local.parout, local.param, true)>
-			<cfset ArrayAppend(local.result, local.parout)>
+			<cfset StructAppend(lcl.parout, lcl.param, true)>
+			<cfset ArrayAppend(lcl.result, lcl.parout)>
 		</cfloop>
-		<cfreturn _as2q(local.result)>
+		<cfreturn _as2q(lcl.result)>
 	</cffunction>
 
 	<cffunction name="__getattr" access="private" output="false" returntype="struct" hint="get the items in variablescope wirth methods excluded">
 		<cfargument name="vars"  type="any" required="true" default="#variables#" />
-		<cfset var local = StructCreate(out = StructCreate(), iter = iterator(arguments.vars))>
+		<cfset var lcl = StructCreate(out = StructCreate(), iter = iterator(arguments.vars))>
 
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfif NOT _isMethod(local.iter.getCurrent()) AND local.iter.getKey() NEQ "this">
-				<cfset StructInsert(local.out, local.iter.getKey(), local.iter.getCurrent(), true)>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfif NOT _isMethod(lcl.iter.getCurrent()) AND lcl.iter.getKey() NEQ "this">
+				<cfset StructInsert(lcl.out, lcl.iter.getKey(), lcl.iter.getCurrent(), true)>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.out>
+		<cfreturn lcl.out>
 	</cffunction>
 </cfcomponent>

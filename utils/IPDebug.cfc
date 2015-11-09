@@ -73,10 +73,10 @@
 	</cffunction>
 
 	<cffunction name="_setIpList" access="private" returntype="string" hint="set ips in a list">
-		<cfset var Local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfset this.iplist = "">
-		<cfloop collection="#this.ips#" item="local.owner">
-			<cfset this.iplist = ListAppend(this.iplist, getIpByOwner(local.owner))>
+		<cfloop collection="#this.ips#" item="lcl.owner">
+			<cfset this.iplist = ListAppend(this.iplist, getIpByOwner(lcl.owner))>
 		</cfloop>
 	</cffunction>
 </cfcomponent>

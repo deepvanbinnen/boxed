@@ -14,16 +14,16 @@
 	<cffunction name="get" output="true">
 		<cfargument name="index" type="any" required="false" default="#getIndex()#" />
 
-		<cfset var local = StructCreate(index = arguments.index)>
+		<cfset var lcl = StructCreate(index = arguments.index)>
 		<cfif NOT isNumeric(arguments.index)>
-			<cfset local.index = getCollection().indexOf(arguments.index)-1>
-			<cfif local.index GTE 0>
-				<cfset local.index = local.index + 1>
+			<cfset lcl.index = getCollection().indexOf(arguments.index)-1>
+			<cfif lcl.index GTE 0>
+				<cfset lcl.index = lcl.index + 1>
 			<cfelse>
-				<cfset local.index = 0>
+				<cfset lcl.index = 0>
 			</cfif>
 		</cfif>
-		<cfreturn super.get(local.index)>
+		<cfreturn super.get(lcl.index)>
 	</cffunction>
 
 	<cffunction name="createPointer" returntype="any">

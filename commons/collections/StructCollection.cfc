@@ -27,9 +27,9 @@
 
 	<cffunction name="getValidKeys" output="true">
 		<cfargument name="keys" type="string" required="true">
-		<cfset var local = StructCreate( keys = ListToArray( getKeys() ))>
-			<cfset local.keys.retainAll( ListToArray(arguments.keys) )>
-		<cfreturn ArrayToList(local.keys)>
+		<cfset var lcl = StructCreate( keys = ListToArray( getKeys() ))>
+			<cfset lcl.keys.retainAll( ListToArray(arguments.keys) )>
+		<cfreturn ArrayToList(lcl.keys)>
 	</cffunction>
 
 	<cffunction name="addAll" hint="Appends any object with filter applied as a struct. See the _toStruct() method for details on the conversion">

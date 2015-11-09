@@ -100,12 +100,12 @@
 		<cfargument name="start" required="false" type="numeric" default="0">
 		<cfargument name="end"   required="false" type="numeric" default="#ListLen(arguments.list)#">
 
-		<cfset var local = StructNew()>
-		<cfset local.arr = ListToArray(arguments.list)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.arr = ListToArray(arguments.list)>
 		<cfif arguments.end GT ListLen(arguments.list)>
-			<cfset arguments.end = ArrayLen(local.arr)>
+			<cfset arguments.end = ArrayLen(lcl.arr)>
 		</cfif>
-		<cfreturn ArrayToList(local.arr.subList(arguments.start, arguments.end))>
+		<cfreturn ArrayToList(lcl.arr.subList(arguments.start, arguments.end))>
 	</cffunction>
 
 	<cffunction name="dot" returntype="string" access="public">
@@ -122,17 +122,17 @@
 		<cfargument name="wrapclass" required="false" type="string" default="source">
 		<cfargument name="escapeHTML" required="false" type="boolean" default="true">
 
-		<cfset var local = StructNew() />
-		<cfset local.source = arguments.source />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.source = arguments.source />
 		<cfif arguments.escapeHTML>
-			<cfset local.source = pf(local.source).formatSourceCode().free().get()>
+			<cfset lcl.source = pf(lcl.source).formatSourceCode().free().get()>
 		</cfif>
 
 		<cfif arguments.wraptag neq "">
-			<cfset local.source = html().get(tag = arguments.wraptag, text=local.source, class=arguments.wrapclass)>
+			<cfset lcl.source = html().get(tag = arguments.wraptag, text=lcl.source, class=arguments.wrapclass)>
 		</cfif>
 
-		<cfreturn local.source>
+		<cfreturn lcl.source>
 	</cffunction>
 
 	<cffunction name="fileSource" output="false" hint="Gets the content of a file wrapped in a pre-tag with all \n replaced by spans and the content HTML-escaped. ie: <pre class='source'><span class='line'>[LINECONTENT]</span></pre>">
@@ -141,10 +141,10 @@
 		<cfargument name="wrapclass" required="false" type="string" default="source">
 		<cfargument name="escapeHTML" required="false" type="boolean" default="true">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.source = sys().readFile(arguments.filename) />
-			<cfreturn formatSource( argumentCollection = arguments, source = local.source ) />
+			<cfset lcl.source = sys().readFile(arguments.filename) />
+			<cfreturn formatSource( argumentCollection = arguments, source = lcl.source ) />
 			<cfcatch type="any">
 				<cfrethrow />
 			</cfcatch>
@@ -154,14 +154,14 @@
 	<cffunction name="_fileSource" output="false" hint="Gets the content of a file wrapped in a pre-tag with all \n replaced by spans and the content HTML-escaped. ie: <pre class='source'><span class='line'>[LINECONTENT]</span></pre>">
 		<cfargument name="filename"  required="true" type="string">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cftry>
-			<cffile action="read" file="#arguments.filename#" variable="local.source">
+			<cffile action="read" file="#arguments.filename#" variable="lcl.source">
 			<cfcatch type="any">
-				<cfset local.source = "Unable to read file: #arguments.filename#">
+				<cfset lcl.source = "Unable to read file: #arguments.filename#">
 			</cfcatch>
 		</cftry>
-		<cfreturn local.source>
+		<cfreturn lcl.source>
 	</cffunction>
 
 	<cffunction name="_getDoc" output="false" hint="Gets documentation from given CFC. The maxdepth of following extensions can be controlled and default to -1.">

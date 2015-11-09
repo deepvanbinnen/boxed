@@ -117,12 +117,12 @@
 	<cffunction name="getAppScope" returntype="any" output="false" hint="Gets the application scope for a given application key">
 		<cfargument name="appKey" type="string" required="false" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
 			<cfif StructKeyExists(arguments, "appKey")>
-				<cfset local.appKey = arguments.appKey />
+				<cfset lcl.appKey = arguments.appKey />
 			<cfelse>
-				<cfset local.appKey = getAppKey() />
+				<cfset lcl.appKey = getAppKey() />
 			</cfif>
 			<cfreturn super.getAppScope( getAppKey() ) />
 			<cfcatch type="any">
@@ -134,14 +134,14 @@
 	<cffunction name="getSesScope" returntype="any" output="false" hint="Gets the session scope for a given application key">
 		<cfargument name="appKey" type="string" required="false" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
 			<cfif StructKeyExists(arguments, "appKey")>
-				<cfset local.appKey = arguments.appKey />
+				<cfset lcl.appKey = arguments.appKey />
 			<cfelse>
-				<cfset local.appKey = getAppKey() />
+				<cfset lcl.appKey = getAppKey() />
 			</cfif>
-			<cfreturn super.getSesScope(local.appKey) />
+			<cfreturn super.getSesScope(lcl.appKey) />
 			<cfcatch type="any">
 				<cfrethrow />
 			</cfcatch>

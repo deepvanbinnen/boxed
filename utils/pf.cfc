@@ -188,20 +188,20 @@
 		<cfargument name="instring" type="string" required="false" default="">
 		<cfargument name="type" required="false" default="url" type="string">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfswitch expression="#arguments.type#">
 			<cfdefaultcase>
-				<cfset local.guard = 0 />
-				<cfset local.decoded = arguments.instring />
-				<cfloop condition="local.guard LT 1000">
-					<cfset local.guard = local.guard+1 />
-					<cfif URLDecode(local.decoded) NEQ local.decoded>
-						<cfset local.decoded = URLDecode(local.decoded) />
+				<cfset lcl.guard = 0 />
+				<cfset lcl.decoded = arguments.instring />
+				<cfloop condition="lcl.guard LT 1000">
+					<cfset lcl.guard = lcl.guard+1 />
+					<cfif URLDecode(lcl.decoded) NEQ lcl.decoded>
+						<cfset lcl.decoded = URLDecode(lcl.decoded) />
 					<cfelse>
 						<cfbreak />
 					</cfif>
 				</cfloop>
-				<cfreturn local.decoded />
+				<cfreturn lcl.decoded />
 			</cfdefaultcase>
 		</cfswitch>
 	</cffunction>
@@ -263,23 +263,23 @@
 		 *        http://stackoverflow.com/questions/2157449/problem-loading-remote-html-source-code-using-jdom
 		 */
 		 --->
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cftry>
-			<cfset local.builder = createObject("java", "org.jdom.input.SAXBuilder").init(JavaCast('boolean', 0)) />
-			<cfset local.format = createObject("java", "org.jdom.output.Format").getPrettyFormat() />
-			<cfset local.format.setOmitDeclaration(arguments.omitdecl) />
+			<cfset lcl.builder = createObject("java", "org.jdom.input.SAXBuilder").init(JavaCast('boolean', 0)) />
+			<cfset lcl.format = createObject("java", "org.jdom.output.Format").getPrettyFormat() />
+			<cfset lcl.format.setOmitDeclaration(arguments.omitdecl) />
 			<!--- Feature solution --->
-			<cfset local.builder.setFeature("http://xml.org/sax/features/validation", JavaCast('boolean', 0)) />
-		    <cfset local.builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", JavaCast('boolean', 0)) />
-		    <cfset local.builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", JavaCast('boolean', 0)) />
-		    <cfset local.builder.setValidation(JavaCast('boolean', 0)) />
+			<cfset lcl.builder.setFeature("http://xml.org/sax/features/validation", JavaCast('boolean', 0)) />
+		    <cfset lcl.builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", JavaCast('boolean', 0)) />
+		    <cfset lcl.builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", JavaCast('boolean', 0)) />
+		    <cfset lcl.builder.setValidation(JavaCast('boolean', 0)) />
 		    <!--- / Feature solution --->
-			<cfset local.out = createObject("java", "org.jdom.output.XMLOutputter").init(local.format) />
+			<cfset lcl.out = createObject("java", "org.jdom.output.XMLOutputter").init(lcl.format) />
 
-			<cfset local.reader = CreateObject( "java", "java.io.StringReader" ).init( JavaCast( "string", arguments.str ) ) />
-			<cfset local.document = local.builder.build( local.reader ) />
+			<cfset lcl.reader = CreateObject( "java", "java.io.StringReader" ).init( JavaCast( "string", arguments.str ) ) />
+			<cfset lcl.document = lcl.builder.build( lcl.reader ) />
 
-			<cfreturn REReplace(local.out.outputString( local.document ), "<script(.*?)(/>)", "<script\1></script>", "ALL") />
+			<cfreturn REReplace(lcl.out.outputString( lcl.document ), "<script(.*?)(/>)", "<script\1></script>", "ALL") />
 
 			<cfcatch type="any">
 				<cfdump var="#cfcatch#"><cfabort>
@@ -299,28 +299,28 @@
 		<cfargument name="maxtabs" type="numeric" required="false" default="100">
 
 		<cfset var local  = StructNew()>
-		<cfset local.code = HTMLEditFormat(arguments.str)>
-		<cfset local.i    = 0>
+		<cfset lcl.code = HTMLEditFormat(arguments.str)>
+		<cfset lcl.i    = 0>
 
-		<cfloop condition="local.code neq replaceTab(local.code)">
-			<cfset local.code = replaceTab(local.code)>
-			<cfset local.i = local.i + 1>
-			<cfif local.i GTE arguments.maxtabs>
+		<cfloop condition="lcl.code neq replaceTab(lcl.code)">
+			<cfset lcl.code = replaceTab(lcl.code)>
+			<cfset lcl.i = lcl.i + 1>
+			<cfif lcl.i GTE arguments.maxtabs>
 				<cfbreak>
 			</cfif>
 		</cfloop>
 
-		<cfreturn set(local.code.replaceAll('(.*)','<span class="line">$1</span>'))>
+		<cfreturn set(lcl.code.replaceAll('(.*)','<span class="line">$1</span>'))>
 	</cffunction>
 
 	<cffunction name="unHTMLEditFormat" returntype="any" output="false">
 		<cfargument name="str" required="no" type="string"  default="#this.string#">
-		<cfset var local = StructNew() />
-		<cfset local.str = Replace(arguments.str, "&gt;", ">", "ALL") />
-		<cfset local.str = Replace(local.str, "&lt;", "<", "ALL") />
-		<cfset local.str = Replace(local.str, "&quot;", '"', "ALL") />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.str = Replace(arguments.str, "&gt;", ">", "ALL") />
+		<cfset lcl.str = Replace(lcl.str, "&lt;", "<", "ALL") />
+		<cfset lcl.str = Replace(lcl.str, "&quot;", '"', "ALL") />
 
-		<cfreturn set(local.str)>
+		<cfreturn set(lcl.str)>
 	</cffunction>
 
 </cfcomponent>

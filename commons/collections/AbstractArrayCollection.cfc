@@ -8,10 +8,10 @@
 	<cffunction name="_addAll" output="false" hint="concatenate arrays">
 		<cfargument name="data" type="array" required="true">
 
-		<cfset var local = StructNew() />
-		<cfset local.l = ArrayLen(arguments.data) />
-		<cfloop from="1" to="#local.l#" index="local.i">
-			<cfset ArrayAppend( getData(), arguments.data[local.i] ) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.l = ArrayLen(arguments.data) />
+		<cfloop from="1" to="#lcl.l#" index="lcl.i">
+			<cfset ArrayAppend( getData(), arguments.data[lcl.i] ) />
 		</cfloop>
 		<cfreturn this />
 	</cffunction>
@@ -26,10 +26,10 @@
 
 	<cffunction name="_get" output="false">
 		<cfargument name="index" type="numeric" required="true">
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.arr = getData() />
-			<cfreturn local.arr[arguments.index] />
+			<cfset lcl.arr = getData() />
+			<cfreturn lcl.arr[arguments.index] />
 			<cfcatch type="any">
 				<cfthrow message="Index out of range: #arguments.index#.">
 			</cfcatch>
@@ -81,7 +81,7 @@
 		<cfargument name="indexlist" type="string" required="true" hint="list of indexes to remove" />
 		<cfargument name="delimiter" type="string" required="false" default="," />
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<!---
 			Since the remove operation modifies the array
 			this might cause the index to be another element
@@ -107,10 +107,10 @@
 			3) thus destArr=['a','b','d','f'] is correct!
 
 		--->
-		<cfset local.list = ListSort(arguments.indexlist, "numeric", "desc", arguments.delimiter)>
-		<cfloop list="#local.list#" index="local.index">
-			<cfif IsNumeric(local.index) AND local.index GT 0 AND local.index LTE ArrayLen( getData() )>
-				<cfset ArrayDeleteAt( getData(), local.index )>
+		<cfset lcl.list = ListSort(arguments.indexlist, "numeric", "desc", arguments.delimiter)>
+		<cfloop list="#lcl.list#" index="lcl.index">
+			<cfif IsNumeric(lcl.index) AND lcl.index GT 0 AND lcl.index LTE ArrayLen( getData() )>
+				<cfset ArrayDeleteAt( getData(), lcl.index )>
 			</cfif>
 		</cfloop>
 
@@ -126,15 +126,15 @@
 		<cfargument name="indexlist" type="string" required="true" />
 		<cfargument name="delimiter" type="string" required="false" default="," />
 
-		<cfset var local = StructNew()>
-		<cfset local.arr = getData() />
-		<cfset local.retain = ArrayNew(1) />
-		<cfloop list="#local.indexlist#" index="local.index" delimiters="#arguments.delimiter#">
-			<cfif IsNumeric(local.index) AND local.index GT 0 AND local.index LTE ArrayLen( getData() )>
-				<cfset ArrayAppend(local.retain, local.arr[local.index] ) />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.arr = getData() />
+		<cfset lcl.retain = ArrayNew(1) />
+		<cfloop list="#lcl.indexlist#" index="lcl.index" delimiters="#arguments.delimiter#">
+			<cfif IsNumeric(lcl.index) AND lcl.index GT 0 AND lcl.index LTE ArrayLen( getData() )>
+				<cfset ArrayAppend(lcl.retain, lcl.arr[lcl.index] ) />
 			</cfif>
 		</cfloop>
-		<cfset getData().retainAll(local.retain) />
+		<cfset getData().retainAll(lcl.retain) />
 		<cfreturn this>
 	</cffunction>
 

@@ -24,14 +24,14 @@
 	</cffunction>
 
 	<cffunction name="ArrayCreate" access="public" output="false" returntype="array" hint="Returns array from unnamed args. DO NOT use named args, the order of passed in args is not respected!">
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 
 		<cfif ArrayLen(arguments) GT 1 AND _isNumericList(StructKeyList(arguments))>
-			<cfset local.a = ArrayNew(1) />
-			<cfloop from="1" to="#ArrayLen(arguments)#" index="local.i">
-				<cfset ArrayAppend(local.a, arguments["#local.i#"]) />
+			<cfset lcl.a = ArrayNew(1) />
+			<cfloop from="1" to="#ArrayLen(arguments)#" index="lcl.i">
+				<cfset ArrayAppend(lcl.a, arguments["#lcl.i#"]) />
 			</cfloop>
-			<cfreturn local.a />
+			<cfreturn lcl.a />
 		</cfif>
 
 		<cfreturn _ArrayCreate(argumentCollection = arguments)>
@@ -46,63 +46,63 @@
 		<cfargument name="struct" required="true"  type="struct" hint="in-struct" />
 		<cfargument name="keylist" required="true"  type="string" hint="list of keys" />
 
-		<cfset var local = StructNew() />
-		<cfset local.arr  = ArrayCreate() />
-		<cfset local.keys = ListEnsureList(arguments.keylist, StructKeyList(arguments.struct)) />
-		<cfset local.iter = iterator(local.keys) />
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfif StructKeyExists(arguments.struct, local.iter.getCurrent())>
-				<cfset ArrayAppend(local.arr, arguments.struct[local.iter.getCurrent()]) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.arr  = ArrayCreate() />
+		<cfset lcl.keys = ListEnsureList(arguments.keylist, StructKeyList(arguments.struct)) />
+		<cfset lcl.iter = iterator(lcl.keys) />
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfif StructKeyExists(arguments.struct, lcl.iter.getCurrent())>
+				<cfset ArrayAppend(lcl.arr, arguments.struct[lcl.iter.getCurrent()]) />
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.arr />
+		<cfreturn lcl.arr />
 	</cffunction>
 
 	<cffunction name="RepeatedArray" access="public" output="false" returntype="array" hint="Returns array with number of 'repeat' items containing value">
 		<cfargument name="value" type="any" required="true" />
 		<cfargument name="repeat" type="numeric" required="false" default="0" />
 
-		<cfset var local = StructCreate( res = ArrayCreate() ) />
-		<cfloop from="1" to="#arguments.repeat#" index="local.i">
-			<cfset ArrayAppend(local.res, arguments.value) />
+		<cfset var lcl = StructCreate( res = ArrayCreate() ) />
+		<cfloop from="1" to="#arguments.repeat#" index="lcl.i">
+			<cfset ArrayAppend(lcl.res, arguments.value) />
 		</cfloop>
 
-		<cfreturn local.res />
+		<cfreturn lcl.res />
 	</cffunction>
 
 	<cffunction name="StructValArray" output="false" hint="Returns list of structkey values as an array">
 		<cfargument name="struct" type="struct" required="true">
 		<cfargument name="list"   type="string" required="false" default="#StructKeyList(arguments.struct)#">
 
-		<cfset var local = StructCreate(keys = iterator(arguments.list), result = ArrayCreate())>
-		<cfloop condition="#local.keys.whileHasNext()#">
-			<cfif StructKeyExists(arguments.struct, local.keys.getCurrent())>
-				<cfset ArrayAppend(local.result, arguments.struct[local.keys.getCurrent()])>
+		<cfset var lcl = StructCreate(keys = iterator(arguments.list), result = ArrayCreate())>
+		<cfloop condition="#lcl.keys.whileHasNext()#">
+			<cfif StructKeyExists(arguments.struct, lcl.keys.getCurrent())>
+				<cfset ArrayAppend(lcl.result, arguments.struct[lcl.keys.getCurrent()])>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="IndexedStructCreate" access="public" output="false" returntype="any" hint="Returns struct from named args">
 		<cfargument name="keys"     required="false" type="any" default="">
 		<cfargument name="valueArr" required="false" type="array" default="#ArrayCreate()#">
 
-		<cfset var local = StructCreate(keylist = arguments.keys, values = arguments.valueArr)>
-		<cfswitch expression="#getDataType(local.keylist)#">
+		<cfset var lcl = StructCreate(keylist = arguments.keys, values = arguments.valueArr)>
+		<cfswitch expression="#getDataType(lcl.keylist)#">
 			<cfcase value="string">
-				<cfif getDataType(local.values) eq "array" AND NOT ArrayLen(local.values) eq ListLen(local.keylist)>
+				<cfif getDataType(lcl.values) eq "array" AND NOT ArrayLen(lcl.values) eq ListLen(lcl.keylist)>
 					<cfthrow message="Unable to create indexed struct!">
 				</cfif>
 			</cfcase>
 			<cfcase value="struct">
-				<cfif local.values neq "">
-					<cfset local.keylist = local.values>
+				<cfif lcl.values neq "">
+					<cfset lcl.keylist = lcl.values>
 				<cfelse>
-					<cfset local.keylist = StructKeyList(arguments.keys)>
+					<cfset lcl.keylist = StructKeyList(arguments.keys)>
 				</cfif>
-				<cfset local.values = StructValArray(arguments.keys, local.keylist)>
+				<cfset lcl.values = StructValArray(arguments.keys, lcl.keylist)>
 			</cfcase>
 		</cfswitch>
 
@@ -179,11 +179,11 @@
 		<cfargument name="delimiter" type="string" required="false" default=",">
 		<cfargument name="trgdelimiter" type="string" required="false" default="#arguments.delimiter#">
 
-		<cfset var local = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
-		<cfloop condition="#local.list.whileHasNext()#">
-			<cfset local.index = ListFindNoCase(arguments.sourcelist, local.list.getCurrent(), arguments.delimiter)>
-			<cfif local.index eq 0>
-				<cfset arguments.sourcelist = ListAppend(arguments.sourcelist, local.list.getCurrent(), arguments.delimiter)>
+		<cfset var lcl = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
+		<cfloop condition="#lcl.list.whileHasNext()#">
+			<cfset lcl.index = ListFindNoCase(arguments.sourcelist, lcl.list.getCurrent(), arguments.delimiter)>
+			<cfif lcl.index eq 0>
+				<cfset arguments.sourcelist = ListAppend(arguments.sourcelist, lcl.list.getCurrent(), arguments.delimiter)>
 			</cfif>
 		</cfloop>
 		<cfreturn arguments.sourcelist>
@@ -195,11 +195,11 @@
 		<cfargument name="delimiter" type="string" required="false" default=",">
 		<cfargument name="trgdelimiter" type="string" required="false" default="#arguments.delimiter#">
 
-		<cfset var local = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
-		<cfloop condition="#local.list.whileHasNext()#">
-			<cfset local.index = ListFindNoCase(arguments.sourcelist, local.list.getCurrent(), arguments.delimiter)>
-			<cfif local.index neq 0>
-				<cfset arguments.sourcelist = ListDeleteAt(arguments.sourcelist, local.index, arguments.delimiter)>
+		<cfset var lcl = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
+		<cfloop condition="#lcl.list.whileHasNext()#">
+			<cfset lcl.index = ListFindNoCase(arguments.sourcelist, lcl.list.getCurrent(), arguments.delimiter)>
+			<cfif lcl.index neq 0>
+				<cfset arguments.sourcelist = ListDeleteAt(arguments.sourcelist, lcl.index, arguments.delimiter)>
 			</cfif>
 		</cfloop>
 		<cfreturn arguments.sourcelist>
@@ -211,11 +211,11 @@
 		<cfargument name="delimiter" type="string" required="false" default=",">
 		<cfargument name="trgdelimiter" type="string" required="false" default="#arguments.delimiter#">
 
-		<cfset var local = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
-		<cfloop condition="#local.list.whileHasNext()#">
-			<cfset local.index = ListFindNoCase(arguments.sourcelist, local.list.getCurrent(), arguments.delimiter)>
-			<cfif local.index eq -1>
-				<cfset arguments.sourcelist = ListDeleteAt(arguments.sourcelist, local.index, arguments.delimiter)>
+		<cfset var lcl = StructCreate(list = iterator(ListToArray(arguments.targetlist, arguments.trgdelimiter)))>
+		<cfloop condition="#lcl.list.whileHasNext()#">
+			<cfset lcl.index = ListFindNoCase(arguments.sourcelist, lcl.list.getCurrent(), arguments.delimiter)>
+			<cfif lcl.index eq -1>
+				<cfset arguments.sourcelist = ListDeleteAt(arguments.sourcelist, lcl.index, arguments.delimiter)>
 			</cfif>
 		</cfloop>
 		<cfreturn arguments.sourcelist>
@@ -297,14 +297,14 @@
 		<cfargument name="keycolumn"   type="string" required="true">
 		<cfargument name="valuecolumn" type="string" required="true">
 
-		<cfset var local = _StructCreate(
+		<cfset var lcl = _StructCreate(
 				result = StructNew()
 		)>
 		<cfloop query="arguments.query">
-			<cfset StructInsert(local.result, arguments.query[keycolumn][currentrow], arguments.query[valuecolumn][currentrow], true)>
+			<cfset StructInsert(lcl.result, arguments.query[keycolumn][currentrow], arguments.query[valuecolumn][currentrow], true)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="RowStruct" access="public" output="false" returntype="struct" hint="return struct from named args else array">
@@ -319,12 +319,12 @@
 		<cfargument name="list" required="false" type="string" default="text" hint="sorttype for keys" />
 		<cfargument name="delimiter" required="false" type="string" default="," hint="list delimiter to use" />
 
-		<cfset var local = StructNew() />
-		<cfset local.iter = iterator(ltoa(arguments.list, arguments.delimiter)) />
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset local.curr = local.iter.getCurrent() />
-			<cfif StructKeyExists(arguments.struct, local.curr)>
-				<cfset StructDelete(arguments.struct, local.curr) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.iter = iterator(ltoa(arguments.list, arguments.delimiter)) />
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset lcl.curr = lcl.iter.getCurrent() />
+			<cfif StructKeyExists(arguments.struct, lcl.curr)>
+				<cfset StructDelete(arguments.struct, lcl.curr) />
 			</cfif>
 		</cfloop>
 		<cfreturn arguments.struct />
@@ -343,45 +343,45 @@
 		<cfargument name="struct" required="true" type="struct" hint="struct to convert" />
 		<cfargument name="qsdelim" required="false" type="string" default="&" hint="qs delimiter to use" />
 
-		<cfset var local = StructCreate( iter = iterator(arguments.struct), qVars = "")>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfif local.iter.getIndex() neq 1>
-				<cfset local.qVars = local.qVars & arguments.qsdelim>
+		<cfset var lcl = StructCreate( iter = iterator(arguments.struct), qVars = "")>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfif lcl.iter.getIndex() neq 1>
+				<cfset lcl.qVars = lcl.qVars & arguments.qsdelim>
 			</cfif>
-			<cfset local.qVars = local.qVars & local.iter.getKey() & "=" & URLEncodedFormat(local.iter.getValue())>
+			<cfset lcl.qVars = lcl.qVars & lcl.iter.getKey() & "=" & URLEncodedFormat(lcl.iter.getValue())>
 		</cfloop>
 
-		<cfreturn local.qVars />
+		<cfreturn lcl.qVars />
 	</cffunction>
 
 	<cffunction name="mergeStruct" returntype="struct" output="false" hint="merges given struct into a struct's subkey">
 		<cfargument name="struct" required="true"  type="struct" hint="The original struct" />
 		<cfargument name="key" required="false"  type="string" default="" hint="The key containing the struct to merge other keys in to" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfif StructKeyExists(arguments.struct, arguments.key) AND IsStruct(arguments.struct[arguments.key])>
-			<cfset local.struct = StructCopy(arguments.struct[arguments.key]) />
+			<cfset lcl.struct = StructCopy(arguments.struct[arguments.key]) />
 			<cfset StructDelete(arguments.struct, arguments.key) />
-			<cfset StructAppend(local.struct, arguments.struct, false) />
+			<cfset StructAppend(lcl.struct, arguments.struct, false) />
 		<cfelse>
-			<cfset local.struct = StructCopy(arguments.struct) />
+			<cfset lcl.struct = StructCopy(arguments.struct) />
 		</cfif>
-		<cfreturn local.struct />
+		<cfreturn lcl.struct />
 	</cffunction>
 
 	<cffunction name="XmlNodesToArray" output="false">
 		<cfargument name="xmlNodes" type="array" required="true">
 
-		<cfset var local = _StructCreate(result = ArrayNew(1))>
+		<cfset var lcl = _StructCreate(result = ArrayNew(1))>
 
-		<cfloop from="1" to="#ArrayLen(arguments.xmlNodes)#" index="local.i">
-			<cfswitch expression="#arguments.xmlNodes[local.i].getNodeType()#">
+		<cfloop from="1" to="#ArrayLen(arguments.xmlNodes)#" index="lcl.i">
+			<cfswitch expression="#arguments.xmlNodes[lcl.i].getNodeType()#">
 				<cfdefaultcase>
-					<cfset ArrayAppend(local.result, arguments.xmlNodes[local.i].getTextContent())>
+					<cfset ArrayAppend(lcl.result, arguments.xmlNodes[lcl.i].getTextContent())>
 				</cfdefaultcase>
 			</cfswitch>
 		</cfloop>
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="XPathAttribsToQuery" output="false">
@@ -391,20 +391,20 @@
 		<cfargument name="collist" type="string" required="false" default="#arguments.attribs#">
 		<cfargument name="query"   type="query"  required="false" default="#QueryNew("")#">
 
-		<cfset var local = StructCreate(result = arguments.query)>
+		<cfset var lcl = StructCreate(result = arguments.query)>
 
-		<cfset local.a = ListToArray(arguments.attribs)>
-		<cfset local.c = ListToArray(arguments.collist)>
+		<cfset lcl.a = ListToArray(arguments.attribs)>
+		<cfset lcl.c = ListToArray(arguments.collist)>
 
-		<cfloop from="1" to="#ArrayLen(local.a)#" index="local.i">
+		<cfloop from="1" to="#ArrayLen(lcl.a)#" index="lcl.i">
 			<cfset QueryAddColumn(
-					local.result
-				  , local.c[local.i]
-				  , XmlNodesToArray(XmlSearch(arguments.xml, arguments.xmlRoot & "/@" & local.a[local.i]))
+					lcl.result
+				  , lcl.c[lcl.i]
+				  , XmlNodesToArray(XmlSearch(arguments.xml, arguments.xmlRoot & "/@" & lcl.a[lcl.i]))
 			)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="XPathChildrenToQuery" output="false">
@@ -414,20 +414,20 @@
 		<cfargument name="collist"  type="string" required="false" default="#arguments.children#">
 		<cfargument name="query"    type="query"  required="false" default="#QueryNew("")#">
 
-		<cfset var local = StructCreate(result = arguments.query)>
+		<cfset var lcl = StructCreate(result = arguments.query)>
 
-		<cfset local.a = ListToArray(arguments.children)>
-		<cfset local.c = ListToArray(arguments.collist)>
+		<cfset lcl.a = ListToArray(arguments.children)>
+		<cfset lcl.c = ListToArray(arguments.collist)>
 
-		<cfloop from="1" to="#ArrayLen(local.a)#" index="local.i">
+		<cfloop from="1" to="#ArrayLen(lcl.a)#" index="lcl.i">
 			<cfset QueryAddColumn(
-					local.result
-				  , local.c[local.i]
-				  , XmlNodesToArray(XmlSearch(arguments.xml, arguments.xmlRoot & "/" & local.a[local.i] & "/"))
+					lcl.result
+				  , lcl.c[lcl.i]
+				  , XmlNodesToArray(XmlSearch(arguments.xml, arguments.xmlRoot & "/" & lcl.a[lcl.i] & "/"))
 			)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="XPathMapToQuery" hint="converts an xml object into a query according to given mapping.">
@@ -694,12 +694,12 @@
 	<cffunction name="_isMethod" access="public" output="false" returntype="boolean" hint="validates is given argument is a method by inspecting metadata">
 		<cfargument name="func" type="any" hint="function reference">
 
-		<cfset var local = StructNew()>
-		<cfset local.fn  = arguments.func>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.fn  = arguments.func>
 
-		<cfif NOT IsStruct(local.fn) AND NOT IsArray(local.fn) AND NOT IsObject(local.fn) AND NOT IsSimpleValue(local.fn)>
-			<cfset local.metadata = getMetaData(local.fn)>
-			<cfreturn StructKeyExists(local.metadata, "name") AND StructKeyExists(local.metadata, "parameters")>
+		<cfif NOT IsStruct(lcl.fn) AND NOT IsArray(lcl.fn) AND NOT IsObject(lcl.fn) AND NOT IsSimpleValue(lcl.fn)>
+			<cfset lcl.metadata = getMetaData(lcl.fn)>
+			<cfreturn StructKeyExists(lcl.metadata, "name") AND StructKeyExists(lcl.metadata, "parameters")>
 		</cfif>
 		<cfreturn false>
 	</cffunction>
@@ -708,76 +708,76 @@
 		<cfargument name="cfc" type="any">
 		<cfargument name="func" type="any">
 
-		<cfset var local = StructNew()>
-		<cfset local.cfc  = arguments.cfc>
-		<cfset local.result = false>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.cfc  = arguments.cfc>
+		<cfset lcl.result = false>
 
-		<cfif _isCFC(local.cfc)>
-			<cfset local.fns = getMetaData(local.cfc).functions>
-			<cfloop from="1" to="#ArrayLen(local.fns)#" index="local.i">
-				<cfif local.fns[local.i].name eq arguments.func>
-					<cfset local.result = true>
+		<cfif _isCFC(lcl.cfc)>
+			<cfset lcl.fns = getMetaData(lcl.cfc).functions>
+			<cfloop from="1" to="#ArrayLen(lcl.fns)#" index="lcl.i">
+				<cfif lcl.fns[lcl.i].name eq arguments.func>
+					<cfset lcl.result = true>
 					<cfbreak>
 				</cfif>
 			</cfloop>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_as2q" access="public" output="false" returntype="query" hint="array of structs to query">
 		<cfargument name="data" type="array" required="true">
 		<cfargument name="keys" type="string" required="false" default="">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = QueryNew("")><!--- result query --->
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = QueryNew("")><!--- result query --->
 
 		<!--- struct that holds columns with an array of their (row)-values --->
-		<cfset local.temp   = StructNew()>
+		<cfset lcl.temp   = StructNew()>
 
 		<!--- setup columns --->
 		<cfif arguments.keys neq "">
 			<!--- columns are given only process these keys (make the list immutable) and initialise result struct --->
-			<cfset local.immutable_keys = true>
-			<cfset local.keys = arguments.keys>
+			<cfset lcl.immutable_keys = true>
+			<cfset lcl.keys = arguments.keys>
 			<!--- initialise result struct --->
-			<cfloop list="#local.keys#" index="local.key">
-				<cfif NOT StructKeyExists(local.temp, local.key)>
-					<cfset StructInsert(local.temp, local.key, ArrayNew(1))>
+			<cfloop list="#lcl.keys#" index="lcl.key">
+				<cfif NOT StructKeyExists(lcl.temp, lcl.key)>
+					<cfset StructInsert(lcl.temp, lcl.key, ArrayNew(1))>
 				</cfif>
 			</cfloop>
 		<cfelse>
-			<cfset local.immutable_keys = false>
-			<cfset local.keys = "">
+			<cfset lcl.immutable_keys = false>
+			<cfset lcl.keys = "">
 		</cfif>
 
 		<!--- loop the data --->
-		<cfloop from="1" to="#ArrayLen(arguments.data)#" index="local.i">
-			<cfset local.item = arguments.data[local.i]>
+		<cfloop from="1" to="#ArrayLen(arguments.data)#" index="lcl.i">
+			<cfset lcl.item = arguments.data[lcl.i]>
 			<!--- reset columnlist if applicable--->
-			<cfif NOT local.immutable_keys>
-				<cfset local.keys = StructKeyList(local.item)>
+			<cfif NOT lcl.immutable_keys>
+				<cfset lcl.keys = StructKeyList(lcl.item)>
 			</cfif>
-			<cfloop list="#local.keys#" index="local.key">
+			<cfloop list="#lcl.keys#" index="lcl.key">
 				<!--- Only process keys that exist --->
-				<cfif StructKeyExists(local.item,local.key)>
+				<cfif StructKeyExists(lcl.item,lcl.key)>
 					<!--- If applicable check and add struct key --->
-					<cfif NOT local.immutable_keys AND NOT StructKeyExists(local.temp, local.key)>
-						<cfset StructInsert(local.temp, local.key, ArrayNew(1))>
+					<cfif NOT lcl.immutable_keys AND NOT StructKeyExists(lcl.temp, lcl.key)>
+						<cfset StructInsert(lcl.temp, lcl.key, ArrayNew(1))>
 					</cfif>
 					<!--- Set value --->
-					<cfset ArraySet(local.temp[local.key], local.i, local.i, local.item[local.key])>
+					<cfset ArraySet(lcl.temp[lcl.key], lcl.i, lcl.i, lcl.item[lcl.key])>
 				</cfif>
 			</cfloop>
 		</cfloop>
 
-		<cfset local.keys = StructKeyList(local.temp)>
-		<cfloop list="#local.keys#" index="local.key">
-			<cfset QueryAddColumn(local.result, local.key, local.temp[local.key])>
+		<cfset lcl.keys = StructKeyList(lcl.temp)>
+		<cfloop list="#lcl.keys#" index="lcl.key">
+			<cfset QueryAddColumn(lcl.result, lcl.key, lcl.temp[lcl.key])>
 		</cfloop>
 
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_aa2s" output="true" hint="array, array to struct">
@@ -806,37 +806,37 @@
 		<cfargument name="coldel"  type="string" required="false" default="," hint="Column delimiter" />
 		<cfargument name="linedel" type="string" required="false" default="#CHR(10)#" hint="Line delimiter" />
 
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			  rows   = iterator(ListToArray(arguments.data, arguments.linedel))
 			, result = QueryCreate(arguments.cols)
 		) />
 
-		<cfloop condition="#local.rows.whileHasNext()#">
-			<cfset local.cols = request.ebx.iterator(ListToArray(TRIM(local.rows.getCurrent()), arguments.coldel)) />
-			<cfif local.cols.getLength() eq ListLen(local.result.columnlist)>
+		<cfloop condition="#lcl.rows.whileHasNext()#">
+			<cfset lcl.cols = request.ebx.iterator(ListToArray(TRIM(lcl.rows.getCurrent()), arguments.coldel)) />
+			<cfif lcl.cols.getLength() eq ListLen(lcl.result.columnlist)>
 				<!--- Still a bit dirty since the collections feature isn't actie yet --->
-				<cfset QueryAddRow(local.result) />
-				<cfloop condition="#local.cols.whileHasNext()#">
-					<cfset QuerySetCell(local.result, ListGetAt(arguments.cols, local.cols.getIndex()), local.cols.getCurrent()) />
+				<cfset QueryAddRow(lcl.result) />
+				<cfloop condition="#lcl.cols.whileHasNext()#">
+					<cfset QuerySetCell(lcl.result, ListGetAt(arguments.cols, lcl.cols.getIndex()), lcl.cols.getCurrent()) />
 				</cfloop>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.result />
+		<cfreturn lcl.result />
 	</cffunction>
 
 	<cffunction name="_q2s" access="public" output="false" returntype="any" hint="return struct from query's current row">
 		<cfargument name="query" type="query" required="true" hint="the query to obtain data from">
 		<cfargument name="list"  type="string" required="false" default="#arguments.query.columnlist#" hint="the keys for the outstruct">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.result = StructNew()>
-		<cfloop list="#arguments.list#" index="local.column">
-			<cfset StructInsert(local.result, local.column, arguments.query[local.column])>
+		<cfset lcl.result = StructNew()>
+		<cfloop list="#arguments.list#" index="lcl.column">
+			<cfset StructInsert(lcl.result, lcl.column, arguments.query[lcl.column])>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_q2as" access="public" output="false" returntype="any" hint="return array of structs from query's current row">
@@ -844,173 +844,173 @@
 		<cfargument name="list"  type="string" required="false" default="#arguments.query.columnlist#" hint="the columns from the inquery">
 		<cfargument name="keys"  type="string" required="false" default="#arguments.list#" hint="the keys for the outstruct">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = ArrayNew(1)>
 
-		<cfset local.list = ListToArray(arguments.list)>
+		<cfset lcl.list = ListToArray(arguments.list)>
 		<cfif ListLen(arguments.keys) eq ListLen(arguments.list)>
-			<cfset local.keys = ListToArray(arguments.keys)>
+			<cfset lcl.keys = ListToArray(arguments.keys)>
 		<cfelse>
-			<cfset local.keys = local.list>
+			<cfset lcl.keys = lcl.list>
 		</cfif>
 
 		<cfloop query="arguments.query">
-			<cfset local.temp = StructNew()>
-			<cfloop from="1" to="#ArrayLen(local.list)#" index="local.i">
-				<cfset StructInsert(local.temp, local.keys[local.i], arguments.query[local.list[local.i]][currentrow], true)>
+			<cfset lcl.temp = StructNew()>
+			<cfloop from="1" to="#ArrayLen(lcl.list)#" index="lcl.i">
+				<cfset StructInsert(lcl.temp, lcl.keys[lcl.i], arguments.query[lcl.list[lcl.i]][currentrow], true)>
 			</cfloop>
-			<cfset ArrayAppend(local.result, local.temp)>
+			<cfset ArrayAppend(lcl.result, lcl.temp)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_toArray" access="public" output="false" returntype="array" hint="return array from any data">
 		<cfargument name="data"   type="any" required="true" hint="the data to convert to array">
 		<cfargument name="filter" type="any" required="false" hint="the filter for the data">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif IsArray(arguments.data) AND NOT StructKeyExists(arguments, "filter")>
 			<cfreturn arguments.data>
 		</cfif>
 
-		<cfset local.result = ArrayNew(1)>
+		<cfset lcl.result = ArrayNew(1)>
 		<cfif IsStruct(arguments.data)>
-			<cfset local.keylist = StructKeyList(arguments.data)>
+			<cfset lcl.keylist = StructKeyList(arguments.data)>
 			<cfif StructKeyExists(arguments, "filter") AND IsSimpleValue(arguments.filter)>
-				<cfset local.keylist = arguments.filter>
+				<cfset lcl.keylist = arguments.filter>
 			</cfif>
-			<cfloop list="#local.keylist#" index="local.key">
-				<cfif StructKeyExists(arguments.data, local.key)>
-					<!--- Must quote local.key because of unreliable behaviour when getting numeric keys from struct --->
-					<cfset ArrayAppend(local.result, arguments.data["#local.key#"])>
+			<cfloop list="#lcl.keylist#" index="lcl.key">
+				<cfif StructKeyExists(arguments.data, lcl.key)>
+					<!--- Must quote lcl.key because of unreliable behaviour when getting numeric keys from struct --->
+					<cfset ArrayAppend(lcl.result, arguments.data["#lcl.key#"])>
 				</cfif>
 			</cfloop>
 		<cfelseif IsSimpleValue(arguments.data)>
-			<cfset local.delim = ",">
+			<cfset lcl.delim = ",">
 			<cfif StructKeyExists(arguments, "filter") AND IsSimpleValue(arguments.filter)>
-				<cfset local.delim = arguments.filter>
+				<cfset lcl.delim = arguments.filter>
 				<cfif IsNumeric(arguments.filter)>
-					<cfset local.delim = CHR(local.delim)>
+					<cfset lcl.delim = CHR(lcl.delim)>
 				</cfif>
 			</cfif>
-			<cfset local.result = ListToArray(arguments.data, local.delim)>
+			<cfset lcl.result = ListToArray(arguments.data, lcl.delim)>
 		<cfelseif IsQuery(arguments.data)>
-			<cfset local.collist = arguments.data.columnlist>
+			<cfset lcl.collist = arguments.data.columnlist>
 			<cfif StructKeyExists(arguments, "filter")>
 				<cfif IsSimpleValue(arguments.filter)>
-					<cfset local.collist = arguments.filter>
+					<cfset lcl.collist = arguments.filter>
 				<cfelseif IsArray(arguments.filter)>
-					<cfset local.collist = ArrayToList(arguments.filter)>
+					<cfset lcl.collist = ArrayToList(arguments.filter)>
 				</cfif>
 			</cfif>
-			<cfset local.result = _q2as(arguments.data, local.collist)>
+			<cfset lcl.result = _q2as(arguments.data, lcl.collist)>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_toStruct" access="public" output="false" returntype="struct" hint="return struct from any data">
 		<cfargument name="data"   type="any" required="true" hint="the data to convert to struct">
 		<cfargument name="filter" type="any" required="false" hint="the filter for the data">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif IsStruct(arguments.data) AND NOT StructKeyExists(arguments, "filter")>
 			<cfreturn arguments.data>
 		</cfif>
 
-		<cfset local.result = StructNew()>
+		<cfset lcl.result = StructNew()>
 		<cfif IsQuery(arguments.data)>
-			<cfset local.collist = arguments.data.columnlist>
+			<cfset lcl.collist = arguments.data.columnlist>
 			<cfif StructKeyExists(arguments, "filter")>
 				<cfif IsSimpleValue(arguments.filter)>
-					<cfset local.collist = arguments.filter>
+					<cfset lcl.collist = arguments.filter>
 				<cfelseif IsArray(arguments.filter)>
-					<cfset local.collist = ArrayToList(arguments.filter)>
+					<cfset lcl.collist = ArrayToList(arguments.filter)>
 				</cfif>
 			</cfif>
-			<cfset local.result = _q2s(arguments.data, local.collist)>
+			<cfset lcl.result = _q2s(arguments.data, lcl.collist)>
 		<cfelseif IsArray(arguments.data) OR IsSimpleValue(arguments.data)>
-			<cfset local.array = _toArray(argumentCollection=arguments)>
-			<cfloop from="1" to="#ArrayLen(local.array)#" index="local.i">
-				<!--- Must quote local.i because of unreliable behaviour when getting numeric keys from struct --->
-				<cfset StructInsert(local.result, local.i, local.array["#local.i#"], true)>
+			<cfset lcl.array = _toArray(argumentCollection=arguments)>
+			<cfloop from="1" to="#ArrayLen(lcl.array)#" index="lcl.i">
+				<!--- Must quote lcl.i because of unreliable behaviour when getting numeric keys from struct --->
+				<cfset StructInsert(lcl.result, lcl.i, lcl.array["#lcl.i#"], true)>
 			</cfloop>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_StructCreate" access="public" output="true" returntype="struct" hint="return struct from named args else array">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.data = arguments>
+		<cfset lcl.data = arguments>
 
 		<cfif ArrayLen(arguments) GT 1 AND StructKeyExists(arguments, "1")>
 			<cfif IsStruct(arguments[1])>
-				<cfset local.data = arguments[1]>
+				<cfset lcl.data = arguments[1]>
 			<cfelseif IsQuery(arguments[1])>
-				<cfset local.data = StructNew()>
-				<cfloop list="#arguments[1].columnlist#" index="local.column">
-					<cfset StructInsert(local.data, local.column, arguments[1][local.column])>
+				<cfset lcl.data = StructNew()>
+				<cfloop list="#arguments[1].columnlist#" index="lcl.column">
+					<cfset StructInsert(lcl.data, lcl.column, arguments[1][lcl.column])>
 				</cfloop>
 			<cfelseif IsArray(arguments[1]) AND IsArray(arguments[2]) AND ArrayLen(arguments[1]) EQ ArrayLen(arguments[2])>
-				<cfset local.data = StructNew()>
-				<cfloop from="1" to="#ArrayLen(arguments[1])#" index="local.i">
-					<cfset StructInsert(local.data, arguments[1][local.i], arguments[2][local.i], true)>
+				<cfset lcl.data = StructNew()>
+				<cfloop from="1" to="#ArrayLen(arguments[1])#" index="lcl.i">
+					<cfset StructInsert(lcl.data, arguments[1][lcl.i], arguments[2][lcl.i], true)>
 				</cfloop>
 			<cfelseif IsSimpleValue(arguments[1])>
-				<cfset local.data = StructNew()>
-				<cfloop list="#arguments[1]#" index="local.column">
-					<cfset StructInsert(local.data, local.column, arguments[2])>
+				<cfset lcl.data = StructNew()>
+				<cfloop list="#arguments[1]#" index="lcl.column">
+					<cfset StructInsert(lcl.data, lcl.column, arguments[2])>
 				</cfloop>
 			</cfif>
 		<cfelseif ArrayLen(arguments) EQ 1 AND StructKeyExists(arguments, "1")>
 			<cfif _isArgumentCollection(arguments[1])>
-				<cfset local.data = StructNew()>
-				<cfset StructAppend(local.data, arguments[1])>
+				<cfset lcl.data = StructNew()>
+				<cfset StructAppend(lcl.data, arguments[1])>
 			<cfelseif IsSimpleValue(arguments[1])>
-				<cfset local.data = StructNew()>
-				<cfloop list="#arguments[1]#" index="local.column">
-					<cfset StructInsert(local.data, local.column, "")>
+				<cfset lcl.data = StructNew()>
+				<cfloop list="#arguments[1]#" index="lcl.column">
+					<cfset StructInsert(lcl.data, lcl.column, "")>
 				</cfloop>
 			</cfif>
 		</cfif>
 
-		<cfreturn local.data>
+		<cfreturn lcl.data>
 	</cffunction>
 
 	<cffunction name="_QueryCreate" access="private" output="false" returntype="query" hint="Creates query with default row from named args (values may be arrays), or empty columns if given argument is a list">
-		<cfset var local = _StructCreate( query = QueryNew(""), data = arguments )>
+		<cfset var lcl = _StructCreate( query = QueryNew(""), data = arguments )>
 
 		<cfif ArrayLen(arguments) eq 1 AND (IsStruct(arguments[1]) OR IsSimpleValue(arguments[1]))>
-			<cfset local.data = arguments[1]>
+			<cfset lcl.data = arguments[1]>
 		</cfif>
 
-		<cfset local.iter = iterator(local.data)>
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfif IsNumeric(local.iter.getKey())>
-				<cfset local.columnname = "AUTO_COLUMN_NAME_#local.column#">
+		<cfset lcl.iter = iterator(lcl.data)>
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfif IsNumeric(lcl.iter.getKey())>
+				<cfset lcl.columnname = "AUTO_COLUMN_NAME_#lcl.column#">
 			<cfelse>
-				<cfset local.columnname = local.iter.getKey()>
+				<cfset lcl.columnname = lcl.iter.getKey()>
 			</cfif>
 
-			<cfif IsSimpleValue(local.data)>
-				<cfset local.columnvalue = "">
+			<cfif IsSimpleValue(lcl.data)>
+				<cfset lcl.columnvalue = "">
 			<cfelse>
-				<cfset local.columnvalue = local.iter.getCurrent()>
+				<cfset lcl.columnvalue = lcl.iter.getCurrent()>
 			</cfif>
 
-			<cfset QueryAddColumn(local.query, local.columnname, _ArrayCreate(local.columnvalue))>
+			<cfset QueryAddColumn(lcl.query, lcl.columnname, _ArrayCreate(lcl.columnvalue))>
 		</cfloop>
 
-		<cfreturn local.query>
+		<cfreturn lcl.query>
 	</cffunction>
 
 	<cffunction name="_ArrayCreate" access="private" output="false" returntype="array" hint="By default returns array from unnamed args. This method does not create a new array, if number of equals 1 and is an array but returns that array. If number of arguments equals 1 and is an empty string returns a new empty array.">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif ArrayLen(arguments) eq 1>
 			<cfif IsArray(arguments[1])>
@@ -1024,17 +1024,17 @@
 			</cfif>
 		</cfif>
 
-		<cfset local.result = ArrayNew(1)>
-		<cfloop from="1" to="#ArrayLen(arguments)#" index="local.i">
-			<cfset ArrayAppend(local.result, arguments["#local.i#"]) />
+		<cfset lcl.result = ArrayNew(1)>
+		<cfloop from="1" to="#ArrayLen(arguments)#" index="lcl.i">
+			<cfset ArrayAppend(lcl.result, arguments["#lcl.i#"]) />
 		</cfloop>
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_ObjectCreate" access="private" output="false" returntype="any" hint="By default returns array from unnamed args. This method does not create a new array, if number of equals 1 and is an array but returns that array. If number of arguments equals 1 and is an empty string returns a new empty array.">
 		<cfargument name="targetCFC"   type="any" required="true">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif NOT _isCFC(arguments.targetCFC)>
 			<cftry>
 				<cfreturn createObject("component", arguments.targetCFC)>

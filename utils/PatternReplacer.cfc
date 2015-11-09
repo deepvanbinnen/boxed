@@ -94,15 +94,15 @@
 
 	<cffunction name="getMatchKeys" hint="get the matched keylist">
 		<cfargument name="groupIndex" required="false" default="1" type="numeric" hint="the group index for the key's match in the regex">
-		<cfset var local = StructNew()>
-		<cfset local.result = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = ArrayNew(1)>
 
 		<cfset variables.matcher.reset(getTemplate())>
 		<cfloop condition="variables.matcher.Find()">
-			<cfset ArrayAppend(local.result, TRIM(variables.matcher.Group(JavaCast("string", arguments.groupIndex))))>
+			<cfset ArrayAppend(lcl.result, TRIM(variables.matcher.Group(JavaCast("string", arguments.groupIndex))))>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="getCustomRX" hint="get the replacement struct">
@@ -120,7 +120,7 @@
 	<cffunction name="substitute" hint="check if replace is actually needed before calling replace function">
 		<cfargument name="replacement" required="true"  type="struct" default="#getReplacement()#" hint="Struct that contains the keys with it's replacement values">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfreturn _substitute(argumentCollection=arguments)>
 	</cffunction>
 
@@ -133,7 +133,7 @@
 		<cfargument name="rxKeyIndex"    required="false" type="string" default="#variables.rxKeyIndex#">
 		<cfargument name="substIndex"    required="false" type="string" default="#variables.substIndex#">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<!--- Used when called directly for instance by cfinvoke --->
 		<cfif NOT isInitialised()>
 			<cfset init(arguments.template, arguments.keystart, arguments.keyend, arguments.customRX, arguments.rxKeyIndex, arguments.substIndex)>
@@ -207,12 +207,12 @@
 	</cffunction>
 
 	<cffunction name="setMatcher" hint="create compiled regex pattern and corresponding matcher object">
-		<cfset var local = StructNew()>
-		<cfset local.compileRX = variables.customRX>
-		<cfif local.compileRX eq "">
-			<cfset local.compileRX = getKeyRegex()>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.compileRX = variables.customRX>
+		<cfif lcl.compileRX eq "">
+			<cfset lcl.compileRX = getKeyRegex()>
 		</cfif>
-		<cfset initMatcher(local.compileRX)>
+		<cfset initMatcher(lcl.compileRX)>
 		<cfset setInitialised()>
 		<cfreturn this>
 	</cffunction>
@@ -222,48 +222,48 @@
 		<cfargument name="oldval" type="string" required="true">
 		<cfargument name="newval" type="string" required="true">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.str   = arguments.string>
-		<cfset local.subst = Replace(arguments.oldval, "$", "\$", "ALL")>
-		<cfset local.subst = Replace(local.subst, "{", "\{", "ALL")>
-		<cfset local.subst = Replace(local.subst, "}", "\}", "ALL")>
-		<cfset local.subst = Replace(local.subst, "|", "\|", "ALL")>
-		<cfset local.subst = Replace(local.subst, "[", "\[", "ALL")>
-		<cfset local.subst = Replace(local.subst, "]", "\]", "ALL")>
+		<cfset lcl.str   = arguments.string>
+		<cfset lcl.subst = Replace(arguments.oldval, "$", "\$", "ALL")>
+		<cfset lcl.subst = Replace(lcl.subst, "{", "\{", "ALL")>
+		<cfset lcl.subst = Replace(lcl.subst, "}", "\}", "ALL")>
+		<cfset lcl.subst = Replace(lcl.subst, "|", "\|", "ALL")>
+		<cfset lcl.subst = Replace(lcl.subst, "[", "\[", "ALL")>
+		<cfset lcl.subst = Replace(lcl.subst, "]", "\]", "ALL")>
 
 		<cftry>
-			<cfset local.str = local.str.replaceAll("("&local.subst&")", arguments.newval)>
+			<cfset lcl.str = lcl.str.replaceAll("("&lcl.subst&")", arguments.newval)>
 			<cfcatch type="any">
 			</cfcatch>
 		</cftry>
 
-		<cfreturn local.str>
+		<cfreturn lcl.str>
 	</cffunction>
 
 	<cffunction name="substituteValues" hint="performs the regex replacement">
-		<cfset var local = StructNew()>
-		<cfset local.rep = getReplacement()>
-		<cfset local.str = getTemplate()>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.rep = getReplacement()>
+		<cfset lcl.str = getTemplate()>
 
-		<cfset variables.matcher.reset(local.str)>
+		<cfset variables.matcher.reset(lcl.str)>
 		<cfloop condition="variables.matcher.Find()">
 			<cftry>
-				<cfset local.rxKeyFound = TRIM(variables.matcher.Group(JavaCast("string", variables.rxKeyIndex)))>
-				<cfif StructKeyExists(local.rep, local.rxKeyFound)>
-					<cfset local.subst = variables.matcher.Group(JavaCast("string", variables.substIndex))>
-					<cfset local.value = JavaCast("string", local.rep[local.rxKeyFound])>
+				<cfset lcl.rxKeyFound = TRIM(variables.matcher.Group(JavaCast("string", variables.rxKeyIndex)))>
+				<cfif StructKeyExists(lcl.rep, lcl.rxKeyFound)>
+					<cfset lcl.subst = variables.matcher.Group(JavaCast("string", variables.substIndex))>
+					<cfset lcl.value = JavaCast("string", lcl.rep[lcl.rxKeyFound])>
 					<cftry>
-						<cfset local.str = substituteValue(local.str, local.subst, local.value)>
+						<cfset lcl.str = substituteValue(lcl.str, lcl.subst, lcl.value)>
 						<cfcatch type="any">
 							<cfoutput>
 								<cfdump var="#cfcatch#">
-								<p>Error in replace: #variables.matcher.Group(JavaCast("string", variables.substIndex))#,#local.rep[variables.matcher.Group(JavaCast("string", variables.rxKeyIndex))]#</p>
-								<cfloop from="1" to="#matcher.groupCount()#" index="local.i">
-									Group #local.i#: #matcher.Group(JavaCast("string", local.i))#<br />
+								<p>Error in replace: #variables.matcher.Group(JavaCast("string", variables.substIndex))#,#lcl.rep[variables.matcher.Group(JavaCast("string", variables.rxKeyIndex))]#</p>
+								<cfloop from="1" to="#matcher.groupCount()#" index="lcl.i">
+									Group #lcl.i#: #matcher.Group(JavaCast("string", lcl.i))#<br />
 								</cfloop>
-								#local.rep[variables.matcher.Group(JavaCast("string", variables.rxKeyIndex))]#<br />
-								<pre>#HTMLEditFormat(local.str)#</pre>
+								#lcl.rep[variables.matcher.Group(JavaCast("string", variables.rxKeyIndex))]#<br />
+								<pre>#HTMLEditFormat(lcl.str)#</pre>
 								<hr />
 							</cfoutput>
 						</cfcatch>
@@ -277,7 +277,7 @@
 			</cftry>
 		</cfloop>
 
-		<cfreturn local.str>
+		<cfreturn lcl.str>
 	</cffunction>
 
 </cfcomponent>

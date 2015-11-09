@@ -55,505 +55,505 @@
 		// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 		 --->
 
-		<cfset var local = StructNew() />
-		<cfset local.states = StructNew() />
-		<cfset local.states.text = "text" />
-		<cfset local.states.tag = "tag" />
-		<cfset local.states.endtag = "endtag" />
-		<cfset local.states.attrtext = "attrtext" />
-		<cfset local.states.script = "script" />
-		<cfset local.states.endscript = "endscript" />
-		<cfset local.states.specialtag = "specialtag" />
-		<cfset local.states.comment = "comment" />
-		<cfset local.states.skipcdata = "skipcdata" />
-		<cfset local.states.entity = "entity" />
-		<cfset local.states.namedentity = "namedentity" />
-		<cfset local.states.numericentity = "numericentity" />
-		<cfset local.states.hexaentity = "hexaentity" />
-		<cfset local.states.tillgt = "tillgt" />
-		<cfset local.states.tillquote = "tillquote" />
-		<cfset local.states.tillinst = "tillinst" />
-		<cfset local.states.andgt = "andgt" />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.states = StructNew() />
+		<cfset lcl.states.text = "text" />
+		<cfset lcl.states.tag = "tag" />
+		<cfset lcl.states.endtag = "endtag" />
+		<cfset lcl.states.attrtext = "attrtext" />
+		<cfset lcl.states.script = "script" />
+		<cfset lcl.states.endscript = "endscript" />
+		<cfset lcl.states.specialtag = "specialtag" />
+		<cfset lcl.states.comment = "comment" />
+		<cfset lcl.states.skipcdata = "skipcdata" />
+		<cfset lcl.states.entity = "entity" />
+		<cfset lcl.states.namedentity = "namedentity" />
+		<cfset lcl.states.numericentity = "numericentity" />
+		<cfset lcl.states.hexaentity = "hexaentity" />
+		<cfset lcl.states.tillgt = "tillgt" />
+		<cfset lcl.states.tillquote = "tillquote" />
+		<cfset lcl.states.tillinst = "tillinst" />
+		<cfset lcl.states.andgt = "andgt" />
 
-		<cfset local.namedentities = StructNew() />
-		<cfset local.emptytags = "" />
-		<cfset local.autoclosetags = StructNew() />
+		<cfset lcl.namedentities = StructNew() />
+		<cfset lcl.emptytags = "" />
+		<cfset lcl.autoclosetags = StructNew() />
 
-		<cfset StructInsert(local.namedentities, "AElig",  198, TRUE) />
-		<cfset StructInsert(local.namedentities, "Aacute",  193, TRUE) />
-		<cfset StructInsert(local.namedentities, "Acirc",  194, TRUE) />
-		<cfset StructInsert(local.namedentities, "Agrave",  192, TRUE) />
-		<cfset StructInsert(local.namedentities, "Alpha",  913, TRUE) />
-		<cfset StructInsert(local.namedentities, "Aring",  197, TRUE) />
-		<cfset StructInsert(local.namedentities, "Atilde",  195, TRUE) />
-		<cfset StructInsert(local.namedentities, "Auml",  196, TRUE) />
-		<cfset StructInsert(local.namedentities, "Beta",  914, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ccedil",  199, TRUE) />
-		<cfset StructInsert(local.namedentities, "Chi",  935, TRUE) />
-		<cfset StructInsert(local.namedentities, "Dagger",  8225, TRUE) />
-		<cfset StructInsert(local.namedentities, "Delta",  916, TRUE) />
-		<cfset StructInsert(local.namedentities, "ETH",  208, TRUE) />
-		<cfset StructInsert(local.namedentities, "Eacute",  201, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ecirc",  202, TRUE) />
-		<cfset StructInsert(local.namedentities, "Egrave",  200, TRUE) />
-		<cfset StructInsert(local.namedentities, "Epsilon",  917, TRUE) />
-		<cfset StructInsert(local.namedentities, "Eta",  919, TRUE) />
-		<cfset StructInsert(local.namedentities, "Euml",  203, TRUE) />
-		<cfset StructInsert(local.namedentities, "Gamma",  915, TRUE) />
-		<cfset StructInsert(local.namedentities, "Iacute",  205, TRUE) />
-		<cfset StructInsert(local.namedentities, "Icirc",  206, TRUE) />
-		<cfset StructInsert(local.namedentities, "Igrave",  204, TRUE) />
-		<cfset StructInsert(local.namedentities, "Iota",  921, TRUE) />
-		<cfset StructInsert(local.namedentities, "Iuml",  207, TRUE) />
-		<cfset StructInsert(local.namedentities, "Kappa",  922, TRUE) />
-		<cfset StructInsert(local.namedentities, "Lambda",  923, TRUE) />
-		<cfset StructInsert(local.namedentities, "Mu",  924, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ntilde",  209, TRUE) />
-		<cfset StructInsert(local.namedentities, "Nu",  925, TRUE) />
-		<cfset StructInsert(local.namedentities, "OElig",  338, TRUE) />
-		<cfset StructInsert(local.namedentities, "Oacute",  211, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ocirc",  212, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ograve",  210, TRUE) />
-		<cfset StructInsert(local.namedentities, "Omega",  937, TRUE) />
-		<cfset StructInsert(local.namedentities, "Omicron",  927, TRUE) />
-		<cfset StructInsert(local.namedentities, "Oslash",  216, TRUE) />
-		<cfset StructInsert(local.namedentities, "Otilde",  213, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ouml",  214, TRUE) />
-		<cfset StructInsert(local.namedentities, "Phi",  934, TRUE) />
-		<cfset StructInsert(local.namedentities, "Pi",  928, TRUE) />
-		<cfset StructInsert(local.namedentities, "Prime",  8243, TRUE) />
-		<cfset StructInsert(local.namedentities, "Psi",  936, TRUE) />
-		<cfset StructInsert(local.namedentities, "Rho",  929, TRUE) />
-		<cfset StructInsert(local.namedentities, "Scaron",  352, TRUE) />
-		<cfset StructInsert(local.namedentities, "Sigma",  931, TRUE) />
-		<cfset StructInsert(local.namedentities, "THORN",  222, TRUE) />
-		<cfset StructInsert(local.namedentities, "Tau",  932, TRUE) />
-		<cfset StructInsert(local.namedentities, "Theta",  920, TRUE) />
-		<cfset StructInsert(local.namedentities, "Uacute",  218, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ucirc",  219, TRUE) />
-		<cfset StructInsert(local.namedentities, "Ugrave",  217, TRUE) />
-		<cfset StructInsert(local.namedentities, "Upsilon",  933, TRUE) />
-		<cfset StructInsert(local.namedentities, "Uuml",  220, TRUE) />
-		<cfset StructInsert(local.namedentities, "Xi",  926, TRUE) />
-		<cfset StructInsert(local.namedentities, "Yacute",  221, TRUE) />
-		<cfset StructInsert(local.namedentities, "Yuml",  376, TRUE) />
-		<cfset StructInsert(local.namedentities, "Zeta",  918, TRUE) />
-		<cfset StructInsert(local.namedentities, "aacute",  225, TRUE) />
-		<cfset StructInsert(local.namedentities, "acirc",  226, TRUE) />
-		<cfset StructInsert(local.namedentities, "acute",  180, TRUE) />
-		<cfset StructInsert(local.namedentities, "aelig",  230, TRUE) />
-		<cfset StructInsert(local.namedentities, "agrave",  224, TRUE) />
-		<cfset StructInsert(local.namedentities, "alpha",  945, TRUE) />
-		<cfset StructInsert(local.namedentities, "and",  8743, TRUE) />
-		<cfset StructInsert(local.namedentities, "ang",  8736, TRUE) />
-		<cfset StructInsert(local.namedentities, "aring",  229, TRUE) />
-		<cfset StructInsert(local.namedentities, "asymp",  8776, TRUE) />
-		<cfset StructInsert(local.namedentities, "atilde",  227, TRUE) />
-		<cfset StructInsert(local.namedentities, "auml",  228, TRUE) />
-		<cfset StructInsert(local.namedentities, "bdquo",  8222, TRUE) />
-		<cfset StructInsert(local.namedentities, "beta",  946, TRUE) />
-		<cfset StructInsert(local.namedentities, "brvbar",  166, TRUE) />
-		<cfset StructInsert(local.namedentities, "bull",  8226, TRUE) />
-		<cfset StructInsert(local.namedentities, "cap",  8745, TRUE) />
-		<cfset StructInsert(local.namedentities, "ccedil",  231, TRUE) />
-		<cfset StructInsert(local.namedentities, "cedil",  184, TRUE) />
-		<cfset StructInsert(local.namedentities, "cent",  162, TRUE) />
-		<cfset StructInsert(local.namedentities, "chi",  967, TRUE) />
-		<cfset StructInsert(local.namedentities, "circ",  710, TRUE) />
-		<cfset StructInsert(local.namedentities, "clubs",  9827, TRUE) />
-		<cfset StructInsert(local.namedentities, "cong",  8773, TRUE) />
-		<cfset StructInsert(local.namedentities, "copy",  169, TRUE) />
-		<cfset StructInsert(local.namedentities, "crarr",  8629, TRUE) />
-		<cfset StructInsert(local.namedentities, "cup",  8746, TRUE) />
-		<cfset StructInsert(local.namedentities, "curren",  164, TRUE) />
-		<cfset StructInsert(local.namedentities, "dagger",  8224, TRUE) />
-		<cfset StructInsert(local.namedentities, "darr",  8595, TRUE) />
-		<cfset StructInsert(local.namedentities, "deg",  176, TRUE) />
-		<cfset StructInsert(local.namedentities, "delta",  948, TRUE) />
-		<cfset StructInsert(local.namedentities, "diams",  9830, TRUE) />
-		<cfset StructInsert(local.namedentities, "divide",  247, TRUE) />
-		<cfset StructInsert(local.namedentities, "eacute",  233, TRUE) />
-		<cfset StructInsert(local.namedentities, "ecirc",  234, TRUE) />
-		<cfset StructInsert(local.namedentities, "egrave",  232, TRUE) />
-		<cfset StructInsert(local.namedentities, "empty",  8709, TRUE) />
-		<cfset StructInsert(local.namedentities, "emsp",  8195, TRUE) />
-		<cfset StructInsert(local.namedentities, "ensp",  8194, TRUE) />
-		<cfset StructInsert(local.namedentities, "epsilon",  949, TRUE) />
-		<cfset StructInsert(local.namedentities, "equiv",  8801, TRUE) />
-		<cfset StructInsert(local.namedentities, "eta",  951, TRUE) />
-		<cfset StructInsert(local.namedentities, "eth",  240, TRUE) />
-		<cfset StructInsert(local.namedentities, "euml",  235, TRUE) />
-		<cfset StructInsert(local.namedentities, "euro",  8364, TRUE) />
-		<cfset StructInsert(local.namedentities, "exists",  8707, TRUE) />
-		<cfset StructInsert(local.namedentities, "fnof",  402, TRUE) />
-		<cfset StructInsert(local.namedentities, "forall",  8704, TRUE) />
-		<cfset StructInsert(local.namedentities, "frac12",  189, TRUE) />
-		<cfset StructInsert(local.namedentities, "frac14",  188, TRUE) />
-		<cfset StructInsert(local.namedentities, "frac34",  190, TRUE) />
-		<cfset StructInsert(local.namedentities, "gamma",  947, TRUE) />
-		<cfset StructInsert(local.namedentities, "ge",  8805, TRUE) />
-		<cfset StructInsert(local.namedentities, "harr",  8596, TRUE) />
-		<cfset StructInsert(local.namedentities, "hearts",  9829, TRUE) />
-		<cfset StructInsert(local.namedentities, "hellip",  8230, TRUE) />
-		<cfset StructInsert(local.namedentities, "iacute",  237, TRUE) />
-		<cfset StructInsert(local.namedentities, "icirc",  238, TRUE) />
-		<cfset StructInsert(local.namedentities, "iexcl",  161, TRUE) />
-		<cfset StructInsert(local.namedentities, "igrave",  236, TRUE) />
-		<cfset StructInsert(local.namedentities, "infin",  8734, TRUE) />
-		<cfset StructInsert(local.namedentities, "int",  8747, TRUE) />
-		<cfset StructInsert(local.namedentities, "iota",  953, TRUE) />
-		<cfset StructInsert(local.namedentities, "iquest",  191, TRUE) />
-		<cfset StructInsert(local.namedentities, "isin",  8712, TRUE) />
-		<cfset StructInsert(local.namedentities, "iuml",  239, TRUE) />
-		<cfset StructInsert(local.namedentities, "kappa",  954, TRUE) />
-		<cfset StructInsert(local.namedentities, "lambda",  923, TRUE) />
-		<cfset StructInsert(local.namedentities, "laquo",  171, TRUE) />
-		<cfset StructInsert(local.namedentities, "larr",  8592, TRUE) />
-		<cfset StructInsert(local.namedentities, "lceil",  8968, TRUE) />
-		<cfset StructInsert(local.namedentities, "ldquo",  8220, TRUE) />
-		<cfset StructInsert(local.namedentities, "le",  8804, TRUE) />
-		<cfset StructInsert(local.namedentities, "lfloor",  8970, TRUE) />
-		<cfset StructInsert(local.namedentities, "lowast",  8727, TRUE) />
-		<cfset StructInsert(local.namedentities, "loz",  9674, TRUE) />
-		<cfset StructInsert(local.namedentities, "lrm",  8206, TRUE) />
-		<cfset StructInsert(local.namedentities, "lsaquo",  8249, TRUE) />
-		<cfset StructInsert(local.namedentities, "lsquo",  8216, TRUE) />
-		<cfset StructInsert(local.namedentities, "macr",  175, TRUE) />
-		<cfset StructInsert(local.namedentities, "mdash",  8212, TRUE) />
-		<cfset StructInsert(local.namedentities, "micro",  181, TRUE) />
-		<cfset StructInsert(local.namedentities, "middot",  183, TRUE) />
-		<cfset StructInsert(local.namedentities, "minus",  8722, TRUE) />
-		<cfset StructInsert(local.namedentities, "mu",  956, TRUE) />
-		<cfset StructInsert(local.namedentities, "nabla",  8711, TRUE) />
-		<cfset StructInsert(local.namedentities, "nbsp",  160, TRUE) />
-		<cfset StructInsert(local.namedentities, "ndash",  8211, TRUE) />
-		<cfset StructInsert(local.namedentities, "ne",  8800, TRUE) />
-		<cfset StructInsert(local.namedentities, "ni",  8715, TRUE) />
-		<cfset StructInsert(local.namedentities, "not",  172, TRUE) />
-		<cfset StructInsert(local.namedentities, "notin",  8713, TRUE) />
-		<cfset StructInsert(local.namedentities, "nsub",  8836, TRUE) />
-		<cfset StructInsert(local.namedentities, "ntilde",  241, TRUE) />
-		<cfset StructInsert(local.namedentities, "nu",  925, TRUE) />
-		<cfset StructInsert(local.namedentities, "oacute",  243, TRUE) />
-		<cfset StructInsert(local.namedentities, "ocirc",  244, TRUE) />
-		<cfset StructInsert(local.namedentities, "oelig",  339, TRUE) />
-		<cfset StructInsert(local.namedentities, "ograve",  242, TRUE) />
-		<cfset StructInsert(local.namedentities, "oline",  8254, TRUE) />
-		<cfset StructInsert(local.namedentities, "omega",  969, TRUE) />
-		<cfset StructInsert(local.namedentities, "omicron",  959, TRUE) />
-		<cfset StructInsert(local.namedentities, "oplus",  8853, TRUE) />
-		<cfset StructInsert(local.namedentities, "or",  8744, TRUE) />
-		<cfset StructInsert(local.namedentities, "ordf",  170, TRUE) />
-		<cfset StructInsert(local.namedentities, "ordm",  186, TRUE) />
-		<cfset StructInsert(local.namedentities, "oslash",  248, TRUE) />
-		<cfset StructInsert(local.namedentities, "otilde",  245, TRUE) />
-		<cfset StructInsert(local.namedentities, "otimes",  8855, TRUE) />
-		<cfset StructInsert(local.namedentities, "ouml",  246, TRUE) />
-		<cfset StructInsert(local.namedentities, "para",  182, TRUE) />
-		<cfset StructInsert(local.namedentities, "part",  8706, TRUE) />
-		<cfset StructInsert(local.namedentities, "permil",  8240, TRUE) />
-		<cfset StructInsert(local.namedentities, "perp",  8869, TRUE) />
-		<cfset StructInsert(local.namedentities, "phi",  966, TRUE) />
-		<cfset StructInsert(local.namedentities, "pi",  960, TRUE) />
-		<cfset StructInsert(local.namedentities, "piv",  982, TRUE) />
-		<cfset StructInsert(local.namedentities, "plusmn",  177, TRUE) />
-		<cfset StructInsert(local.namedentities, "pound",  163, TRUE) />
-		<cfset StructInsert(local.namedentities, "prime",  8242, TRUE) />
-		<cfset StructInsert(local.namedentities, "prod",  8719, TRUE) />
-		<cfset StructInsert(local.namedentities, "prop",  8733, TRUE) />
-		<cfset StructInsert(local.namedentities, "psi",  968, TRUE) />
-		<cfset StructInsert(local.namedentities, "radic",  8730, TRUE) />
-		<cfset StructInsert(local.namedentities, "raquo",  187, TRUE) />
-		<cfset StructInsert(local.namedentities, "rarr",  8594, TRUE) />
-		<cfset StructInsert(local.namedentities, "rceil",  8969, TRUE) />
-		<cfset StructInsert(local.namedentities, "rdquo",  8221, TRUE) />
-		<cfset StructInsert(local.namedentities, "reg",  174, TRUE) />
-		<cfset StructInsert(local.namedentities, "rfloor",  8971, TRUE) />
-		<cfset StructInsert(local.namedentities, "rho",  961, TRUE) />
-		<cfset StructInsert(local.namedentities, "rlm",  8207, TRUE) />
-		<cfset StructInsert(local.namedentities, "rsaquo",  8250, TRUE) />
-		<cfset StructInsert(local.namedentities, "rsquo",  8217, TRUE) />
-		<cfset StructInsert(local.namedentities, "sbquo",  8218, TRUE) />
-		<cfset StructInsert(local.namedentities, "scaron",  353, TRUE) />
-		<cfset StructInsert(local.namedentities, "sdot",  8901, TRUE) />
-		<cfset StructInsert(local.namedentities, "sect",  167, TRUE) />
-		<cfset StructInsert(local.namedentities, "shy",  173, TRUE) />
-		<cfset StructInsert(local.namedentities, "sigma",  963, TRUE) />
-		<cfset StructInsert(local.namedentities, "sigmaf",  962, TRUE) />
-		<cfset StructInsert(local.namedentities, "sim",  8764, TRUE) />
-		<cfset StructInsert(local.namedentities, "spades",  9824, TRUE) />
-		<cfset StructInsert(local.namedentities, "sub",  8834, TRUE) />
-		<cfset StructInsert(local.namedentities, "sube",  8838, TRUE) />
-		<cfset StructInsert(local.namedentities, "sum",  8721, TRUE) />
-		<cfset StructInsert(local.namedentities, "sup",  8835, TRUE) />
-		<cfset StructInsert(local.namedentities, "sup1",  185, TRUE) />
-		<cfset StructInsert(local.namedentities, "sup3",  179, TRUE) />
-		<cfset StructInsert(local.namedentities, "supe",  8839, TRUE) />
-		<cfset StructInsert(local.namedentities, "szlig",  223, TRUE) />
-		<cfset StructInsert(local.namedentities, "tau",  964, TRUE) />
-		<cfset StructInsert(local.namedentities, "there4",  8756, TRUE) />
-		<cfset StructInsert(local.namedentities, "theta",  952, TRUE) />
-		<cfset StructInsert(local.namedentities, "thetasym",  977, TRUE) />
-		<cfset StructInsert(local.namedentities, "thinsp",  8201, TRUE) />
-		<cfset StructInsert(local.namedentities, "thorn",  254, TRUE) />
-		<cfset StructInsert(local.namedentities, "tilde",  732, TRUE) />
-		<cfset StructInsert(local.namedentities, "times",  215, TRUE) />
-		<cfset StructInsert(local.namedentities, "trade",  8482, TRUE) />
-		<cfset StructInsert(local.namedentities, "uacute",  250, TRUE) />
-		<cfset StructInsert(local.namedentities, "uarr",  8593, TRUE) />
-		<cfset StructInsert(local.namedentities, "ucirc",  251, TRUE) />
-		<cfset StructInsert(local.namedentities, "ugrave",  249, TRUE) />
-		<cfset StructInsert(local.namedentities, "uml",  168, TRUE) />
-		<cfset StructInsert(local.namedentities, "up2",  178, TRUE) />
-		<cfset StructInsert(local.namedentities, "upsih",  978, TRUE) />
-		<cfset StructInsert(local.namedentities, "upsilon",  965, TRUE) />
-		<cfset StructInsert(local.namedentities, "uuml",  252, TRUE) />
-		<cfset StructInsert(local.namedentities, "xi",  958, TRUE) />
-		<cfset StructInsert(local.namedentities, "yacute",  253, TRUE) />
-		<cfset StructInsert(local.namedentities, "yen",  165, TRUE) />
-		<cfset StructInsert(local.namedentities, "yuml",  255, TRUE) />
-		<cfset StructInsert(local.namedentities, "zeta",  950, TRUE) />
-		<cfset StructInsert(local.namedentities, "zwj",  8205, TRUE) />
-		<cfset StructInsert(local.namedentities, "zwnj",  8204, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "AElig",  198, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Aacute",  193, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Acirc",  194, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Agrave",  192, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Alpha",  913, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Aring",  197, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Atilde",  195, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Auml",  196, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Beta",  914, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ccedil",  199, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Chi",  935, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Dagger",  8225, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Delta",  916, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ETH",  208, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Eacute",  201, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ecirc",  202, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Egrave",  200, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Epsilon",  917, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Eta",  919, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Euml",  203, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Gamma",  915, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Iacute",  205, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Icirc",  206, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Igrave",  204, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Iota",  921, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Iuml",  207, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Kappa",  922, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Lambda",  923, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Mu",  924, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ntilde",  209, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Nu",  925, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "OElig",  338, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Oacute",  211, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ocirc",  212, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ograve",  210, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Omega",  937, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Omicron",  927, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Oslash",  216, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Otilde",  213, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ouml",  214, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Phi",  934, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Pi",  928, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Prime",  8243, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Psi",  936, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Rho",  929, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Scaron",  352, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Sigma",  931, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "THORN",  222, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Tau",  932, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Theta",  920, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Uacute",  218, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ucirc",  219, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Ugrave",  217, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Upsilon",  933, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Uuml",  220, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Xi",  926, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Yacute",  221, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Yuml",  376, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "Zeta",  918, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "aacute",  225, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "acirc",  226, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "acute",  180, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "aelig",  230, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "agrave",  224, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "alpha",  945, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "and",  8743, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ang",  8736, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "aring",  229, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "asymp",  8776, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "atilde",  227, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "auml",  228, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "bdquo",  8222, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "beta",  946, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "brvbar",  166, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "bull",  8226, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "cap",  8745, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ccedil",  231, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "cedil",  184, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "cent",  162, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "chi",  967, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "circ",  710, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "clubs",  9827, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "cong",  8773, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "copy",  169, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "crarr",  8629, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "cup",  8746, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "curren",  164, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "dagger",  8224, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "darr",  8595, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "deg",  176, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "delta",  948, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "diams",  9830, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "divide",  247, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "eacute",  233, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ecirc",  234, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "egrave",  232, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "empty",  8709, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "emsp",  8195, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ensp",  8194, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "epsilon",  949, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "equiv",  8801, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "eta",  951, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "eth",  240, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "euml",  235, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "euro",  8364, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "exists",  8707, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "fnof",  402, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "forall",  8704, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "frac12",  189, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "frac14",  188, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "frac34",  190, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "gamma",  947, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ge",  8805, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "harr",  8596, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "hearts",  9829, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "hellip",  8230, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "iacute",  237, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "icirc",  238, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "iexcl",  161, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "igrave",  236, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "infin",  8734, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "int",  8747, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "iota",  953, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "iquest",  191, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "isin",  8712, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "iuml",  239, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "kappa",  954, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lambda",  923, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "laquo",  171, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "larr",  8592, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lceil",  8968, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ldquo",  8220, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "le",  8804, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lfloor",  8970, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lowast",  8727, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "loz",  9674, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lrm",  8206, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lsaquo",  8249, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "lsquo",  8216, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "macr",  175, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "mdash",  8212, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "micro",  181, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "middot",  183, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "minus",  8722, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "mu",  956, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "nabla",  8711, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "nbsp",  160, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ndash",  8211, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ne",  8800, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ni",  8715, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "not",  172, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "notin",  8713, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "nsub",  8836, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ntilde",  241, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "nu",  925, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "oacute",  243, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ocirc",  244, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "oelig",  339, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ograve",  242, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "oline",  8254, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "omega",  969, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "omicron",  959, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "oplus",  8853, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "or",  8744, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ordf",  170, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ordm",  186, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "oslash",  248, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "otilde",  245, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "otimes",  8855, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ouml",  246, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "para",  182, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "part",  8706, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "permil",  8240, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "perp",  8869, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "phi",  966, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "pi",  960, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "piv",  982, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "plusmn",  177, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "pound",  163, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "prime",  8242, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "prod",  8719, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "prop",  8733, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "psi",  968, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "radic",  8730, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "raquo",  187, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rarr",  8594, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rceil",  8969, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rdquo",  8221, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "reg",  174, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rfloor",  8971, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rho",  961, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rlm",  8207, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rsaquo",  8250, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "rsquo",  8217, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sbquo",  8218, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "scaron",  353, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sdot",  8901, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sect",  167, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "shy",  173, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sigma",  963, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sigmaf",  962, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sim",  8764, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "spades",  9824, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sub",  8834, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sube",  8838, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sum",  8721, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sup",  8835, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sup1",  185, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "sup3",  179, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "supe",  8839, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "szlig",  223, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "tau",  964, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "there4",  8756, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "theta",  952, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "thetasym",  977, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "thinsp",  8201, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "thorn",  254, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "tilde",  732, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "times",  215, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "trade",  8482, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "uacute",  250, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "uarr",  8593, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ucirc",  251, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "ugrave",  249, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "uml",  168, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "up2",  178, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "upsih",  978, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "upsilon",  965, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "uuml",  252, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "xi",  958, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "yacute",  253, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "yen",  165, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "yuml",  255, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "zeta",  950, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "zwj",  8205, TRUE) />
+		<cfset StructInsert(lcl.namedentities, "zwnj",  8204, TRUE) />
 
-		<cfset local.emptytags = ListAppend(emptytags, "area") />
-		<cfset local.emptytags = ListAppend(emptytags, "base") />
-		<cfset local.emptytags = ListAppend(emptytags, "basefont") />
-		<cfset local.emptytags = ListAppend(emptytags, "br") />
-		<cfset local.emptytags = ListAppend(emptytags, "col") />
-		<cfset local.emptytags = ListAppend(emptytags, "frame") />
-		<cfset local.emptytags = ListAppend(emptytags, "hr") />
-		<cfset local.emptytags = ListAppend(emptytags, "img") />
-		<cfset local.emptytags = ListAppend(emptytags, "input") />
-		<cfset local.emptytags = ListAppend(emptytags, "isindex") />
-		<cfset local.emptytags = ListAppend(emptytags, "link") />
-		<cfset local.emptytags = ListAppend(emptytags, "meta") />
-		<cfset local.emptytags = ListAppend(emptytags, "param") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "area") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "base") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "basefont") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "br") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "col") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "frame") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "hr") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "img") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "input") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "isindex") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "link") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "meta") />
+		<cfset lcl.emptytags = ListAppend(emptytags, "param") />
 
-		<cfset StructInsert(local.autoclosetags, "basefont", "") />
-		<cfset local.autoclosetags["basefont"] = ListAppend(local.autoclosetags["basefont"],"basefont") />
-		<cfset StructInsert(local.autoclosetags, "colgroup", "") />
-		<cfset local.autoclosetags["colgroup"] = ListAppend(local.autoclosetags["colgroup"],"colgroup") />
-		<cfset StructInsert(local.autoclosetags, "dd", "") />
-		<cfset local.autoclosetags["dd"] = ListAppend(local.autoclosetags["dd"],"colgroup") />
-		<cfset StructInsert(local.autoclosetags, "dt", "") />
-		<cfset local.autoclosetags["dt"] = ListAppend(local.autoclosetags["dt"],"dt") />
-		<cfset StructInsert(local.autoclosetags, "li", "") />
-		<cfset local.autoclosetags["li"] = ListAppend(local.autoclosetags["li"],"li") />
-		<cfset StructInsert(local.autoclosetags, "p", "") />
-		<cfset local.autoclosetags["p"] = ListAppend(local.autoclosetags["p"],"p") />
-		<cfset StructInsert(local.autoclosetags, "thead", "") />
-		<cfset local.autoclosetags["thead"] = ListAppend(local.autoclosetags["thead"],"tbody") />
-		<cfset local.autoclosetags["thead"] = ListAppend(local.autoclosetags["thead"],"tfoot") />
-		<cfset StructInsert(local.autoclosetags, "tbody", "") />
-		<cfset local.autoclosetags["tbody"] = ListAppend(local.autoclosetags["tbody"],"thead") />
-		<cfset local.autoclosetags["tbody"] = ListAppend(local.autoclosetags["tbody"],"tfoot") />
-		<cfset StructInsert(local.autoclosetags, "tfoot", "") />
-		<cfset local.autoclosetags["tfoot"] = ListAppend(local.autoclosetags["tfoot"],"thead") />
-		<cfset local.autoclosetags["tfoot"] = ListAppend(local.autoclosetags["tfoot"],"tbody") />
-		<cfset StructInsert(local.autoclosetags, "th", "") />
-		<cfset local.autoclosetags["th"] = ListAppend(local.autoclosetags["th"],"td") />
-		<cfset StructInsert(local.autoclosetags, "td", "") />
-		<cfset local.autoclosetags["td"] = ListAppend(local.autoclosetags["td"],"th") />
-		<cfset local.autoclosetags["td"] = ListAppend(local.autoclosetags["td"],"td") />
-		<cfset StructInsert(local.autoclosetags, "tr", "") />
-		<cfset local.autoclosetags["tr"] = ListAppend(local.autoclosetags["tr"],"tr") />
+		<cfset StructInsert(lcl.autoclosetags, "basefont", "") />
+		<cfset lcl.autoclosetags["basefont"] = ListAppend(lcl.autoclosetags["basefont"],"basefont") />
+		<cfset StructInsert(lcl.autoclosetags, "colgroup", "") />
+		<cfset lcl.autoclosetags["colgroup"] = ListAppend(lcl.autoclosetags["colgroup"],"colgroup") />
+		<cfset StructInsert(lcl.autoclosetags, "dd", "") />
+		<cfset lcl.autoclosetags["dd"] = ListAppend(lcl.autoclosetags["dd"],"colgroup") />
+		<cfset StructInsert(lcl.autoclosetags, "dt", "") />
+		<cfset lcl.autoclosetags["dt"] = ListAppend(lcl.autoclosetags["dt"],"dt") />
+		<cfset StructInsert(lcl.autoclosetags, "li", "") />
+		<cfset lcl.autoclosetags["li"] = ListAppend(lcl.autoclosetags["li"],"li") />
+		<cfset StructInsert(lcl.autoclosetags, "p", "") />
+		<cfset lcl.autoclosetags["p"] = ListAppend(lcl.autoclosetags["p"],"p") />
+		<cfset StructInsert(lcl.autoclosetags, "thead", "") />
+		<cfset lcl.autoclosetags["thead"] = ListAppend(lcl.autoclosetags["thead"],"tbody") />
+		<cfset lcl.autoclosetags["thead"] = ListAppend(lcl.autoclosetags["thead"],"tfoot") />
+		<cfset StructInsert(lcl.autoclosetags, "tbody", "") />
+		<cfset lcl.autoclosetags["tbody"] = ListAppend(lcl.autoclosetags["tbody"],"thead") />
+		<cfset lcl.autoclosetags["tbody"] = ListAppend(lcl.autoclosetags["tbody"],"tfoot") />
+		<cfset StructInsert(lcl.autoclosetags, "tfoot", "") />
+		<cfset lcl.autoclosetags["tfoot"] = ListAppend(lcl.autoclosetags["tfoot"],"thead") />
+		<cfset lcl.autoclosetags["tfoot"] = ListAppend(lcl.autoclosetags["tfoot"],"tbody") />
+		<cfset StructInsert(lcl.autoclosetags, "th", "") />
+		<cfset lcl.autoclosetags["th"] = ListAppend(lcl.autoclosetags["th"],"td") />
+		<cfset StructInsert(lcl.autoclosetags, "td", "") />
+		<cfset lcl.autoclosetags["td"] = ListAppend(lcl.autoclosetags["td"],"th") />
+		<cfset lcl.autoclosetags["td"] = ListAppend(lcl.autoclosetags["td"],"td") />
+		<cfset StructInsert(lcl.autoclosetags, "tr", "") />
+		<cfset lcl.autoclosetags["tr"] = ListAppend(lcl.autoclosetags["tr"],"tr") />
 
-		<cfset local.r2 = "" />
-		<cfset local.r = "" />
-		<cfset local.limit = Len(arguments.s) />
-		<cfset local.state = local.states.text />
-		<cfset local.prevstate = local.state />
+		<cfset lcl.r2 = "" />
+		<cfset lcl.r = "" />
+		<cfset lcl.limit = Len(arguments.s) />
+		<cfset lcl.state = lcl.states.text />
+		<cfset lcl.prevstate = lcl.state />
 
-		<cfset local.opentags = createObject("component", "cfc.ebx.commons.collections.java.Stack").init()>
-		<cfset local.name = "" />
-		<cfset local.tagname = "" />
-		<cfset local.attrname = "" />
-		<cfset local.attrs = "" />
-		<cfset local.attrnames = "" />
-		<cfset local.entvalue = 0 />
-		<cfset local.attrdelim = '"' />
-		<cfset local.attrvalue = "" />
-		<cfset local.cs = "" />
-		<cfset local.prec = ' ' />
-		<cfset local.preprec = ' ' />
-		<cfset local.c = ' ' />
-		<cfset local.start = 0 />
-		<cfset local.encoding = "" />
+		<cfset lcl.opentags = createObject("component", "cfc.ebx.commons.collections.java.Stack").init()>
+		<cfset lcl.name = "" />
+		<cfset lcl.tagname = "" />
+		<cfset lcl.attrname = "" />
+		<cfset lcl.attrs = "" />
+		<cfset lcl.attrnames = "" />
+		<cfset lcl.entvalue = 0 />
+		<cfset lcl.attrdelim = '"' />
+		<cfset lcl.attrvalue = "" />
+		<cfset lcl.cs = "" />
+		<cfset lcl.prec = ' ' />
+		<cfset lcl.preprec = ' ' />
+		<cfset lcl.c = ' ' />
+		<cfset lcl.start = 0 />
+		<cfset lcl.encoding = "" />
 
 		<cfif (arguments.s.charAt(0) EQ InputBaseN("0xEF", 16)  AND  arguments.s.charAt(1) EQ InputBaseN("0xBB", 16)  AND  arguments.s.charAt(2) EQ InputBaseN("0xBF",16))>
-			<cfset local.encoding =  "utf-8" />
-			<cfset local.start =  3 />
+			<cfset lcl.encoding =  "utf-8" />
+			<cfset lcl.start =  3 />
 		<cfelse>
-			<cfset local.encoding =  "iso-8859-1" />
-			<cfset local.start =  0 />
+			<cfset lcl.encoding =  "iso-8859-1" />
+			<cfset lcl.start =  0 />
 		</cfif>
-		<cfset local.i = local.start />
-		<cfset local.gswitch = true>
-		<cfloop condition="local.gswitch">
-			<cfset local.gswitch = (local.i LT local.limit AND ((local.r2 EQ "" AND local.r EQ "") OR (NOT local.opentags.empty())))>
+		<cfset lcl.i = lcl.start />
+		<cfset lcl.gswitch = true>
+		<cfloop condition="lcl.gswitch">
+			<cfset lcl.gswitch = (lcl.i LT lcl.limit AND ((lcl.r2 EQ "" AND lcl.r EQ "") OR (NOT lcl.opentags.empty())))>
 			<!--- break wordt onderin de loop afgevangen --->
-			<cfif (local.r.length() GT 10240)>
-				<cfset local.r2 = local.r2 + local.r />
-				<cfset local.r =  "" />
+			<cfif (lcl.r.length() GT 10240)>
+				<cfset lcl.r2 = lcl.r2 + lcl.r />
+				<cfset lcl.r =  "" />
 			</cfif>
 			<cftry>
-				<cfset local.c =  arguments.s.charAt(local.i) />
-				<cfset local.switch_handled = false />
-				<cfloop condition="NOT local.switch_handled">
-					<cfswitch expression="#local.state#">
+				<cfset lcl.c =  arguments.s.charAt(lcl.i) />
+				<cfset lcl.switch_handled = false />
+				<cfloop condition="NOT lcl.switch_handled">
+					<cfswitch expression="#lcl.state#">
 						<cfcase value="text">
-							<cfif (local.c EQ '<')	>
-								<cfset local.name =  "" />
-								<cfset local.tagname =  "" />
-								<cfset local.attrname =  "" />
-								<cfset local.attrs =  "" />
-								<cfset local.attrnames = "" />
-								<cfset local.state =  local.states.tag />
+							<cfif (lcl.c EQ '<')	>
+								<cfset lcl.name =  "" />
+								<cfset lcl.tagname =  "" />
+								<cfset lcl.attrname =  "" />
+								<cfset lcl.attrs =  "" />
+								<cfset lcl.attrnames = "" />
+								<cfset lcl.state =  lcl.states.tag />
 								<cfbreak />
 							</cfif>
-							<cfif (NOT isWhitespace(local.c)  AND  local.opentags.empty())>
-								<cfset local.r = local.r & "<html>" />
-								<cfset local.opentags.push("html") />
+							<cfif (NOT isWhitespace(lcl.c)  AND  lcl.opentags.empty())>
+								<cfset lcl.r = lcl.r & "<html>" />
+								<cfset lcl.opentags.push("html") />
 							</cfif>
-							<cfif (isWhitespace(local.c)  AND  local.opentags.empty())>
+							<cfif (isWhitespace(lcl.c)  AND  lcl.opentags.empty())>
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '&')	>
-								<cfset local.name =  "" />
-								<cfset local.entvalue =  0 />
-								<cfset local.prevstate =  local.state />
-								<cfset local.state =  local.states.entity />
+							<cfif (lcl.c EQ '&')	>
+								<cfset lcl.name =  "" />
+								<cfset lcl.entvalue =  0 />
+								<cfset lcl.prevstate =  lcl.state />
+								<cfset lcl.state =  lcl.states.entity />
 								<cfbreak />
 							</cfif>
-							<cfset local.r = local.r & local.c />
+							<cfset lcl.r = lcl.r & lcl.c />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="tag">
-							<cfif (local.c EQ '?'  AND  local.tagname EQ "") >
-								<cfset local.state =  local.states.tillinst />
+							<cfif (lcl.c EQ '?'  AND  lcl.tagname EQ "") >
+								<cfset lcl.state =  lcl.states.tillinst />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '!'  AND  local.tagname EQ "") >
-								<cfset local.state =  local.states.specialtag />
-								<cfset local.prec =  ' ' />
+							<cfif (lcl.c EQ '!'  AND  lcl.tagname EQ "") >
+								<cfset lcl.state =  lcl.states.specialtag />
+								<cfset lcl.prec =  ' ' />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '/'  AND  local.name EQ ""  AND  local.tagname EQ "") >
-								<cfset local.state =  local.states.endtag />
-								<cfset local.name =  "" />
+							<cfif (lcl.c EQ '/'  AND  lcl.name EQ ""  AND  lcl.tagname EQ "") >
+								<cfset lcl.state =  lcl.states.endtag />
+								<cfset lcl.name =  "" />
 								<cfbreak />
 							</cfif>
-							<cfif (isWhitespace(local.c))	>
-								<cfif (local.name EQ "")	>
+							<cfif (isWhitespace(lcl.c))	>
+								<cfif (lcl.name EQ "")	>
 									<cfbreak />
 								</cfif>
-								<cfif (local.tagname EQ ""  AND  local.name NEQ  "_")>
-									<cfset local.tagname =  local.name />
-									<cfset local.name =  "" />
+								<cfif (lcl.tagname EQ ""  AND  lcl.name NEQ  "_")>
+									<cfset lcl.tagname =  lcl.name />
+									<cfset lcl.name =  "" />
 									<cfbreak />
 								</cfif>
-								<cfif (local.attrname EQ "") >
-									<cfset local.attrname =  local.name.toLowerCase() />
-									<cfset local.name =  "" />
+								<cfif (lcl.attrname EQ "") >
+									<cfset lcl.attrname =  lcl.name.toLowerCase() />
+									<cfset lcl.name =  "" />
 									<cfbreak />
 								</cfif>
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '=')	>
-								<cfif (local.attrname EQ "") >
-									<cfset local.attrname =  local.name.toLowerCase() />
-									<cfset local.name =  "" />
+							<cfif (lcl.c EQ '=')	>
+								<cfif (lcl.attrname EQ "") >
+									<cfset lcl.attrname =  lcl.name.toLowerCase() />
+									<cfset lcl.name =  "" />
 								</cfif>
-								<cfset local.state =  local.states.tillquote />
+								<cfset lcl.state =  lcl.states.tillquote />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '/'  AND  (NOT local.tagname EQ ""  OR NOT local.name EQ "")) >
-								<cfif (local.tagname EQ "") >
-									<cfset local.tagname =  local.name />
+							<cfif (lcl.c EQ '/'  AND  (NOT lcl.tagname EQ ""  OR NOT lcl.name EQ "")) >
+								<cfif (lcl.tagname EQ "") >
+									<cfset lcl.tagname =  lcl.name />
 								</cfif>
-								<cfset local.tagname =  local.tagname.toLowerCase() />
-								<cfif (NOT local.tagname EQ "html"  AND  local.opentags.empty()) >
-									<cfset local.r = local.r & "<html>" />
-									<cfset local.opentags.push("html") />
+								<cfset lcl.tagname =  lcl.tagname.toLowerCase() />
+								<cfif (NOT lcl.tagname EQ "html"  AND  lcl.opentags.empty()) >
+									<cfset lcl.r = lcl.r & "<html>" />
+									<cfset lcl.opentags.push("html") />
 								</cfif>
-								<cfif (local.autoclosetags.containsKey(local.tagname) AND NOT local.opentags.empty())>
-									<cfset local.prevtag = local.opentags.peek() />
-									<cfif ListFind(local.autoclosetags.get(local.tagname), local.prevtag)>
-										<cfset local.opentags.pop() />
-										<cfset local.r = local.r & "</" & local.prevtag & ">" />
+								<cfif (lcl.autoclosetags.containsKey(lcl.tagname) AND NOT lcl.opentags.empty())>
+									<cfset lcl.prevtag = lcl.opentags.peek() />
+									<cfif ListFind(lcl.autoclosetags.get(lcl.tagname), lcl.prevtag)>
+										<cfset lcl.opentags.pop() />
+										<cfset lcl.r = lcl.r & "</" & lcl.prevtag & ">" />
 									</cfif>
 								</cfif>
-								<cfif local.tagname EQ "tr" AND local.opentags.peek() EQ "table">
-									<cfset local.r = local.r & "<tbody>" />
-									<cfset local.opentags.push("tbody") />
+								<cfif lcl.tagname EQ "tr" AND lcl.opentags.peek() EQ "table">
+									<cfset lcl.r = lcl.r & "<tbody>" />
+									<cfset lcl.opentags.push("tbody") />
 								</cfif>
-								<cfset local.r = local.r & "<" & local.tagname & local.attrs & "/>" />
-								<cfset local.state =  local.states.tillgt />
+								<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & "/>" />
+								<cfset lcl.state =  lcl.states.tillgt />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '>')	>
-								<cfif (local.tagname EQ ""  AND  NOT local.name EQ "") >
-									<cfset local.tagname =  name />
+							<cfif (lcl.c EQ '>')	>
+								<cfif (lcl.tagname EQ ""  AND  NOT lcl.name EQ "") >
+									<cfset lcl.tagname =  name />
 								</cfif>
-								<cfif (NOT local.tagname EQ "") >
-									<cfset local.tagname =  local.tagname.toLowerCase() />
-									<cfif (NOT local.tagname EQ "html"  AND  local.opentags.empty())	>
-										<cfset local.r = local.r & "<html>" />
-										<cfset local.opentags.push("html") />
+								<cfif (NOT lcl.tagname EQ "") >
+									<cfset lcl.tagname =  lcl.tagname.toLowerCase() />
+									<cfif (NOT lcl.tagname EQ "html"  AND  lcl.opentags.empty())	>
+										<cfset lcl.r = lcl.r & "<html>" />
+										<cfset lcl.opentags.push("html") />
 									</cfif>
-									<cfif (local.autoclosetags.containsKey(local.tagname) AND NOT local.opentags.empty())	>
-										<cfset local.prevtag = local.opentags.peek() />
-										<cfif ListFind(local.autoclosetags.get(local.tagname), local.prevtag)>
-											<cfset local.opentags.pop() />
-											<cfset local.r = local.r & "</" & local.prevtag & ">" />
+									<cfif (lcl.autoclosetags.containsKey(lcl.tagname) AND NOT lcl.opentags.empty())	>
+										<cfset lcl.prevtag = lcl.opentags.peek() />
+										<cfif ListFind(lcl.autoclosetags.get(lcl.tagname), lcl.prevtag)>
+											<cfset lcl.opentags.pop() />
+											<cfset lcl.r = lcl.r & "</" & lcl.prevtag & ">" />
 										</cfif>
 									</cfif>
-									<cfif (local.tagname EQ "tr"  AND  opentags.peek() EQ "table") >
-										<cfset local.r = local.r & "<tbody>" />
-										<cfset local.opentags.push("tbody") />
+									<cfif (lcl.tagname EQ "tr"  AND  opentags.peek() EQ "table") >
+										<cfset lcl.r = lcl.r & "<tbody>" />
+										<cfset lcl.opentags.push("tbody") />
 									</cfif>
-									<cfif (ListFind(local.emptytags,local.tagname))>
-										<cfset local.r = local.r & "<" & local.tagname.toLowerCase() & local.attrs & "/>" />
+									<cfif (ListFind(lcl.emptytags,lcl.tagname))>
+										<cfset lcl.r = lcl.r & "<" & lcl.tagname.toLowerCase() & lcl.attrs & "/>" />
 									<cfelse>
-										<cfset local.opentags.push(local.tagname) />
-										<cfset local.r = local.r & "<" & local.tagname & local.attrs & ">" />
-										<cfif (local.tagname EQ "script") >
-											<cfset local.r = local.r & "<![CDATA[" />
-											<cfset local.opentags.pop() />
-											<cfset local.state =  local.states.script />
+										<cfset lcl.opentags.push(lcl.tagname) />
+										<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & ">" />
+										<cfif (lcl.tagname EQ "script") >
+											<cfset lcl.r = lcl.r & "<![CDATA[" />
+											<cfset lcl.opentags.pop() />
+											<cfset lcl.state =  lcl.states.script />
 											<cfbreak />
 										</cfif>
 									</cfif>
-									<cfset local.state =  local.states.text />
+									<cfset lcl.state =  lcl.states.text />
 									<cfbreak />
 								</cfif>
 							</cfif>
-							<cfif (local.attrname EQ "_") >
-								<cfloop condition="(ListFind(local.attrnames, local.attrname))">
-									<cfset local.attrname = local.attrname & "_" />
+							<cfif (lcl.attrname EQ "_") >
+								<cfloop condition="(ListFind(lcl.attrnames, lcl.attrname))">
+									<cfset lcl.attrname = lcl.attrname & "_" />
 								</cfloop>
 							</cfif>
-							<cfif (NOT local.attrname EQ ""  AND  NOT ListFind(local.attrnames, local.attrname)  AND  NOT local.attrname EQ "xmlns") >
-								<cfset local.attrs = local.attrs & " " & "=\"" & local.attrname & "\"" />
-								<cfset local.attrname =  "" />
+							<cfif (NOT lcl.attrname EQ ""  AND  NOT ListFind(lcl.attrnames, lcl.attrname)  AND  NOT lcl.attrname EQ "xmlns") >
+								<cfset lcl.attrs = lcl.attrs & " " & "=\"" & lcl.attrname & "\"" />
+								<cfset lcl.attrname =  "" />
 							</cfif>
-							<cfset local.cs =  "" & local.c />
+							<cfset lcl.cs =  "" & lcl.c />
 							<!---
 							name += (Character.isLetterOrDigit(c) && name != "") || Character.isLetter(c) ? cs : (name EQ "" ? "_" : (c == '-' ? "-" : (!name EQ "_" ? "_" : "")));
 							Translated to:
 							--->
-							<cfif (isLetterOrDigit(local.c) AND local.name NEQ "") OR isLetter(local.c)>
-								<cfset local.name = local.name & local.cs />
+							<cfif (isLetterOrDigit(lcl.c) AND lcl.name NEQ "") OR isLetter(lcl.c)>
+								<cfset lcl.name = lcl.name & lcl.cs />
 							<cfelse>
-								<cfif local.name EQ "">
-									<cfset local.name = local.name & "_" />
+								<cfif lcl.name EQ "">
+									<cfset lcl.name = lcl.name & "_" />
 								<cfelse>
-									<cfif local.c eq "-">
-										<cfset local.name = local.name & "-" />
+									<cfif lcl.c eq "-">
+										<cfset lcl.name = lcl.name & "-" />
 									<cfelse>
-										<cfif NOT local.name EQ "_">
-											<cfset local.name = local.name & "_" />
+										<cfif NOT lcl.name EQ "_">
+											<cfset lcl.name = lcl.name & "_" />
 										</cfif>
 									</cfif>
 								</cfif>
@@ -561,382 +561,382 @@
 							<cfbreak />
 						</cfcase>
 						<cfcase value="endtag">
-							<cfif (local.c EQ '>') >
-								<cfset local.name =  local.name.toLowerCase() />
+							<cfif (lcl.c EQ '>') >
+								<cfset lcl.name =  lcl.name.toLowerCase() />
 								<cfif (opentags.search(name)  NEQ  -1) >
-									<cfset local.prevtag = local.opentags.pop() />
-									<cfloop condition="(local.prevtag NEQ local.name) ">
-										<cfset local.r = local.r & "</" & local.prevtag & ">" />
-										<cfset local.prevtag = local.opentags.pop() />
+									<cfset lcl.prevtag = lcl.opentags.pop() />
+									<cfloop condition="(lcl.prevtag NEQ lcl.name) ">
+										<cfset lcl.r = lcl.r & "</" & lcl.prevtag & ">" />
+										<cfset lcl.prevtag = lcl.opentags.pop() />
 									</cfloop>
-									<cfset local.r = local.r & "</" & local.name & ">" />
+									<cfset lcl.r = lcl.r & "</" & lcl.name & ">" />
 								<cfelse>
-									<cfif (local.name NEQ "html"  AND  local.opentags.empty()) >
-										<cfset local.r = local.r & "<html>" />
-										<cfset local.opentags.push("html") />
+									<cfif (lcl.name NEQ "html"  AND  lcl.opentags.empty()) >
+										<cfset lcl.r = lcl.r & "<html>" />
+										<cfset lcl.opentags.push("html") />
 									</cfif>
 								</cfif>
-								<cfset local.state =  local.states.text />
+								<cfset lcl.state =  lcl.states.text />
 								<cfbreak />
 							</cfif>
-							<cfif (isWhitespace(local.c)) >
+							<cfif (isWhitespace(lcl.c)) >
 								<cfbreak />
 							</cfif>
-							<cfset local.cs =  "" & local.c />
-							<cfif isLetterOrDigit(local.c)>
-								<cfset local.name = local.name & local.cs />
+							<cfset lcl.cs =  "" & lcl.c />
+							<cfif isLetterOrDigit(lcl.c)>
+								<cfset lcl.name = lcl.name & lcl.cs />
 							<cfelse>
-								<cfif local.name NEQ "_">
-									<cfset local.name = local.name & "_" />
+								<cfif lcl.name NEQ "_">
+									<cfset lcl.name = lcl.name & "_" />
 								</cfif>
 							</cfif>
 							<cfbreak />
 						</cfcase>
 						<cfcase value="attrtext">
-							<cfif (local.c EQ local.attrdelim  OR  (isWhitespace(local.c)  AND  local.attrdelim EQ ' ')) >
-								<cfif (local.attrname EQ "_") >
-									<cfloop condition="(ListFind(local.attrnames, local.attrname)) ">
-										<cfset local.attrname = local.attrname & "_" />
+							<cfif (lcl.c EQ lcl.attrdelim  OR  (isWhitespace(lcl.c)  AND  lcl.attrdelim EQ ' ')) >
+								<cfif (lcl.attrname EQ "_") >
+									<cfloop condition="(ListFind(lcl.attrnames, lcl.attrname)) ">
+										<cfset lcl.attrname = lcl.attrname & "_" />
 									</cfloop>
 								</cfif>
-								<cfif (NOT ListFind(local.attrnames, local.attrname)  AND  NOT local.attrname EQ "xmlns") >
-									<cfset ListAppend(local.attrnames, local.attrname) />
-									<cfset local.attrs = local.attrs & " " & local.attrname & '="' & local.attrvalue & '"' />
+								<cfif (NOT ListFind(lcl.attrnames, lcl.attrname)  AND  NOT lcl.attrname EQ "xmlns") >
+									<cfset ListAppend(lcl.attrnames, lcl.attrname) />
+									<cfset lcl.attrs = lcl.attrs & " " & lcl.attrname & '="' & lcl.attrvalue & '"' />
 								</cfif>
-								<cfset local.attrname =  "" />
-								<cfset local.state =  local.states.tag />
+								<cfset lcl.attrname =  "" />
+								<cfset lcl.state =  lcl.states.tag />
 								<cfbreak />
 							</cfif>
-							<cfif (local.attrdelim EQ ' '  AND  (local.c EQ '/'  OR  local.c EQ '>')) >
-								<cfset local.tagname =  local.tagname.toLowerCase() />
-								<cfif (NOT local.tagname EQ "html"  AND  local.opentags.empty()) >
-									<cfset local.r = local.r & "<html>" />
-									<cfset local.opentags.push("html") />
+							<cfif (lcl.attrdelim EQ ' '  AND  (lcl.c EQ '/'  OR  lcl.c EQ '>')) >
+								<cfset lcl.tagname =  lcl.tagname.toLowerCase() />
+								<cfif (NOT lcl.tagname EQ "html"  AND  lcl.opentags.empty()) >
+									<cfset lcl.r = lcl.r & "<html>" />
+									<cfset lcl.opentags.push("html") />
 								</cfif>
-								<cfif (local.autoclosetags.containsKey(local.tagname)  AND NOT local.opentags.empty()) >
-									<cfset local.prevtag = local.opentags.peek() />
-									<cfif (ListFind(local.autoclosetags.get(local.tagname), local.prevtag)) >
-										<cfset local.opentags.pop() />
-										<cfset local.r = local.r & "</" & local.prevtag & ">" />
+								<cfif (lcl.autoclosetags.containsKey(lcl.tagname)  AND NOT lcl.opentags.empty()) >
+									<cfset lcl.prevtag = lcl.opentags.peek() />
+									<cfif (ListFind(lcl.autoclosetags.get(lcl.tagname), lcl.prevtag)) >
+										<cfset lcl.opentags.pop() />
+										<cfset lcl.r = lcl.r & "</" & lcl.prevtag & ">" />
 									</cfif>
 								</cfif>
-								<cfif (local.attrname EQ "_") >
-									<cfloop condition="(ListFind(local.attrnames, local.attrname)) ">
-										<cfset local.attrname = local.attrname & "_" />
+								<cfif (lcl.attrname EQ "_") >
+									<cfloop condition="(ListFind(lcl.attrnames, lcl.attrname)) ">
+										<cfset lcl.attrname = lcl.attrname & "_" />
 									</cfloop>
 								</cfif>
-								<cfif (NOT ListFind(local.attrnames, local.attrname)  AND  NOT local.attrname EQ "xmlns") >
-									<cfset local.attrnames.add(local.attrname) />
-									<cfset local.attrs = local.attrs & " " & local.attrname & '="' & local.attrvalue & '"' />
+								<cfif (NOT ListFind(lcl.attrnames, lcl.attrname)  AND  NOT lcl.attrname EQ "xmlns") >
+									<cfset lcl.attrnames.add(lcl.attrname) />
+									<cfset lcl.attrs = lcl.attrs & " " & lcl.attrname & '="' & lcl.attrvalue & '"' />
 								</cfif>
-								<cfset local.attrname =  "" />
-								<cfif (local.c EQ '/') >
-									<cfset local.r = local.r & "<" & local.tagname & local.attrs & "/>" />
-									<cfset local.state =  local.states.tillgt />
+								<cfset lcl.attrname =  "" />
+								<cfif (lcl.c EQ '/') >
+									<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & "/>" />
+									<cfset lcl.state =  lcl.states.tillgt />
 									<cfbreak />
 								</cfif>
-								<cfif (local.c EQ '>') >
-									<cfif ListFind(local.emptytags, local.tagname) >
-										<cfset local.r = local.r & "<" & local.tagname & local.attrs & "/>" />
-										<cfset local.state =  local.states.text />
+								<cfif (lcl.c EQ '>') >
+									<cfif ListFind(lcl.emptytags, lcl.tagname) >
+										<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & "/>" />
+										<cfset lcl.state =  lcl.states.text />
 										<cfbreak />
 									<cfelse>
-										<cfset local.opentags.push(local.tagname) />
-										<cfset local.r = local.r & "<" & local.tagname & local.attrs & ">" />
-										<cfif (local.tagname EQ "script") >
-											<cfset local.r = local.r & "<![CDATA[" />
-											<cfset local.opentags.pop() />
-											<cfset local.prec =  ' ' />
-											<cfset local.preprec =  ' ' />
-											<cfset local.state =  local.states.script />
+										<cfset lcl.opentags.push(lcl.tagname) />
+										<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & ">" />
+										<cfif (lcl.tagname EQ "script") >
+											<cfset lcl.r = lcl.r & "<![CDATA[" />
+											<cfset lcl.opentags.pop() />
+											<cfset lcl.prec =  ' ' />
+											<cfset lcl.preprec =  ' ' />
+											<cfset lcl.state =  lcl.states.script />
 											<cfbreak />
 										</cfif>
-										<cfset local.state =  local.states.text />
+										<cfset lcl.state =  lcl.states.text />
 										<cfbreak />
 									</cfif>
 								</cfif>
 							</cfif>
-							<cfif (local.c EQ '&') >
-								<cfset local.name =  "" />
-								<cfset local.entvalue =  0 />
-								<cfset local.prevstate =  state />
-								<cfset local.state =  local.states.entity />
+							<cfif (lcl.c EQ '&') >
+								<cfset lcl.name =  "" />
+								<cfset lcl.entvalue =  0 />
+								<cfset lcl.prevstate =  state />
+								<cfset lcl.state =  lcl.states.entity />
 								<cfbreak />
 							</cfif>
-							<cfset local.cs =  "" & local.c />
-							<cfif local.c EQ '"'>
-								<cfset local.attrvalue = local.attrvalue & "&quot;" />
+							<cfset lcl.cs =  "" & lcl.c />
+							<cfif lcl.c EQ '"'>
+								<cfset lcl.attrvalue = lcl.attrvalue & "&quot;" />
 							<cfelse>
-								<cfif local.c EQ "'">
-									<cfset local.attrvalue = local.attrvalue & "&apos;" />
+								<cfif lcl.c EQ "'">
+									<cfset lcl.attrvalue = lcl.attrvalue & "&apos;" />
 								<cfelse>
-									<cfset local.attrvalue = local.attrvalue & local.cs />
+									<cfset lcl.attrvalue = lcl.attrvalue & lcl.cs />
 								</cfif>
 							</cfif>
 							<cfbreak />
 						</cfcase>
 
 						<cfcase value="script">
-							<cfif (local.c EQ '/'  AND  local.prec EQ '<')>
-								<cfset local.state =  local.states.endscript />
-								<cfset local.name =  "" />
+							<cfif (lcl.c EQ '/'  AND  lcl.prec EQ '<')>
+								<cfset lcl.state =  lcl.states.endscript />
+								<cfset lcl.name =  "" />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '['  AND  local.prec EQ '!'  AND  local.preprec EQ '<') >
-								<cfset local.state =  local.states.skipcdata />
-								<cfset local.name =  "<![" />
+							<cfif (lcl.c EQ '['  AND  lcl.prec EQ '!'  AND  lcl.preprec EQ '<') >
+								<cfset lcl.state =  lcl.states.skipcdata />
+								<cfset lcl.name =  "<![" />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '>'  AND  local.prec EQ ']'  AND  local.preprec EQ ']') >
-									<cfset local.c =  local.r.charAt(local.r.length() - 3) />
-									<cfset local.r =  local.r.substring(0, local.r.length() - 4) />
+							<cfif (lcl.c EQ '>'  AND  lcl.prec EQ ']'  AND  lcl.preprec EQ ']') >
+									<cfset lcl.c =  lcl.r.charAt(lcl.r.length() - 3) />
+									<cfset lcl.r =  lcl.r.substring(0, lcl.r.length() - 4) />
 							</cfif>
-							<cfset local.r = local.r & local.c />
-							<cfset local.preprec =  local.prec />
-							<cfset local.prec =  local.c />
+							<cfset lcl.r = lcl.r & lcl.c />
+							<cfset lcl.preprec =  lcl.prec />
+							<cfset lcl.prec =  lcl.c />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="endscript">
-							<cfif (local.c EQ '>'  AND  local.name.toLowerCase() EQ "script") >
-								<cfset local.r =  r.substring(0, r.length() - 1) />
-								<cfset local.r = local.r & "]]></script>" />
-								<cfset local.state =  local.states.text />
+							<cfif (lcl.c EQ '>'  AND  lcl.name.toLowerCase() EQ "script") >
+								<cfset lcl.r =  r.substring(0, r.length() - 1) />
+								<cfset lcl.r = lcl.r & "]]></script>" />
+								<cfset lcl.state =  lcl.states.text />
 								<cfbreak />
 							</cfif>
-							<cfset local.name = local.name + local.c />
-							<cfset local.sscr = "script" />
-							<cfif (!sscr.startsWith(local.name.toLowerCase())) >
-								<cfset local.r = local.r & local.name />
-								<cfset local.state =  local.states.script />
+							<cfset lcl.name = lcl.name + lcl.c />
+							<cfset lcl.sscr = "script" />
+							<cfif (!sscr.startsWith(lcl.name.toLowerCase())) >
+								<cfset lcl.r = lcl.r & lcl.name />
+								<cfset lcl.state =  lcl.states.script />
 							</cfif>
 							<cfbreak />
 						</cfcase>
 						<cfcase value="specialtag">
 							<cfif (c  NEQ  '-') >
-								<cfset local.state =  local.states.tillgt />
+								<cfset lcl.state =  lcl.states.tillgt />
 								<cfbreak />
 							</cfif>
 							<cfif (prec EQ '-') >
-								<cfset local.state =  local.states.comment />
-								<cfset local.preprec =  ' ' />
+								<cfset lcl.state =  lcl.states.comment />
+								<cfset lcl.preprec =  ' ' />
 								<cfbreak />
 							</cfif>
-							<cfset local.prec = local.c />
+							<cfset lcl.prec = lcl.c />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="comment">
-							<cfif (local.c EQ '>'  AND  prec EQ '-'  AND  preprec EQ '-') >
-								<cfset local.state =  local.states.text />
+							<cfif (lcl.c EQ '>'  AND  prec EQ '-'  AND  preprec EQ '-') >
+								<cfset lcl.state =  lcl.states.text />
 								<cfbreak />
 							</cfif>
-							<cfset local.preprec =  local.prec />
-							<cfset local.prec =  local.c />
+							<cfset lcl.preprec =  lcl.prec />
+							<cfset lcl.prec =  lcl.c />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="skipcdata">
-							<cfif (local.name EQ "<![CDATA[") >
-								<cfset local.state =  local.states.script />
+							<cfif (lcl.name EQ "<![CDATA[") >
+								<cfset lcl.state =  lcl.states.script />
 								<cfbreak />
 							</cfif>
-							<cfset local.name = local.name & local.c />
-							<cfset local.scdata = "<![CDATA[" />
-							<cfif (NOT local.scdata.startsWith(local.name)) >
-								<cfset local.r = local.r & local.name />
-								<cfset local.state =  local.states.script />
+							<cfset lcl.name = lcl.name & lcl.c />
+							<cfset lcl.scdata = "<![CDATA[" />
+							<cfif (NOT lcl.scdata.startsWith(lcl.name)) >
+								<cfset lcl.r = lcl.r & lcl.name />
+								<cfset lcl.state =  lcl.states.script />
 							</cfif>
 							<cfbreak />
 						</cfcase>
 						<cfcase value="entity">
-							<cfif (local.c EQ CHR(35)) >
-								<cfset local.state =  local.states.numericentity />
+							<cfif (lcl.c EQ CHR(35)) >
+								<cfset lcl.state =  lcl.states.numericentity />
 								<cfbreak />
 							</cfif>
-							<cfset local.name = local.name & local.c />
-							<cfset local.state =  local.states.namedentity />
+							<cfset lcl.name = lcl.name & lcl.c />
+							<cfset lcl.state =  lcl.states.namedentity />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="numericentity">
-							<cfif (local.c EQ 'x'  OR  local.c EQ 'X') >
-								<cfset local.state =  local.states.hexaentity />
+							<cfif (lcl.c EQ 'x'  OR  lcl.c EQ 'X') >
+								<cfset lcl.state =  lcl.states.hexaentity />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ ';') >
-								<cfset local.ent = "&##" & local.entvalue & ";" />
-								<cfif (local.prevstate EQ local.states.text) >
-									<cfset local.r = local.r & local.ent />
+							<cfif (lcl.c EQ ';') >
+								<cfset lcl.ent = "&##" & lcl.entvalue & ";" />
+								<cfif (lcl.prevstate EQ lcl.states.text) >
+									<cfset lcl.r = lcl.r & lcl.ent />
 								<cfelse>
-									<cfset local.attrvalue = local.attrvalue & local.ent />
+									<cfset lcl.attrvalue = lcl.attrvalue & lcl.ent />
 								</cfif>
-								<cfset local.state =  prevstate />
+								<cfset lcl.state =  prevstate />
 								<cfbreak />
 							</cfif>
-							<cfset local.entvalue =  entvalue * 10 & local.c - '0' />
+							<cfset lcl.entvalue =  entvalue * 10 & lcl.c - '0' />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="hexaentity">
-							<cfif (local.c EQ ';') >
-								<cfset local.ent = "&##" & local.entvalue & ";" />
-								<cfif (local.prevstate EQ local.states.text)	>
-									<cfset local.r = local.r & local.ent />
+							<cfif (lcl.c EQ ';') >
+								<cfset lcl.ent = "&##" & lcl.entvalue & ";" />
+								<cfif (lcl.prevstate EQ lcl.states.text)	>
+									<cfset lcl.r = lcl.r & lcl.ent />
 								<cfelse>
-									<cfset local.attrvalue = local.attrvalue & local.ent />
+									<cfset lcl.attrvalue = lcl.attrvalue & lcl.ent />
 								</cfif>
-								<cfset local.state =  prevstate />
+								<cfset lcl.state =  prevstate />
 								<cfbreak />
 							</cfif>
-							<!--- <cfset local.entvalue =  local.entvalue * 16 & (Character.isDigit(c) ? local.c - '0' : Character.toUpperCase(c) - 'A') /> --->
-							<cfset local.entvalue = "DEEBAC">
+							<!--- <cfset lcl.entvalue =  lcl.entvalue * 16 & (Character.isDigit(c) ? lcl.c - '0' : Character.toUpperCase(c) - 'A') /> --->
+							<cfset lcl.entvalue = "DEEBAC">
 							<cfbreak />
 						</cfcase>
 						<cfcase value="namedentity">
-							<cfif (local.c EQ ';') >
-								<cfset local.ent = "" />
-								<cfset local.name =  local.name.toLowerCase() />
-								<cfif (local.name EQ "amp"  OR  local.name EQ "lt"  OR  local.name EQ "gt"  OR  local.name EQ "quot"  OR  local.name EQ "apos") >
-									<cfset local.ent =  "&" + local.name + ";" />
-									<cfset local.name =  "" />
-									<cfif (local.prevstate EQ local.states.text) >
-										<cfset local.r = local.r & local.ent />
+							<cfif (lcl.c EQ ';') >
+								<cfset lcl.ent = "" />
+								<cfset lcl.name =  lcl.name.toLowerCase() />
+								<cfif (lcl.name EQ "amp"  OR  lcl.name EQ "lt"  OR  lcl.name EQ "gt"  OR  lcl.name EQ "quot"  OR  lcl.name EQ "apos") >
+									<cfset lcl.ent =  "&" + lcl.name + ";" />
+									<cfset lcl.name =  "" />
+									<cfif (lcl.prevstate EQ lcl.states.text) >
+										<cfset lcl.r = lcl.r & lcl.ent />
 									<cfelse>
-										<cfset local.attrvalue = local.attrvalue + local.ent />
+										<cfset lcl.attrvalue = lcl.attrvalue + lcl.ent />
 									</cfif>
-									<cfset local.state =  prevstate />
+									<cfset lcl.state =  prevstate />
 									<cfbreak />
 								</cfif>
-								<cfif (ListFind(local.namedentities, local.name)) >
-									<cfset local.entvalue =  local.namedentities.get(local.name) />
+								<cfif (ListFind(lcl.namedentities, lcl.name)) >
+									<cfset lcl.entvalue =  lcl.namedentities.get(lcl.name) />
 								<cfelse>
-									<cfset local.entvalue =  0 />
+									<cfset lcl.entvalue =  0 />
 								</cfif>
-								<cfset local.ent =  "&" + local.entvalue + ";" />
-								<cfset local.name =  "" />
-								<cfif (local.prevstate EQ local.states.text) >
-									<cfset local.r = local.r & local.ent />
+								<cfset lcl.ent =  "&" + lcl.entvalue + ";" />
+								<cfset lcl.name =  "" />
+								<cfif (lcl.prevstate EQ lcl.states.text) >
+									<cfset lcl.r = lcl.r & lcl.ent />
 								<cfelse>
-									<cfset local.attrvalue = local.attrvalue + local.ent />
+									<cfset lcl.attrvalue = lcl.attrvalue + lcl.ent />
 								</cfif>
-								<cfset local.state =  prevstate />
+								<cfset lcl.state =  prevstate />
 								<cfbreak />
 							</cfif>
-							<cfif (NOT isLetterOrDigit(local.c)  OR  local.name.length() GT 6)>
-								<cfset local.ent = "&amp;" & local.name />
-								<cfset local.name =  "" />
-								<cfif (local.prevstate EQ local.states.text) >
-									<cfset local.r = local.r & local.ent />
+							<cfif (NOT isLetterOrDigit(lcl.c)  OR  lcl.name.length() GT 6)>
+								<cfset lcl.ent = "&amp;" & lcl.name />
+								<cfset lcl.name =  "" />
+								<cfif (lcl.prevstate EQ lcl.states.text) >
+									<cfset lcl.r = lcl.r & lcl.ent />
 								<cfelse>
-									<cfset local.attrvalue = local.attrvalue + local.ent />
+									<cfset lcl.attrvalue = lcl.attrvalue + lcl.ent />
 								</cfif>
-								<cfset local.state =  prevstate />
-								<cfset local.i = local.i - 1 />
+								<cfset lcl.state =  prevstate />
+								<cfset lcl.i = lcl.i - 1 />
 								<cfbreak />
 							</cfif>
-							<cfset local.name = local.name & local.c />
+							<cfset lcl.name = lcl.name & lcl.c />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="tillinst">
-							<cfif (local.c EQ '?') >
-									<cfset local.state =  local.states.andgt />
+							<cfif (lcl.c EQ '?') >
+									<cfset lcl.state =  lcl.states.andgt />
 							</cfif>
 							<cfbreak />
 						</cfcase>
 						<cfcase value="andgt">
-							<cfif (local.c EQ '>') >
-								<cfset local.state =  local.states.text />
+							<cfif (lcl.c EQ '>') >
+								<cfset lcl.state =  lcl.states.text />
 								<cfbreak />
 							</cfif>
-							<cfset local.state =  local.states.tillinst />
+							<cfset lcl.state =  lcl.states.tillinst />
 							<cfbreak />
 						</cfcase>
 						<cfcase value="tillgt">
-							<cfif (local.c EQ '>') >
-								<cfset local.state =  local.states.text />
+							<cfif (lcl.c EQ '>') >
+								<cfset lcl.state =  lcl.states.text />
 							</cfif>
 							<cfbreak />
 						</cfcase>
 						<cfcase value="tillquote">
-							<cfif (isWhitespace(local.c)) >
+							<cfif (isWhitespace(lcl.c)) >
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '"'  OR  local.c EQ "'") >
-								<cfset local.attrdelim =  local.c />
-								<cfset local.attrvalue =  "" />
-								<cfset local.state =  local.states.attrtext />
+							<cfif (lcl.c EQ '"'  OR  lcl.c EQ "'") >
+								<cfset lcl.attrdelim =  lcl.c />
+								<cfset lcl.attrvalue =  "" />
+								<cfset lcl.state =  lcl.states.attrtext />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '/'  OR  local.c EQ '>') >
-								<cfif (local.attrname EQ "_") >
-									<cfloop condition="(ListFind(local.attrnames, local.attrname))">
-										<cfset local.attrname = local.attrname & "_" />
+							<cfif (lcl.c EQ '/'  OR  lcl.c EQ '>') >
+								<cfif (lcl.attrname EQ "_") >
+									<cfloop condition="(ListFind(lcl.attrnames, lcl.attrname))">
+										<cfset lcl.attrname = lcl.attrname & "_" />
 									</cfloop>
 								</cfif>
-								<cfif (NOT ListFind(local.attrnames, local.attrname)  AND  NOT local.attrname EQ "xmlns") >
-									<cfset local.attrnames.add(local.attrname) />
-									<cfset local.attrs = local.attrs & " " & local.attrname & '= "' & attrvalue & '"' />
+								<cfif (NOT ListFind(lcl.attrnames, lcl.attrname)  AND  NOT lcl.attrname EQ "xmlns") >
+									<cfset lcl.attrnames.add(lcl.attrname) />
+									<cfset lcl.attrs = lcl.attrs & " " & lcl.attrname & '= "' & attrvalue & '"' />
 								</cfif>
-								<cfset local.attrname =  "" />
+								<cfset lcl.attrname =  "" />
 							</cfif>
-							<cfif (local.c EQ '/') >
-								<cfset local.r = local.r & "<" & local.tagname.toLowerCase() & local.attrs & "/>" />
-								<cfset local.state =  local.states.tillgt />
+							<cfif (lcl.c EQ '/') >
+								<cfset lcl.r = lcl.r & "<" & lcl.tagname.toLowerCase() & lcl.attrs & "/>" />
+								<cfset lcl.state =  lcl.states.tillgt />
 								<cfbreak />
 							</cfif>
-							<cfif (local.c EQ '>') >
-								<cfset local.tagname =  local.tagname.toLowerCase() />
-								<cfif (NOT local.tagname EQ "html"  AND  local.opentags.empty()) >
-									<cfset local.r = local.r & "<html>" />
-									<cfset local.opentags.push("html") />
+							<cfif (lcl.c EQ '>') >
+								<cfset lcl.tagname =  lcl.tagname.toLowerCase() />
+								<cfif (NOT lcl.tagname EQ "html"  AND  lcl.opentags.empty()) >
+									<cfset lcl.r = lcl.r & "<html>" />
+									<cfset lcl.opentags.push("html") />
 								</cfif>
-								<cfif (local.autoclosetags.containsKey(local.tagname) AND NOT local.opentags.empty())>
-									<cfset local.prevtag = local.opentags.peek() />
-									<cfif (ListFind(local.autoclosetags.get(local.tagname), local.prevtag))>
-										<cfset local.opentags.pop() />
-										<cfset local.r = local.r & "</" & local.prevtag & ">" />
+								<cfif (lcl.autoclosetags.containsKey(lcl.tagname) AND NOT lcl.opentags.empty())>
+									<cfset lcl.prevtag = lcl.opentags.peek() />
+									<cfif (ListFind(lcl.autoclosetags.get(lcl.tagname), lcl.prevtag))>
+										<cfset lcl.opentags.pop() />
+										<cfset lcl.r = lcl.r & "</" & lcl.prevtag & ">" />
 									</cfif>
 								</cfif>
-								<cfif ListFind(local.emptytags, local.tagname)>
-									<cfset local.r = local.r & "<" & local.tagname & local.attrs & "/>" />
-									<cfset local.state =  local.states.text />
+								<cfif ListFind(lcl.emptytags, lcl.tagname)>
+									<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & "/>" />
+									<cfset lcl.state =  lcl.states.text />
 									<cfbreak />
 								<cfelse>
-									<cfset local.opentags.push(local.tagname) />
-									<cfset local.r = local.r & "<" & local.tagname & local.attrs & ">" />
-									<cfif (local.tagname EQ "script") >
-										<cfset local.r = local.r & "<![CDATA[" />
-										<cfset local.opentags.pop() />
-										<cfset local.state =  local.states.script />
+									<cfset lcl.opentags.push(lcl.tagname) />
+									<cfset lcl.r = lcl.r & "<" & lcl.tagname & lcl.attrs & ">" />
+									<cfif (lcl.tagname EQ "script") >
+										<cfset lcl.r = lcl.r & "<![CDATA[" />
+										<cfset lcl.opentags.pop() />
+										<cfset lcl.state =  lcl.states.script />
 										<cfbreak />
 									</cfif>
 								</cfif>
 							</cfif>
-							<cfset local.attrdelim =  ' ' />
-							<cfset local.attrvalue =  "" & local.c />
-							<cfset local.state =  local.states.attrtext />
+							<cfset lcl.attrdelim =  ' ' />
+							<cfset lcl.attrvalue =  "" & lcl.c />
+							<cfset lcl.state =  lcl.states.attrtext />
 							<cfbreak />
 						</cfcase>
 					</cfswitch>
-					<cfset local.switch_handled = true />
+					<cfset lcl.switch_handled = true />
 				</cfloop>
 				<cfcatch type="any">
 					<cfoutput><p>#cfcatch.message# #cfcatch.detail# <cfdump var="#cfcatch#"></p></cfoutput>
-					<cfset local.switch_handled = true />
+					<cfset lcl.switch_handled = true />
 					<cfbreak />
 				</cfcatch>
 			</cftry>
-			<cfset local.i = local.i + 1 />
-			<cfif local.i GTE local.limit>
+			<cfset lcl.i = lcl.i + 1 />
+			<cfif lcl.i GTE lcl.limit>
 				<cfbreak>
 			</cfif>
-			<!--- <cfif local.i LTE 1000>
-				<cfoutput>#local.i# [#local.state#]: #local.r#: #local.tagname#<br /></cfoutput>
+			<!--- <cfif lcl.i LTE 1000>
+				<cfoutput>#lcl.i# [#lcl.state#]: #lcl.r#: #lcl.tagname#<br /></cfoutput>
 			<cfelse>
 				<cfbreak />
 			</cfif> --->
 		</cfloop>
-		<cfloop condition="(NOT local.opentags.empty())">
-			<cfset local.r = local.r & "</" & local.opentags.pop() & ">" />
+		<cfloop condition="(NOT lcl.opentags.empty())">
+			<cfset lcl.r = lcl.r & "</" & lcl.opentags.pop() & ">" />
 		</cfloop>
-		<cfset local.r2 = local.r2 & local.r />
-		<cfdump var="#local.i#">
-		<cfreturn '<?xml version="1.0" encoding="' & local.encoding & '"?>' & CHR(10) & local.r2 />
+		<cfset lcl.r2 = lcl.r2 & lcl.r />
+		<cfdump var="#lcl.i#">
+		<cfreturn '<?xml version="1.0" encoding="' & lcl.encoding & '"?>' & CHR(10) & lcl.r2 />
 	</cffunction>
 </cfcomponent>

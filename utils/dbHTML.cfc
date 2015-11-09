@@ -28,13 +28,13 @@ DO NOT USE!
 	<cffunction name="parseKeyVal">
 		<cfargument name="value"  required="false" type="string" default="">
 
-		<cfset var local = StructNew()>
-		<cfset local.key = arguments.value>
-		<cfset local.value = arguments.value>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.key = arguments.value>
+		<cfset lcl.value = arguments.value>
 
-		<cfif ListLen(local.value,"=") gt 1>
-			<cfset local.key = ListFirst(local.value,"=")>
-			<cfset local.value = ListLast(local.value,"=")>
+		<cfif ListLen(lcl.value,"=") gt 1>
+			<cfset lcl.key = ListFirst(lcl.value,"=")>
+			<cfset lcl.value = ListLast(lcl.value,"=")>
 		</cfif>
 		<cfreturn local>
 	</cffunction>
@@ -45,16 +45,16 @@ DO NOT USE!
 		<cfargument name="qualifier" required="false" type="string" default='"'>
 
 		<cfset var local  = StructNew()>
-		<cfset local.it   = iterator(arguments.attrkeys)>
-		<cfset local.args = arguments.argstruct>
-		<cfset local.val  = "">
+		<cfset lcl.it   = iterator(arguments.attrkeys)>
+		<cfset lcl.args = arguments.argstruct>
+		<cfset lcl.val  = "">
 
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfif StructKeyExists(local.args, local.it.current) AND IsSimpleValue(local.it.current)>
-				<cfset local.val = ListAppend(local.val, local.it.current & "=" & ListQualify(local.args[local.it.current],arguments.qualifier), " ")>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfif StructKeyExists(lcl.args, lcl.it.current) AND IsSimpleValue(lcl.it.current)>
+				<cfset lcl.val = ListAppend(lcl.val, lcl.it.current & "=" & ListQualify(lcl.args[lcl.it.current],arguments.qualifier), " ")>
 			</cfif>
 		</cfloop>
-		<cfreturn local.val>
+		<cfreturn lcl.val>
 	</cffunction>
 
 	<cffunction name="substituteValues">
@@ -62,13 +62,13 @@ DO NOT USE!
 		<cfargument name="substitute" required="false" type="struct" default="#StructNew()#">
 
 		<cfset var local  = StructNew()>
-		<cfset local.subs = arguments.substitute>
-		<cfset local.val  = arguments.value>
+		<cfset lcl.subs = arguments.substitute>
+		<cfset lcl.val  = arguments.value>
 
-		<cfif Find("%", local.val) AND NOT StructIsEmpty(local.subs)>
-			<cfset local.val = subsitute(local.val, local.subs)>
+		<cfif Find("%", lcl.val) AND NOT StructIsEmpty(lcl.subs)>
+			<cfset lcl.val = subsitute(lcl.val, lcl.subs)>
 		</cfif>
-		<cfreturn local.val>
+		<cfreturn lcl.val>
 	</cffunction>
 
 	<cffunction name="subsitute">
@@ -122,78 +122,78 @@ DO NOT USE!
 		<cfargument name="subst" required="true" type="struct">
 		<cfargument name="obj"   required="true" type="struct">
 
-		<cfset var local = StructNew()>
-		<cfset local.out = StructNew()>
-		<cfset local.obj  = arguments.obj>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.out = StructNew()>
+		<cfset lcl.obj  = arguments.obj>
 
-		<cfset local.out.list  = "">
-		<cfset local.out.subst  = arguments.subst>
+		<cfset lcl.out.list  = "">
+		<cfset lcl.out.subst  = arguments.subst>
 
 		<cfif ArrayLen(arguments) gt 2>
-			<cfset local.out.list  = arguments[3]>
-			<cfset local.it = iterator(local.out.list)>
-			<cfloop condition="#local.it.whileHasNext()#">
-				<cfif StructKeyExists(local.obj, local.it.current)>
-					<cfset local.out.subst[local.it.key] = local.obj[local.it.current]>
+			<cfset lcl.out.list  = arguments[3]>
+			<cfset lcl.it = iterator(lcl.out.list)>
+			<cfloop condition="#lcl.it.whileHasNext()#">
+				<cfif StructKeyExists(lcl.obj, lcl.it.current)>
+					<cfset lcl.out.subst[lcl.it.key] = lcl.obj[lcl.it.current]>
 				</cfif>
 			</cfloop>
 		<cfelse>
-			<cfset local.it = iterator(local.out.subst)>
-			<cfloop condition="#local.it.whileHasNext()#">
-				<cfif StructKeyExists(local.obj, local.it.current)>
-					<cfset local.out.list = ListAppend(local.out.list, local.it.current)>
-					<cfset local.out.subst[local.it.key] = local.obj[local.it.current]>
+			<cfset lcl.it = iterator(lcl.out.subst)>
+			<cfloop condition="#lcl.it.whileHasNext()#">
+				<cfif StructKeyExists(lcl.obj, lcl.it.current)>
+					<cfset lcl.out.list = ListAppend(lcl.out.list, lcl.it.current)>
+					<cfset lcl.out.subst[lcl.it.key] = lcl.obj[lcl.it.current]>
 				</cfif>
 			</cfloop>
 		</cfif>
-		<cfreturn local.out>
+		<cfreturn lcl.out>
 	</cffunction>
 
 	<cffunction name="indexNumberedArgs">
 		<cfargument name="collection" required="true" type="any">
 		<cfargument name="mergelist"  required="false" type="boolean" default="false">
 
-		<cfset var local = StructNew()>
-		<cfset local.it  = iterator(arguments.collection)>
-		<cfset local.mergelist  = arguments.mergelist>
-		<cfset local.tmp = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.it  = iterator(arguments.collection)>
+		<cfset lcl.mergelist  = arguments.mergelist>
+		<cfset lcl.tmp = ArrayNew(1)>
 
-		<cfset local.args = StructNew()>
-		<cfset local.args.map  = StructNew()>
-		<cfset local.args.keylist = "">
+		<cfset lcl.args = StructNew()>
+		<cfset lcl.args.map  = StructNew()>
+		<cfset lcl.args.keylist = "">
 
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfif IsNumeric(local.it.key)>
-				<cfset ArraySet(local.tmp, local.it.key, local.it.key, local.it.current)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfif IsNumeric(lcl.it.key)>
+				<cfset ArraySet(lcl.tmp, lcl.it.key, lcl.it.key, lcl.it.current)>
 			</cfif>
 		</cfloop>
 
-		<cfif local.mergelist>
-			<cfset local.tmp = ListToArray(ArrayToList(local.tmp))>
+		<cfif lcl.mergelist>
+			<cfset lcl.tmp = ListToArray(ArrayToList(lcl.tmp))>
 		</cfif>
-		<cfset local.it = iterator(local.tmp)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset StructInsert(local.args.map, local.it.key, local.it.current, true)>
-			<cfset local.args.keylist = ListAppend(local.args.keylist, local.it.current)>
+		<cfset lcl.it = iterator(lcl.tmp)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset StructInsert(lcl.args.map, lcl.it.key, lcl.it.current, true)>
+			<cfset lcl.args.keylist = ListAppend(lcl.args.keylist, lcl.it.current)>
 		</cfloop>
 
-		<cfreturn local.args>
+		<cfreturn lcl.args>
 	</cffunction>
 
 	<cffunction name="indexNamedArgs">
 		<cfargument name="namedlist"  required="true" type="string">
 
-		<cfset var local = StructNew()>
-		<cfset local.it  = iterator(arguments.namedlist)>
-		<cfset local.args = StructNew()>
-		<cfset local.args.map  = StructNew()>
-		<cfset local.args.keylist = arguments.namedlist>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.it  = iterator(arguments.namedlist)>
+		<cfset lcl.args = StructNew()>
+		<cfset lcl.args.map  = StructNew()>
+		<cfset lcl.args.keylist = arguments.namedlist>
 
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset StructInsert(local.args.map, local.it.key, local.it.current, true)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset StructInsert(lcl.args.map, lcl.it.key, lcl.it.current, true)>
 		</cfloop>
 
-		<cfreturn local.args>
+		<cfreturn lcl.args>
 	</cffunction>
 
 	<cffunction name="indexArgs">
@@ -202,21 +202,21 @@ DO NOT USE!
 		<cfargument name="idxfield" required="false" type="string" default="">
 
 		<cfset var out = StructNew()>
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.argmap   = arguments.argmap>
-		<cfset local.idxstart = arguments.idxstart>
-		<cfset local.idxfield = arguments.idxfield>
+		<cfset lcl.argmap   = arguments.argmap>
+		<cfset lcl.idxstart = arguments.idxstart>
+		<cfset lcl.idxfield = arguments.idxfield>
 
 		<cfset out.map     = StructNew()>
 		<cfset out.keylist = "">
 		<cfset out.type    = "">
 
-		<cfif numberedArguments(local.argmap, local.idxstart)>
-			<cfset out = indexNumberedArgs(local.argmap, true)>
+		<cfif numberedArguments(lcl.argmap, lcl.idxstart)>
+			<cfset out = indexNumberedArgs(lcl.argmap, true)>
 			<cfset out.type = "numbered">
-		<cfelseif StructKeyExists(local.argmap, local.idxfield)>
-			<cfset out = indexNamedArgs(local.argmap[local.idxfield])>
+		<cfelseif StructKeyExists(lcl.argmap, lcl.idxfield)>
+			<cfset out = indexNamedArgs(lcl.argmap[lcl.idxfield])>
 			<cfset out.type = "named">
 		</cfif>
 		<cfreturn out>
@@ -234,18 +234,18 @@ DO NOT USE!
 		<cfargument name="keys"    required="true" type="any">
 
 		<cfset var local    = StructNew()>
-		<cfset local.struct = arguments.struct>
-		<cfset local.out    = StructNew()>
+		<cfset lcl.struct = arguments.struct>
+		<cfset lcl.out    = StructNew()>
 
-		<cfset local.it = iterator(arguments.keys)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset local.temp = parseKeyVal(local.it.current)>
-			<cfif StructKeyExists(local.struct, local.temp.key)>
-				<cfset StructInsert(local.out, local.temp.value, local.struct[local.temp.key], true)>
+		<cfset lcl.it = iterator(arguments.keys)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset lcl.temp = parseKeyVal(lcl.it.current)>
+			<cfif StructKeyExists(lcl.struct, lcl.temp.key)>
+				<cfset StructInsert(lcl.out, lcl.temp.value, lcl.struct[lcl.temp.key], true)>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.out>
+		<cfreturn lcl.out>
 	</cffunction>
 
 	<cffunction name="getCollectionHTML">
@@ -255,53 +255,53 @@ DO NOT USE!
 		<cfargument name="colkeys"    required="true" type="any">
 
 		<cfset var local      = StructNew()>
-		<cfset local.coll     = arguments.collection>
-		<cfset local.render   = arguments.render>
-		<cfset local.substmap = arguments.substmap>
-		<cfset local.colkeys  = arguments.colkeys>
-		<cfset local.html = "">
+		<cfset lcl.coll     = arguments.collection>
+		<cfset lcl.render   = arguments.render>
+		<cfset lcl.substmap = arguments.substmap>
+		<cfset lcl.colkeys  = arguments.colkeys>
+		<cfset lcl.html = "">
 
-		<cfswitch expression="#getCollectionType(local.coll).type#">
+		<cfswitch expression="#getCollectionType(lcl.coll).type#">
 			<cfcase value="query,component">
-				<cfset local.it = iterator(local.coll)>
-				<cfloop condition="#local.it.whileHasNext()#">
-					<cfset local.temp             = substValsFromObj(local.substmap, local.it.current, local.colkeys)>
-					<cfset local.colkeys          = local.temp.list>
-					<cfset local.substmap         = local.temp.subst>
-					<cfset local.substmap.key     = local.it.index>
-					<cfset local.substmap.current = local.it.index>
-					<cfset local.html = local.html & substituteValues(local.render, local.substmap)>
+				<cfset lcl.it = iterator(lcl.coll)>
+				<cfloop condition="#lcl.it.whileHasNext()#">
+					<cfset lcl.temp             = substValsFromObj(lcl.substmap, lcl.it.current, lcl.colkeys)>
+					<cfset lcl.colkeys          = lcl.temp.list>
+					<cfset lcl.substmap         = lcl.temp.subst>
+					<cfset lcl.substmap.key     = lcl.it.index>
+					<cfset lcl.substmap.current = lcl.it.index>
+					<cfset lcl.html = lcl.html & substituteValues(lcl.render, lcl.substmap)>
 				</cfloop>
 			</cfcase>
 
 			<cfcase value="string,array">
-				<cfset local.it = iterator(local.coll)>
-				<cfloop condition="#local.it.whileHasNext()#">
-					<cfset local.substmap.current = local.it.index>
-					<cfset local.substmap.key     = local.it.key>
-					<cfset local.substmap.value   = local.it.current>
-					<cfset local.substmap["0"]    = substituteValues(local.it.current, local.substmap)>
-					<cfset local.html = local.html & substituteValues(local.render, local.substmap)>
+				<cfset lcl.it = iterator(lcl.coll)>
+				<cfloop condition="#lcl.it.whileHasNext()#">
+					<cfset lcl.substmap.current = lcl.it.index>
+					<cfset lcl.substmap.key     = lcl.it.key>
+					<cfset lcl.substmap.value   = lcl.it.current>
+					<cfset lcl.substmap["0"]    = substituteValues(lcl.it.current, lcl.substmap)>
+					<cfset lcl.html = lcl.html & substituteValues(lcl.render, lcl.substmap)>
 				</cfloop>
 			</cfcase>
 
 			<cfcase value="struct">
-				<cfset local.temp  = substValsFromObj(local.substmap, local.coll, local.colkeys)>
-				<cfset local.colkeys          = local.temp.list>
-				<cfset local.substmap         = local.temp.subst>
-				<cfset local.html = local.html & substituteValues(local.render, local.substmap)>
-				<!--- <cfset local.it = iterator(local.coll)>
-				<cfloop condition="#local.it.whileHasNext()#">
-					<cfset local.substmap.current = local.it.index>
-					<cfset local.substmap.key     = local.it.key>
-					<cfset local.substmap.value   = local.it.current>
-					<cfset local.substmap["0"]    = substituteValues(local.it.current, local.substmap)>
-					<cfset local.html = local.html & substituteValues(local.render, local.substmap)>
+				<cfset lcl.temp  = substValsFromObj(lcl.substmap, lcl.coll, lcl.colkeys)>
+				<cfset lcl.colkeys          = lcl.temp.list>
+				<cfset lcl.substmap         = lcl.temp.subst>
+				<cfset lcl.html = lcl.html & substituteValues(lcl.render, lcl.substmap)>
+				<!--- <cfset lcl.it = iterator(lcl.coll)>
+				<cfloop condition="#lcl.it.whileHasNext()#">
+					<cfset lcl.substmap.current = lcl.it.index>
+					<cfset lcl.substmap.key     = lcl.it.key>
+					<cfset lcl.substmap.value   = lcl.it.current>
+					<cfset lcl.substmap["0"]    = substituteValues(lcl.it.current, lcl.substmap)>
+					<cfset lcl.html = lcl.html & substituteValues(lcl.render, lcl.substmap)>
 				</cfloop> --->
 			</cfcase>
 		</cfswitch>
 
-		<cfreturn local.html>
+		<cfreturn lcl.html>
 	</cffunction>
 
 	<cffunction name="list">
@@ -309,24 +309,24 @@ DO NOT USE!
 		<cfargument name="text" required="false" type="string" default="%0%" hint="the collections 'content-value' will be used (list,array) for the li's tagbody (or an empty string if it can not be determined)">
 
 		<cfset var local     = StructNew()>
-		<cfset local.coll    = arguments.collection>
-		<cfset local.render  = arguments.text>
+		<cfset lcl.coll    = arguments.collection>
+		<cfset lcl.render  = arguments.text>
 
-		<cfset local.argmap   = indexArgs(arguments, 3, "keyfields")>
-		<cfset local.itemattr = structSubtract(arguments, "id,class")>
-		<cfset local.linkattr = structSubtract(arguments, "href=href,linkid=id,linkclass=class")>
-		<cfset local.listattr = structSubtract(arguments, "listid=id,listclass=class")>
+		<cfset lcl.argmap   = indexArgs(arguments, 3, "keyfields")>
+		<cfset lcl.itemattr = structSubtract(arguments, "id,class")>
+		<cfset lcl.linkattr = structSubtract(arguments, "href=href,linkid=id,linkclass=class")>
+		<cfset lcl.listattr = structSubtract(arguments, "listid=id,listclass=class")>
 
-		<cfset local.html      = "">
+		<cfset lcl.html      = "">
 
-		<cfif NOT StructIsEmpty(local.linkattr)>
-			<cfset local.render = getHTML("a", keysToList(local.linkattr), local.render)>
+		<cfif NOT StructIsEmpty(lcl.linkattr)>
+			<cfset lcl.render = getHTML("a", keysToList(lcl.linkattr), lcl.render)>
 		</cfif>
-		<cfset local.render = getHTML("li", keysToList(local.itemattr), local.render)>
+		<cfset lcl.render = getHTML("li", keysToList(lcl.itemattr), lcl.render)>
 
-		<cfset local.html = getCollectionHTML(local.coll, local.render, local.argmap.map, local.argmap.keylist)>
+		<cfset lcl.html = getCollectionHTML(lcl.coll, lcl.render, lcl.argmap.map, lcl.argmap.keylist)>
 
-		<cfreturn getHTML("ul", keysToList(local.listattr), local.html)>
+		<cfreturn getHTML("ul", keysToList(lcl.listattr), lcl.html)>
 	</cffunction>
 
 	<cffunction name="link">
@@ -335,17 +335,17 @@ DO NOT USE!
 		<cfargument name="text" required="false" type="string" default="%0" hint="the collections 'content-value' will be used (list,array) for the li's tagbody (or an empty string if it can not be determined)">
 
 		<cfset var local     = StructNew()>
-		<cfset local.coll    = arguments.collection>
-		<cfset local.text    = arguments.text>
+		<cfset lcl.coll    = arguments.collection>
+		<cfset lcl.text    = arguments.text>
 
-		<cfset local.argmap   = indexArgs(arguments, 4, "keyfields")>
-		<cfset local.linkattr = structSubtract(arguments, "href,rel,class,id")>
-		<cfset local.html      = "">
+		<cfset lcl.argmap   = indexArgs(arguments, 4, "keyfields")>
+		<cfset lcl.linkattr = structSubtract(arguments, "href,rel,class,id")>
+		<cfset lcl.html      = "">
 
-		<cfset local.render = getHTML("a", keysToList(local.linkattr), local.text)>
-		<cfset local.html = getCollectionHTML(local.coll, local.render, local.argmap.map, local.argmap.keylist)>
+		<cfset lcl.render = getHTML("a", keysToList(lcl.linkattr), lcl.text)>
+		<cfset lcl.html = getCollectionHTML(lcl.coll, lcl.render, lcl.argmap.map, lcl.argmap.keylist)>
 
-		<cfreturn local.html>
+		<cfreturn lcl.html>
 	</cffunction>
 
 	<cffunction name="table">
@@ -354,61 +354,61 @@ DO NOT USE!
 		<!--- <cfargument name="headers" required="false" type="string" default="%0" hint="the collections 'content-value' will be used (list,array) for the li's tagbody (or an empty string if it can not be determined)"> --->
 
 		<cfset var local     = StructNew()>
-		<cfset local.coll    = arguments.collection>
-		<cfset local.html      = "">
+		<cfset lcl.coll    = arguments.collection>
+		<cfset lcl.html      = "">
 
-		<cfset local.tableattr = structSubtract(arguments, "id,class")>
+		<cfset lcl.tableattr = structSubtract(arguments, "id,class")>
 
-		<cfset local.colmap = arguments.colmap>
-		<cfset local.headers = "">
-		<cfset local.rowdata = "">
+		<cfset lcl.colmap = arguments.colmap>
+		<cfset lcl.headers = "">
+		<cfset lcl.rowdata = "">
 
-		<cfset local.headers_set = false>
+		<cfset lcl.headers_set = false>
 		<cfif StructKeyExists(arguments, "headers") AND arguments.headers neq "">
-			<cfset local.headers = arguments.headers>
-			<cfset local.headers_set = true>
+			<cfset lcl.headers = arguments.headers>
+			<cfset lcl.headers_set = true>
 		</cfif>
 
-		<cfset local.argmap  = StructNew()>
-		<cfset local.argmap.map = StructNew()>
-		<cfset local.argmap.keylist = "">
+		<cfset lcl.argmap  = StructNew()>
+		<cfset lcl.argmap.map = StructNew()>
+		<cfset lcl.argmap.keylist = "">
 
-		<cfset local.renders = StructNew()>
-		<cfset local.renders["th"] = ArrayNew(1)>
-		<cfset local.renders["td"] = ArrayNew(1)>
+		<cfset lcl.renders = StructNew()>
+		<cfset lcl.renders["th"] = ArrayNew(1)>
+		<cfset lcl.renders["td"] = ArrayNew(1)>
 
 		<!--- Setup substitution map --->
-		<cfset local.it = iterator(local.colmap)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset local.temp = parseKeyVal(local.it.current)>
-			<cfif NOT local.headers_set>
-				<cfset local.headers = ListAppend(local.headers, local.temp.value)>
+		<cfset lcl.it = iterator(lcl.colmap)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset lcl.temp = parseKeyVal(lcl.it.current)>
+			<cfif NOT lcl.headers_set>
+				<cfset lcl.headers = ListAppend(lcl.headers, lcl.temp.value)>
 			</cfif>
-			<cfset local.rowdata = ListAppend(local.rowdata, local.temp.key)>
-			<cfset StructInsert(local.argmap.map, local.it.key, local.temp.key)>
+			<cfset lcl.rowdata = ListAppend(lcl.rowdata, lcl.temp.key)>
+			<cfset StructInsert(lcl.argmap.map, lcl.it.key, lcl.temp.key)>
 
-			<cfset ArrayAppend(local.renders["th"], getHTML("th", "", local.temp.value))>
-			<cfset ArrayAppend(local.renders["td"], getHTML("td", "", "%#local.it.key#%"))>
+			<cfset ArrayAppend(lcl.renders["th"], getHTML("th", "", lcl.temp.value))>
+			<cfset ArrayAppend(lcl.renders["td"], getHTML("td", "", "%#lcl.it.key#%"))>
 		</cfloop>
 
 		<!--- Setup key list to lookup in collection --->
-		<cfset local.argmap.keylist = local.rowdata>
+		<cfset lcl.argmap.keylist = lcl.rowdata>
 
 		<!--- Parse head --->
-		<cfset local.thead = getHTML("tr", "", ArrayToList(local.renders["th"],""))>
-		<cfset local.thead = getHTML("thead", "", local.thead )>
+		<cfset lcl.thead = getHTML("tr", "", ArrayToList(lcl.renders["th"],""))>
+		<cfset lcl.thead = getHTML("thead", "", lcl.thead )>
 
 		<!--- Parse body template --->
-		<cfset local.tbody = getHTML("tr", "", ArrayToList(local.renders["td"],""))>
+		<cfset lcl.tbody = getHTML("tr", "", ArrayToList(lcl.renders["td"],""))>
 
 		<!--- get body data from template and collection --->
-		<cfset local.tbody = getCollectionHTML(local.coll, local.tbody, local.argmap.map, local.argmap.keylist)>
-		<cfset local.tbody = getHTML("tbody", "", local.tbody )>
+		<cfset lcl.tbody = getCollectionHTML(lcl.coll, lcl.tbody, lcl.argmap.map, lcl.argmap.keylist)>
+		<cfset lcl.tbody = getHTML("tbody", "", lcl.tbody )>
 
 		<!--- parse out table --->
-		<cfset local.html = getHTML("table", "", local.thead & local.tbody)>
+		<cfset lcl.html = getHTML("table", "", lcl.thead & lcl.tbody)>
 
-		<cfreturn local.html>
+		<cfreturn lcl.html>
 	</cffunction>
 
 	<cffunction name="render">
@@ -417,14 +417,14 @@ DO NOT USE!
 		<cfargument name="collectionkeys" required="false" type="string">
 
 		<cfset var local    = StructNew()>
-		<cfset local.coll   = arguments.collection>
+		<cfset lcl.coll   = arguments.collection>
 
-		<cfset local.argmap = indexArgs(arguments, 3, "collectionkeys")>
-		<cfset local.html   = "">
-		<cfset local.render = arguments.template>
-		<cfset local.html   = getCollectionHTML(local.coll, local.render, local.argmap.map, local.argmap.keylist)>
+		<cfset lcl.argmap = indexArgs(arguments, 3, "collectionkeys")>
+		<cfset lcl.html   = "">
+		<cfset lcl.render = arguments.template>
+		<cfset lcl.html   = getCollectionHTML(lcl.coll, lcl.render, lcl.argmap.map, lcl.argmap.keylist)>
 
-		<cfreturn local.html>
+		<cfreturn lcl.html>
 	</cffunction>
 
 	<cffunction name="timesnap">

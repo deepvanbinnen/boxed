@@ -34,7 +34,6 @@
 	</cffunction>
 
 	<cffunction name="getAttrArgs" output="false" returntype="any" hint="create an argumentCollection for get/set/paramAttribute">
-		arg
 		<cfreturn setAttr(argumentCollection = arguments)>
 	</cffunction>
 
@@ -147,19 +146,19 @@
 	</cffunction>
 
 	<cffunction name="createXFA" output="No" returntype="any">
-		<cfset var local = LocalArgs(arguments)>
-		<cfif local.args.getOriginalCount() eq 1 AND NOT local.args.parseRule(keylist="name", typelist="string")>
-			<cfset local.args.remapSingleNamedArg("name,action")>
+		<cfset var lcl = LocalArgs(arguments)>
+		<cfif lcl.args.getOriginalCount() eq 1 AND NOT lcl.args.parseRule(keylist="name", typelist="string")>
+			<cfset lcl.args.remapSingleNamedArg("name,action")>
 		</cfif>
-		<cfreturn getParser().createXFA(argumentCollection = local.args.getArguments())>
+		<cfreturn getParser().createXFA(argumentCollection = lcl.args.getArguments())>
 	</cffunction>
 
 	<cffunction name="createCFXFA" output="No" returntype="any">
-		<cfset var local = LocalArgs(arguments)>
-		<cfif local.args.getOriginalCount() eq 1 AND NOT local.args.parseRule(keylist="name", typelist="string")>
-			<cfset local.args.remapSingleNamedArg("name,action")>
+		<cfset var lcl = LocalArgs(arguments)>
+		<cfif lcl.args.getOriginalCount() eq 1 AND NOT lcl.args.parseRule(keylist="name", typelist="string")>
+			<cfset lcl.args.remapSingleNamedArg("name,action")>
 		</cfif>
-		<cfreturn getParser().createCFXFA(argumentCollection = local.args.getArguments())>
+		<cfreturn getParser().createCFXFA(argumentCollection = lcl.args.getArguments())>
 	</cffunction>
 
 	<cffunction name="getParser" output="false" access="public" returntype="any">

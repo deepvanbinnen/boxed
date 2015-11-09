@@ -83,14 +83,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="value"      required="true" type="any"  hint="value to use">
 		<cfargument name="append"     required="false" type="boolean" default="false" hint="append contentvar value or overwrite">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif arguments.append>
-			<cfset local.currval = appendVariable(getVar(arguments.contentvar, ""), arguments.value)>
+			<cfset lcl.currval = appendVariable(getVar(arguments.contentvar, ""), arguments.value)>
 		<cfelse>
-			<cfset local.currval = arguments.value>
+			<cfset lcl.currval = arguments.value>
 		</cfif>
 
-		<cfset getEbxPageContext().ebx_put(arguments.contentvar, local.currval)>
+		<cfset getEbxPageContext().ebx_put(arguments.contentvar, lcl.currval)>
 
 		<cfreturn true>
 	</cffunction>
@@ -128,12 +128,12 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="contentvar" required="false" type="string"  default="" hint="contentvariable to store result output">
 		<cfargument name="append"     required="false" type="boolean" default="false" hint="append contentvar or overwrite">
 
-		<cfset var local = StructNew()>
-		<cfset local.req = getParsedAction(arguments.action)>
-		<cfif NOT StructIsEmpty(local.req)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req = getParsedAction(arguments.action)>
+		<cfif NOT StructIsEmpty(lcl.req)>
 			<cfset StructDelete(arguments, "action")>
-			<cfset StructAppend(local.req, arguments)>
-			<cfset variables.cf.createContext(argumentCollection=local.req)>
+			<cfset StructAppend(lcl.req, arguments)>
+			<cfset variables.cf.createContext(argumentCollection=lcl.req)>
 			<cfset setContextFromFactory(arguments.type)>
 			<cfset addContextToStack()>
 			<cfset updateParserFromContext()>
@@ -148,21 +148,21 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="getParsedAction" returntype="struct" hint="return parsed fuseaction as struct with action and circuitdir">
 		<cfargument name="action"  required="true"  type="string" hint="action to be parsed">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
 
 		<cfif ListLen(arguments.action, ".") eq 3 AND hasInternal(arguments.action)>
-			<cfset local.result.action  = arguments.action>
-			<cfset local.result.circuitdir = getInternalExecDir(arguments.action)>
+			<cfset lcl.result.action  = arguments.action>
+			<cfset lcl.result.circuitdir = getInternalExecDir(arguments.action)>
 		<cfelseif ListLen(arguments.action, ".") eq 2 AND hasCircuit(ListFirst(arguments.action, "."))>
-			<cfset local.result.action  = arguments.action>
-			<cfset local.result.circuitdir = getCircuitExecDir(ListFirst(arguments.action, "."))>
+			<cfset lcl.result.action  = arguments.action>
+			<cfset lcl.result.circuitdir = getCircuitExecDir(ListFirst(arguments.action, "."))>
 		<cfelseif ListLen(arguments.action, ".") eq 1 AND getProperty("thisCircuit") neq "">
-			<cfset local.result.action    = getProperty("thisCircuit") & "." & arguments.action>
-			<cfset local.result.circuitdir = getProperty("circuitdir")>
+			<cfset lcl.result.action    = getProperty("thisCircuit") & "." & arguments.action>
+			<cfset lcl.result.circuitdir = getProperty("circuitdir")>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="setContextFromFactory" returntype="any" hint="set active context based on type??">
@@ -203,11 +203,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="executeContext" returntype="boolean" hint="include context-template and set result in context. Return true if result does not contain errors">
-		<cfset var local = StructNew()>
-		<cfset local.template = variables.thisContext.getExecDir() & variables.thisContext.getTemplate()>
-		<cfset local.result   = include(local.template)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.template = variables.thisContext.getExecDir() & variables.thisContext.getTemplate()>
+		<cfset lcl.result   = include(lcl.template)>
 		<!--- <cfdump var="#variables.thisContext._dump()#"> --->
-		<cfset variables.thisContext.setResult(local.result)>
+		<cfset variables.thisContext.setResult(lcl.result)>
 
 		<cfif variables.thisContext.hasErrors()>
 			<cfset ArrayAppend(variables.errors, variables.thisContext)>
@@ -216,16 +216,16 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="handleContextOutput" returntype="any" hint="process result: assign content-variable or parser-layout otherwise write result output">
-		<cfset var local = StructNew( )>
-		<cfset local.cc = getCurrentEbxContext()>
-		<cfif local.cc.getContentVar() neq "">
-			<cfset assignVariable(local.cc.getContentVar(), local.cc.getOutput(), local.cc.getAppend())>
+		<cfset var lcl = StructNew( )>
+		<cfset lcl.cc = getCurrentEbxContext()>
+		<cfif lcl.cc.getContentVar() neq "">
+			<cfset assignVariable(lcl.cc.getContentVar(), lcl.cc.getOutput(), lcl.cc.getAppend())>
 		<cfelse>
 			<!--- Always fill layout variable if requesttype for action is the main action or a layout action --->
 			<cfif isMainRequest() OR isLayoutRequest()>
-				<cfset setLayout( local.cc.getOutput() )>
+				<cfset setLayout( lcl.cc.getOutput() )>
 			<cfelse>
-				<cfset flushOutput( local.cc.getOutput() )>
+				<cfset flushOutput( lcl.cc.getOutput() )>
 			</cfif>
 		</cfif>
 
@@ -260,28 +260,28 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="updateParserFromContext" returntype="any" hint="update parser settings from active context">
 		<cfargument name="types"   required="false" type="string" default="current,target" hint="parser context scopes can be current target or original">
 
-		<cfset var local = StructNew()>
-		<cfset local.keylist  = ListToArray("action,circuitdir,circuit,rootpath,execdir,act")>
-		<cfset local.thislist = ListToArray("thisAction,circuitdir,thisCircuit,rootpath,execdir,act")>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.keylist  = ListToArray("action,circuitdir,circuit,rootpath,execdir,act")>
+		<cfset lcl.thislist = ListToArray("thisAction,circuitdir,thisCircuit,rootpath,execdir,act")>
 
 		<!--- Do not update parser on calls to include which uses an internal circuit --->
 		<cfif variables.thisContext.getType() neq "include">
-			<cfloop list="#arguments.types#" index="local.type">
-				<cfswitch expression="#local.type#">
+			<cfloop list="#arguments.types#" index="lcl.type">
+				<cfswitch expression="#lcl.type#">
 					<cfcase value="current">
-						<cfloop from="1" to="#ArrayLen(local.keylist)#" index="local.i">
-							<cfset setProperty(local.thislist[local.i], variables.thisContext.get(local.keylist[local.i]))>
+						<cfloop from="1" to="#ArrayLen(lcl.keylist)#" index="lcl.i">
+							<cfset setProperty(lcl.thislist[lcl.i], variables.thisContext.get(lcl.keylist[lcl.i]))>
 						</cfloop>
 					</cfcase>
 					<cfcase value="original,target">
-						<cfloop from="1" to="#ArrayLen(local.keylist)#" index="local.i">
-							<cfset setProperty(local.type & local.keylist[local.i], variables.thisContext.get(local.keylist[local.i]))>
+						<cfloop from="1" to="#ArrayLen(lcl.keylist)#" index="lcl.i">
+							<cfset setProperty(lcl.type & lcl.keylist[lcl.i], variables.thisContext.get(lcl.keylist[lcl.i]))>
 						</cfloop>
 					</cfcase>
 					<!--- <cfcase value="target">
 						<cfif variables.thisContext.getType() neq "include">
-							<cfloop from="1" to="#ArrayLen(local.keylist)#" index="local.i">
-								<cfset setProperty(local.type & local.keylist[local.i], variables.thisContext.get(local.keylist[local.i]))>
+							<cfloop from="1" to="#ArrayLen(lcl.keylist)#" index="lcl.i">
+								<cfset setProperty(lcl.type & lcl.keylist[lcl.i], variables.thisContext.get(lcl.keylist[lcl.i]))>
 							</cfloop>
 						</cfif>
 					</cfcase> --->
@@ -305,9 +305,9 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="attributes" type="struct" required="true" default="#StructNew()#" hint="struct with new attributes values">
 		<cfargument name="overwrite"  type="boolean" required="false" default="true" hint="overwrite existing keys">
 		<cfset var local  = StructNew()>
-		<cfset local.attr = getAttributes()>
-		<cfset StructAppend(local.attr, arguments.attributes, arguments.overwrite)>
-		<cfreturn setAttributes(local.attr)>
+		<cfset lcl.attr = getAttributes()>
+		<cfset StructAppend(lcl.attr, arguments.attributes, arguments.overwrite)>
+		<cfreturn setAttributes(lcl.attr)>
 		<!--- --->
 	</cffunction>
 
@@ -356,11 +356,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<!--- Path related --->
 	<cffunction name="getInternalExecDir" returntype="string" hint="get (path)value from parser-property for a property read from the internal circuit definition">
 		<cfargument name="action" type="string" required="true" hint="full qualified internal action">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.pathvar = getInternal(ListLast(arguments.action, "."))>
-		<cfif local.pathvar neq "">
-			<cfreturn getProperty(local.pathvar)>
+		<cfset lcl.pathvar = getInternal(ListLast(arguments.action, "."))>
+		<cfif lcl.pathvar neq "">
+			<cfreturn getProperty(lcl.pathvar)>
 		</cfif>
 		<cfreturn "">
 	</cffunction>
@@ -424,10 +424,10 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="name"  type="string" required="true" hint="attribute name">
 		<cfargument name="value" type="any"    required="false" default="" hint="value if unexistant">
 
-		<cfset var local = StructNew()>
-		<cfset local.attr = getAttributes()>
-		<cfif hasAttribute(arguments.name, local.attr)>
-			<cfreturn local.attr[arguments.name]>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.attr = getAttributes()>
+		<cfif hasAttribute(arguments.name, lcl.attr)>
+			<cfreturn lcl.attr[arguments.name]>
 		</cfif>
 
 		<cfreturn arguments.value>
@@ -450,9 +450,9 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="name"  type="string" required="true" hint="attribute name">
 		<cfargument name="value" type="any"    required="true" hint="value for attribute">
 
-		<cfset var local = StructNew()>
-		<cfset local.attr = getAttributes()>
-		<cfif NOT hasAttribute(arguments.name, local.attr)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.attr = getAttributes()>
+		<cfif NOT hasAttribute(arguments.name, lcl.attr)>
 			<cfset setAttribute(arguments.name, arguments.value)>
 		</cfif>
 
@@ -480,45 +480,45 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="value"   required="true" type="any"  hint="value to use">
 
 		<cfset var local     = StructNew()>
-		<cfset local.currval = arguments.orginal>
+		<cfset lcl.currval = arguments.orginal>
 
-		<cfif IsSimpleValue(local.currval) AND local.currval eq "">
+		<cfif IsSimpleValue(lcl.currval) AND lcl.currval eq "">
 			<!--- bail out immediately if append isn't needed --->
-			<cfset local.currval = arguments.value>
-		<cfelseif IsSimpleValue(local.currval) AND IsSimpleValue(arguments.value)>
+			<cfset lcl.currval = arguments.value>
+		<cfelseif IsSimpleValue(lcl.currval) AND IsSimpleValue(arguments.value)>
 			<!--- string concatenation if both are string --->
-			<cfset local.currval = local.currval & 	arguments.value>
-		<cfelseif IsArray(local.currval)>
+			<cfset lcl.currval = lcl.currval & 	arguments.value>
+		<cfelseif IsArray(lcl.currval)>
 			<!--- ArrayAppend on array --->
 			<!--- TODO:
 					Add [[AND NOT IsArray(arguments.value)]] so that we can concat both arrays;
 					But is this actually nice behaviour?
 			--->
-			<cfset ArrayAppend(local.currval, arguments.value)>
-		<cfelseif IsStruct(local.currval) AND IsStruct(arguments.value)>
+			<cfset ArrayAppend(lcl.currval, arguments.value)>
+		<cfelseif IsStruct(lcl.currval) AND IsStruct(arguments.value)>
 			<!--- Merge structs if both are structs --->
-			<cfset StructAppend(local.currval, arguments.value, true)>
-		<cfelseif IsQuery(local.currval) AND IsStruct(arguments.value)>
+			<cfset StructAppend(lcl.currval, arguments.value, true)>
+		<cfelseif IsQuery(lcl.currval) AND IsStruct(arguments.value)>
 			<!--- Add query row based on struct; this is a bit experimental --->
-			<cfset local.cols  = local.currval.columnlist>
-			<cfset local.recs  = local.currval.recordcount>
-			<cfset local.valid = false>
-			<cfset QueryAddRow(local.currval)>
-			<cfloop list="#StructKeyList(arguments.value)#" index="local.item">
-				<cfset local.testval = arguments.value[local.item]>
-				<cfif ListFind(local.cols, local.item)>
-					<cfset QuerySetCell(local.currval, local.item, local.testval)>
-					<cfset local.valid = true>
-				<cfelseif IsArray(local.testval) AND ArrayLen(local.testval) eq local.recs>
-					<cfset QueryAddColumn(local.currval, local.item, local.testval)>
-					<cfset local.valid = true>
+			<cfset lcl.cols  = lcl.currval.columnlist>
+			<cfset lcl.recs  = lcl.currval.recordcount>
+			<cfset lcl.valid = false>
+			<cfset QueryAddRow(lcl.currval)>
+			<cfloop list="#StructKeyList(arguments.value)#" index="lcl.item">
+				<cfset lcl.testval = arguments.value[lcl.item]>
+				<cfif ListFind(lcl.cols, lcl.item)>
+					<cfset QuerySetCell(lcl.currval, lcl.item, lcl.testval)>
+					<cfset lcl.valid = true>
+				<cfelseif IsArray(lcl.testval) AND ArrayLen(lcl.testval) eq lcl.recs>
+					<cfset QueryAddColumn(lcl.currval, lcl.item, lcl.testval)>
+					<cfset lcl.valid = true>
 				</cfif>
 			</cfloop>
-			<cfif NOT local.valid>
-				<cfset local.currval.removeRows(JavaCast( "int", local.recs ),JavaCast( "int", 1 ))>
+			<cfif NOT lcl.valid>
+				<cfset lcl.currval.removeRows(JavaCast( "int", lcl.recs ),JavaCast( "int", 1 ))>
 			</cfif>
 		</cfif>
-		<cfreturn local.currval>
+		<cfreturn lcl.currval>
 	</cffunction>
 
 </cfcomponent>

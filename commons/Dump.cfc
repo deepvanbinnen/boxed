@@ -300,30 +300,30 @@
 	<cffunction name="dumpCatch" access="public" returntype="string" output="false">
 		<cfargument name="caught" type="any" required="true">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 
-		<cfset local.cght = arguments.caught />
-		<cfsavecontent variable="local.result"><cfoutput>
+		<cfset lcl.cght = arguments.caught />
+		<cfsavecontent variable="lcl.result"><cfoutput>
 			<div class="dump caught">
 				<div>
-					<p class="message">#local.cght.message#</p>
-					<div class="detail">#local.cght.detail#</div>
-					<cfif StructKeyExists( local.cght, "type")>
+					<p class="message">#lcl.cght.message#</p>
+					<div class="detail">#lcl.cght.detail#</div>
+					<cfif StructKeyExists( lcl.cght, "type")>
 						<div class="type">
-							<cfswitch expression="#local.cght.type#">
+							<cfswitch expression="#lcl.cght.type#">
 								<cfcase value="Database">
 									<cfoutput>
 										<dl class="database">
-											<!-- <dt>queryError:</dt><dd class="message">#local.cght.queryError#</dd> -->
-											<dt>SQL:</dt><dd class="source">#local.cght.Sql#</dd>
-											<dt>WHERE:</dt><dd class="params">#local.cght.where#</dd>
+											<!-- <dt>queryError:</dt><dd class="message">#lcl.cght.queryError#</dd> -->
+											<dt>SQL:</dt><dd class="source">#lcl.cght.Sql#</dd>
+											<dt>WHERE:</dt><dd class="params">#lcl.cght.where#</dd>
 										</dl>
 									</cfoutput>
 								</cfcase>
 								<cfcase value="Application">
-									<cfif StructKeyExists(local.cght, "func")>
+									<cfif StructKeyExists(lcl.cght, "func")>
 										<cfoutput>
-											Function: <strong>#local.cght.func#</strong><strong>@<em>#local.cght.templatePath#</em></strong>
+											Function: <strong>#lcl.cght.func#</strong><strong>@<em>#lcl.cght.templatePath#</em></strong>
 										</cfoutput>
 									</cfif>
 								</cfcase>
@@ -332,42 +332,42 @@
 								</cfcase>
 								<cfcase value="missingInclude">
 									<cfoutput>
-										<cfdump var="#local.cght#">
+										<cfdump var="#lcl.cght#">
 									</cfoutput>
 								</cfcase>
 								<cfdefaultcase>
-									<cfoutput>#local.cght.Type#</cfoutput>
+									<cfoutput>#lcl.cght.Type#</cfoutput>
 									<!--- <cfdump var="#arguments.caught#"> --->
 								</cfdefaultcase>
 							</cfswitch>
 						</div>
 					</cfif>
-					<cfif StructKeyExists( local.cght, "tagcontext") AND ArrayLen(local.cght.tagcontext)>
+					<cfif StructKeyExists( lcl.cght, "tagcontext") AND ArrayLen(lcl.cght.tagcontext)>
 						<ul class="tagcontext">
-							<cfloop from="1" to="#ArrayLen(local.cght.tagcontext)#" index="local.i">
-								<cfset local.fnrx = "(.*?)(\$func([a-zA-Z0-9_]+?)\.)(.*)">
-								<cfset local.trace = local.cght.tagcontext[local.i]>
-								<li>#local.trace.template# (line:#local.trace.line#):
-									<cfif StructKeyExists(local.trace, "raw_trace") AND REFindNoCase(local.fnrx, local.trace.raw_trace)>
-										<strong class="function">#REReplaceNoCase(local.trace.raw_trace, local.fnrx, "\3")#</strong>
+							<cfloop from="1" to="#ArrayLen(lcl.cght.tagcontext)#" index="lcl.i">
+								<cfset lcl.fnrx = "(.*?)(\$func([a-zA-Z0-9_]+?)\.)(.*)">
+								<cfset lcl.trace = lcl.cght.tagcontext[lcl.i]>
+								<li>#lcl.trace.template# (line:#lcl.trace.line#):
+									<cfif StructKeyExists(lcl.trace, "raw_trace") AND REFindNoCase(lcl.fnrx, lcl.trace.raw_trace)>
+										<strong class="function">#REReplaceNoCase(lcl.trace.raw_trace, lcl.fnrx, "\3")#</strong>
 									<cfelse>
-										<cfif StructKeyExists(local.trace, "type")>
-											<strong><em>#local.trace.type#</em></strong>
+										<cfif StructKeyExists(lcl.trace, "type")>
+											<strong><em>#lcl.trace.type#</em></strong>
 										</cfif>
 									</cfif>
 								</li>
 							</cfloop>
 						</ul>
-					<cfelseif StructKeyExists( local.cght, "stacktrace") >
+					<cfelseif StructKeyExists( lcl.cght, "stacktrace") >
 						<div class="stacktrace">
-							<cfoutput>#friendlyStackTrace(local.cght.stacktrace)#</cfoutput>
+							<cfoutput>#friendlyStackTrace(lcl.cght.stacktrace)#</cfoutput>
 						</div>
 					</cfif>
 				</div>
 			</div>
 		</cfoutput></cfsavecontent>
 
-		<cfreturn dumpData(local.result) />
+		<cfreturn dumpData(lcl.result) />
 	</cffunction>
 
 	<cffunction name="friendlyStackTrace" output="false">

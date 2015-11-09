@@ -7,100 +7,100 @@
 			<cfset _setCollector(this)>
 		<cfreturn this />
 	</cffunction>
-	
+
 	<cffunction name="parseRule" output="true" access="public" returntype="boolean">
 		<cfargument name="keylist" type="string" required="true">
 		<cfargument name="typelist" type="string" required="true">
-		
+
 		<cfif getRuleObj().parseRule(arguments.keylist, arguments.typelist).isValidRule()>
 			<cfset setRule( getRuleObj() )>
 		</cfif>
-		
+
 		<cfreturn hasRule()>
 	</cffunction>
-	
+
 	<cffunction name="mergeArgs" output="true" access="public" returntype="any">
 		<cfargument name="mergedKey" type="string" required="false" default="argumentCollection">
-		
-		<cfset var local = StructCreate( 
-			  newArgsValue  = getKeyValue( arguments.mergedKey, StructCreate() ) 
+
+		<cfset var lcl = StructCreate(
+			  newArgsValue  = getKeyValue( arguments.mergedKey, StructCreate() )
 			, newArgsStruct = StructCreate()
 		)>
-		<cfset StructAppend(local.newArgsValue, getArguments(), true)>
-		<cfset StructInsert(local.newArgsStruct, arguments.mergedKey, getArguments(), true)>
-		
-		<cfset _setNewArgstruct(local.newArgsStruct)>
-		
+		<cfset StructAppend(lcl.newArgsValue, getArguments(), true)>
+		<cfset StructInsert(lcl.newArgsStruct, arguments.mergedKey, getArguments(), true)>
+
+		<cfset _setNewArgstruct(lcl.newArgsStruct)>
+
 		<cfreturn this />
 	</cffunction>
-	
+
 	<cffunction name="remapSingleNamedArg" output="true" access="public" returntype="any">
 		<cfargument name="mapkeyto"  type="string" required="true">
 		<cfargument name="mapvalueto"  type="string" required="false" default="">
-		
-		<cfset var local = StructCreate(keyto = arguments.mapkeyto, valto = arguments.mapvalueto)>
-		
-		<cfif local.valto neq  "">
-			<cfset local.keyto = ListAppend(local.keyto, local.valto)>
+
+		<cfset var lcl = StructCreate(keyto = arguments.mapkeyto, valto = arguments.mapvalueto)>
+
+		<cfif lcl.valto neq  "">
+			<cfset lcl.keyto = ListAppend(lcl.keyto, lcl.valto)>
 		</cfif>
-		
+
 		<cfif getOriginalCount() eq 1>
-			<cfset local.value   = getOriginal().valuesIterator().next()>
-			<cfset local.newArgs = StructCreate()>
-			<cfset StructInsert(local.newArgs, ListFirst(local.keyto), local.value.getKey(), true)>
-			<cfset StructInsert(local.newArgs, ListLast(local.keyto), local.value.getValue(), true)>
-			<cfset _setNewArgstruct(local.newArgs)>
+			<cfset lcl.value   = getOriginal().valuesIterator().next()>
+			<cfset lcl.newArgs = StructCreate()>
+			<cfset StructInsert(lcl.newArgs, ListFirst(lcl.keyto), lcl.value.getKey(), true)>
+			<cfset StructInsert(lcl.newArgs, ListLast(lcl.keyto), lcl.value.getValue(), true)>
+			<cfset _setNewArgstruct(lcl.newArgs)>
 		<cfelse>
 			<cfthrow message="remapSingleNamedArg error this argcollection contains #getArgumentsCount()# arguments">
 		</cfif>
-		
+
 		<cfreturn this>
 	</cffunction>
-	
+
 	<cffunction name="remapArgs" output="true" access="public" returntype="any">
 		<cfargument name="inlist"  type="string" required="true">
 		<cfargument name="outlist" type="string" required="false" default="">
 		<cfargument name="strict"  type="boolean" required="false" default="true" hint="Whether to discard other keys in the return struct">
-		
-		<cfset var local = StructCreate()>
+
+		<cfset var lcl = StructCreate()>
 		<cfif arguments.strict>
-			<cfset local.newArgs = StructCreate()>
+			<cfset lcl.newArgs = StructCreate()>
 		<cfelse>
-			<cfset local.newArgs = getArguments().clone()>
+			<cfset lcl.newArgs = getArguments().clone()>
 		</cfif>
-		
+
 		<cfif arguments.outlist eq "">
-			<cfset local.o  = getOriginal().valuesIterator()>
-			<cfset local.oi = 0>
-			<cfloop condition="#local.o.hasNext()#">
-				<cfset local.oi = local.oi + 1>
-				<cfif local.oi LTE ListLen(arguments.inlist)>
-					<cfset local.ov = local.o.next()>
-					<cfset local.inkey  = ListGetAt(arguments.inlist, local.oi)>
-					<cfif NOT hasKey( local.inkey )>
-						<cfset StructInsert(local.newArgs, local.inkey, local.ov.getValue(), true)>
+			<cfset lcl.o  = getOriginal().valuesIterator()>
+			<cfset lcl.oi = 0>
+			<cfloop condition="#lcl.o.hasNext()#">
+				<cfset lcl.oi = lcl.oi + 1>
+				<cfif lcl.oi LTE ListLen(arguments.inlist)>
+					<cfset lcl.ov = lcl.o.next()>
+					<cfset lcl.inkey  = ListGetAt(arguments.inlist, lcl.oi)>
+					<cfif NOT hasKey( lcl.inkey )>
+						<cfset StructInsert(lcl.newArgs, lcl.inkey, lcl.ov.getValue(), true)>
 					<cfelse>
-						<cfset StructInsert(local.newArgs, local.inkey, getKeyValue(local.inkey), true)>
+						<cfset StructInsert(lcl.newArgs, lcl.inkey, getKeyValue(lcl.inkey), true)>
 					</cfif>
 				<cfelse>
 					<cfbreak>
 				</cfif>
 			</cfloop>
 		<cfelseif ListLen(arguments.inlist) eq ListLen(arguments.outlist)>
-			<cfset local.keys = iterator(arguments.inlist)>
-			<cfloop condition="#local.keys.hasNext()#">
-				<cfif hasKey(local.keys.getKey())>
-					<cfset local.temp = getKeyValue(local.keys.getKey())>
-					<cfset StructDelete(local.newArgs, local.keys.getKey())>
-					<cfset StructInsert(local.newArgs, ListGetAt(local.outlist, local.keys.getIndex()), local.temp, true)>
+			<cfset lcl.keys = iterator(arguments.inlist)>
+			<cfloop condition="#lcl.keys.hasNext()#">
+				<cfif hasKey(lcl.keys.getKey())>
+					<cfset lcl.temp = getKeyValue(lcl.keys.getKey())>
+					<cfset StructDelete(lcl.newArgs, lcl.keys.getKey())>
+					<cfset StructInsert(lcl.newArgs, ListGetAt(lcl.outlist, lcl.keys.getIndex()), lcl.temp, true)>
 				</cfif>
 			</cfloop>
 		</cfif>
-		<cfset _setNewArgstruct(local.newArgs)>
-		
+		<cfset _setNewArgstruct(lcl.newArgs)>
+
 		<cfreturn this />
 	</cffunction>
-	
+
 
 	<cffunction name="getRuleObj" output="false" access="public" returntype="any">
 		<cfif NOT StructKeyExists( variables, "ruleObj")>
@@ -108,18 +108,18 @@
 		</cfif>
 		<cfreturn variables.ruleObj>
 	</cffunction>
-	
+
 	<cffunction name="getOriginal" output="false" access="public" returntype="any">
 		<cfreturn _getOriginal()>
 	</cffunction>
-	
+
 	<cffunction name="_getOriginal" output="false" access="private" returntype="any">
 		<cfif NOT StructKeyExists( variables, "original")>
 			<cfthrow message="ArgumentsCollector.cfc: Original is undefined, call init to set." />
 		</cfif>
 		<cfreturn variables.original />
 	</cffunction>
-	
+
 	<cffunction name="_setOriginal" output="false" access="private">
 		<cfargument name="original" type="any" required="true" />
 			<cfset variables.original = arguments.original />

@@ -129,7 +129,7 @@
 	<cffunction name="_getMethodAsRow" returntype="string" hint="gets documentation for method rendered as tablerow">
 		<cfargument name="meth" type="any" required="true" hint="introspected method struct">
 
-		<cfset var localvar = StructCreate(meth = arguments.meth, pars = iterator(arguments.meth.parameters), result = "")>
+		<cfset var lcl = StructCreate(meth = arguments.meth, pars = iterator(arguments.meth.parameters), result = "")>
 
 		<cfsavecontent variable="localvar.result">
 			<cfoutput>
@@ -180,7 +180,7 @@
 	<cffunction name="_getMethodsAsTable" returntype="string" hint="gets documentation for methods in the iterator rendered as tablerow">
 		<cfargument name="methiter" type="any" required="true" hint="iterator over introspected methods">
 
-		<cfset var localvar = StructCreate(iter = arguments.methiter, result = "")>
+		<cfset var lcl = StructCreate(iter = arguments.methiter, result = "")>
 
 		<cfsavecontent variable="localvar.result">
 			<cfoutput>
@@ -222,11 +222,11 @@
 		<cfargument name="methiter" type="any" required="true" hint="iterator over introspected methods">
 		<cfargument name="str" type="any" required="true" hint="iterator over introspected methods">
 
-		<cfset var localvar = StructCreate(iter = arguments.methiter)>
+		<cfset var lcl = StructCreate(iter = arguments.methiter)>
 
 		<cfloop condition="#localvar.iter.whileHasNext()#">
 			<cfset ArrayAppend(arguments.str, getSnipex().getReplacedSnippet(110, localvar.iter.getCurrent())) />
-			<cfset arguments.str = _getArgumentsAsText(iterator(local.iter.getCurrent().parameters), arguments.str ) />
+			<cfset arguments.str = _getArgumentsAsText(iterator(lcl.iter.getCurrent().parameters), arguments.str ) />
 		</cfloop>
 
 		<cfreturn arguments.str>
@@ -236,7 +236,7 @@
 		<cfargument name="argiter" type="any" required="true" hint="iterator over introspected methods">
 		<cfargument name="str" type="any" required="true" hint="iterator over introspected methods">
 
-		<cfset var localvar = StructCreate(iter = arguments.argiter, result = "")>
+		<cfset var lcl = StructCreate(iter = arguments.argiter, result = "")>
 		<cfloop condition="#localvar.iter.whileHasNext()#">
 			<cfset ArrayAppend(arguments.str, getSnipex().getReplacedSnippet(111, localvar.iter.getCurrent())) />
 		</cfloop>
@@ -245,7 +245,7 @@
 	</cffunction>
 
 	<cffunction name="_getHTML" returntype="string" hint="generate the documenation html">
-		<cfset var localvar = StructCreate(
+		<cfset var lcl = StructCreate(
 			docs = getAllMethods(getCFC())
 		)>
 		<cfset var iter       = iterator(localvar.docs)>
@@ -287,10 +287,10 @@
 		<cfargument name="cfc" type="any" required="false" default="#getCFC()#">
 		<cfargument name="maxdepth" type="string" required="false" default="#getMaxDepth()#">
 
-		<cfset var localvar = StructCreate(
+		<cfset var lcl = StructCreate(
 			docs = getAllMethods(arguments.cfc)
 		)>
-		<cfset var iter       = iterator(local.docs)>
+		<cfset var iter       = iterator(lcl.docs)>
 		<cfset var meth       = "">
 		<cfset var meth_iter  = "">
 		<cfset var param_iter = "">

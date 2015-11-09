@@ -43,15 +43,15 @@
 	<cffunction name="bashEscape" returntype="string" output="false" hint="escapes (multiline) string suitable for use in bash">
 		<cfargument name="str"  type="string" required="true" hint="the string to escape" />
 
-		<cfset var local = StructNew() />
-		<cfset local.string = TRIM(arguments.str) />
-		<cfset local.escapes = "((\\?)(\n|!|$|#CHR(34)#|\\))" />
-		<cfset local.string = REReplace(local.string, local.escapes, "\\\3", "ALL") />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.string = TRIM(arguments.str) />
+		<cfset lcl.escapes = "((\\?)(\n|!|$|#CHR(34)#|\\))" />
+		<cfset lcl.string = REReplace(lcl.string, lcl.escapes, "\\\3", "ALL") />
 		<!--- trailing backslash verwijderen *ouch* --->
-		<cfif RIGHT(local.string,1) EQ "\" AND RIGHT(local.string,2) NEQ "\\">
-			<cfset local.string = LEFT(local.string, LEN(local.string)-1) />
+		<cfif RIGHT(lcl.string,1) EQ "\" AND RIGHT(lcl.string,2) NEQ "\\">
+			<cfset lcl.string = LEFT(lcl.string, LEN(lcl.string)-1) />
 		</cfif>
-		<cfreturn local.string />
+		<cfreturn lcl.string />
 	</cffunction>
 
 	<cffunction name="execute" returntype="string" hint="Proxies cfexecute and returns the variable result">
@@ -59,10 +59,10 @@
 		<cfargument name="args" type="any"    required="false" default="" hint="shell command arguments as array or string" />
 		<cfargument name="timeout" type="numeric"    required="false" default="10" hint="timeoutvalue for cfexecute defaults to 10ms" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfexecute name="#arguments.cmd#" arguments="#arguments.args#" timeout="#arguments.timeout#" variable="local.result"  />
-			<cfreturn local.result />
+			<cfexecute name="#arguments.cmd#" arguments="#arguments.args#" timeout="#arguments.timeout#" variable="lcl.result"  />
+			<cfreturn lcl.result />
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.ExecutionError"
@@ -79,19 +79,19 @@
 		<cfargument name="sort"    type="string" required="false" default="name" hint="sort columns" />
 		<cfargument name="filter"  type="string" required="false" default="" hint="names to filter" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.dir = arguments.dir>
-			<cfif NOT DirectoryExists(local.dir)>
-				<cfset local.dir = getDirectoryFromPath(local.dir)>
+			<cfset lcl.dir = arguments.dir>
+			<cfif NOT DirectoryExists(lcl.dir)>
+				<cfset lcl.dir = getDirectoryFromPath(lcl.dir)>
 			</cfif>
 			<!--- Quick and dirty --->
 			<cfif arguments.filter EQ "">
-				<cfdirectory type="#arguments.type#" action="list" directory="#local.dir#" name="local.result" recurse="#arguments.recurse#" sort="#arguments.sort#" />
+				<cfdirectory type="#arguments.type#" action="list" directory="#lcl.dir#" name="lcl.result" recurse="#arguments.recurse#" sort="#arguments.sort#" />
 			<cfelse>
-				<cfdirectory type="#arguments.type#" action="list" directory="#local.dir#" name="local.result" recurse="#arguments.recurse#" sort="#arguments.sort#" filter="#arguments.filter#" />
+				<cfdirectory type="#arguments.type#" action="list" directory="#lcl.dir#" name="lcl.result" recurse="#arguments.recurse#" sort="#arguments.sort#" filter="#arguments.filter#" />
 			</cfif>
-			<cfreturn local.result />
+			<cfreturn lcl.result />
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.DirectoryListing"
@@ -114,10 +114,10 @@
 	<cffunction name="displayFile" output="true" hint="Read and display content from file">
 		<cfargument name="filename"  required="true" type="string">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cftry>
-			<cfset local.source = readFile(arguments.filename) />
-			<cfoutput>#local.source#</cfoutput>
+			<cfset lcl.source = readFile(arguments.filename) />
+			<cfoutput>#lcl.source#</cfoutput>
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.FileReadFailure"
@@ -130,30 +130,30 @@
 	<cffunction name="tempFile" output="false" hint="Creates a temporary file">
 		<cfargument name="content"  required="true" type="string">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cftry>
-			<cfset local.tmpfile = getTempFile( getTempDirectory(), "tmp" )>
-			<cfset writeFile(local.tmpfile, arguments.content)>
+			<cfset lcl.tmpfile = getTempFile( getTempDirectory(), "tmp" )>
+			<cfset writeFile(lcl.tmpfile, arguments.content)>
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.TempFileFailure"
-					message="Unable to write tempfile #local.tmpfile#"
+					message="Unable to write tempfile #lcl.tmpfile#"
 					detail="#cfcatch.message# #cfcatch.detail#" />
 			</cfcatch>
 		</cftry>
-		<cfreturn local.tmpfile>
+		<cfreturn lcl.tmpfile>
 	</cffunction>
 
 	<cffunction name="readFile" output="false" hint="Reads content from file">
 		<cfargument name="filename"  required="true" type="string">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cftry>
-			<cffile action="read" file="#arguments.filename#" variable="local.source" />
+			<cffile action="read" file="#arguments.filename#" variable="lcl.source" />
 			<cfcatch type="any">
 				<cftry>
-					<cffile action="readbinary" file="#arguments.filename#" variable="local.source" />
-					<cfset local.source = Trim(local.source) />
+					<cffile action="readbinary" file="#arguments.filename#" variable="lcl.source" />
+					<cfset lcl.source = Trim(lcl.source) />
 					<cfcatch type="any">
 						<cfrethrow />
 					</cfcatch>
@@ -164,7 +164,7 @@
 					detail="#cfcatch.message# #cfcatch.detail#" />
 			</cfcatch>
 		</cftry>
-		<cfreturn local.source>
+		<cfreturn lcl.source>
 	</cffunction>
 
 	<cffunction name="writeFile" access="public" returntype="any" output="false"  hint="Writes content to file">
@@ -173,14 +173,14 @@
 		<cfargument name="append" required="false" type="boolean" default="false" hint="appends content to file">
 		<cfargument name="charset" required="false" type="string" default="utf-8" hint="sets charset for content">
 
-		<cfset var local = StructCreate(action="write")>
+		<cfset var lcl = StructCreate(action="write")>
 		<cftry>
 			<cfif arguments.append>
-				<cfset local.action = "append">
+				<cfset lcl.action = "append">
 			<cfelse>
-				<cfset local.action = "write">
+				<cfset lcl.action = "write">
 			</cfif>
-			<cffile action="#local.action#" file="#arguments.filename#" output="#arguments.filecontent#" charset="#arguments.charset#" />
+			<cffile action="#lcl.action#" file="#arguments.filename#" output="#arguments.filecontent#" charset="#arguments.charset#" />
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.FileWriteFailure"
@@ -200,13 +200,13 @@
 	</cffunction>
 
 	<cffunction name="rmfiles" access="public" returntype="any" output="false" hint="removes all files given as arguments">
-		<cfset var local = StructNew()>
-		<cfloop from="1" to="#ArrayLen(arguments)#" index="local.i">
-			<cfset local.arg = arguments[local.i] />
-			<cfif IsSimpleValue(local.arg)>
-				<cfset deleteFile(local.arg) />
-			<cfelseif IsArray(local.arg)>
-				<cfset rmfiles(local.arg) />
+		<cfset var lcl = StructNew()>
+		<cfloop from="1" to="#ArrayLen(arguments)#" index="lcl.i">
+			<cfset lcl.arg = arguments[lcl.i] />
+			<cfif IsSimpleValue(lcl.arg)>
+				<cfset deleteFile(lcl.arg) />
+			<cfelseif IsArray(lcl.arg)>
+				<cfset rmfiles(lcl.arg) />
 			</cfif>
 		</cfloop>
 	</cffunction>
@@ -244,11 +244,11 @@
 		<cfargument name="filecontent" required="true" type="any" hint="content to stream">
 		<cfargument name="reset"       required="false" type="boolean" default="true" hint="discard preceding output">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.out = toBinary( toBase64( trim( arguments.filecontent ) ) )>
-			<cfheader name="Content-Length" value="#ArrayLen(local.out)#">
-			<cfcontent type="#arguments.mimetype#" variable="#local.out#" reset="#arguments.reset#" />
+			<cfset lcl.out = toBinary( toBase64( trim( arguments.filecontent ) ) )>
+			<cfheader name="Content-Length" value="#ArrayLen(lcl.out)#">
+			<cfcontent type="#arguments.mimetype#" variable="#lcl.out#" reset="#arguments.reset#" />
 
 			<cfcatch type="any">
 				<cfthrow
@@ -265,13 +265,13 @@
 		<cfargument name="fallbackMime" required="false" type="string" hint="optional fallback mimetype if gzip-accept is false. defaults to mapped html-mimetype from mimeMap">
 		<cfargument name="reset"        required="false" type="boolean" default="true" hint="discard preceding output">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
 			<cfif acceptsGZ()>
-				<cfset local.gzbytes = gzByteArray( arguments.filecontent )>
+				<cfset lcl.gzbytes = gzByteArray( arguments.filecontent )>
 				<cfheader name="Content-Encoding" value="gzip">
-				<cfheader name="Content-Length" value="#ArrayLen(local.gzbytes)#">
-				<cfcontent type="#arguments.mimetype#" variable="#local.gzbytes#" reset="#arguments.reset#" />
+				<cfheader name="Content-Length" value="#ArrayLen(lcl.gzbytes)#">
+				<cfcontent type="#arguments.mimetype#" variable="#lcl.gzbytes#" reset="#arguments.reset#" />
 			<cfelse>
 				<cfset streamMimeContent(
 					  ife( arguments.fallbackMime, getMime(arguments.mimeType) )
@@ -290,17 +290,17 @@
 
 	<cffunction name="gzByteArray" returntype="any" hint="Returns GZIP ByteArray used for streaming gzip content" output="false">
 		<cfargument name="content" type="string" required="true" hint="content to return compressed bytearray for" />
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.bos = createObject("java","java.io.ByteArrayOutputStream") >
-			<cfset local.bos.init()>
-			<cfset local.gzipStream = createObject("java","java.util.zip.GZIPOutputStream")>
-			<cfset local.gzipStream.init(local.bos) >
-			<cfset local.gzipStream.write(arguments.content.getBytes("utf-8")) >
-			<cfset local.gzipStream.close()>
-			<cfset local.bos.flush()>
-			<cfset local.bos.close()>
-			<cfreturn local.bos.toByteArray()>
+			<cfset lcl.bos = createObject("java","java.io.ByteArrayOutputStream") >
+			<cfset lcl.bos.init()>
+			<cfset lcl.gzipStream = createObject("java","java.util.zip.GZIPOutputStream")>
+			<cfset lcl.gzipStream.init(lcl.bos) >
+			<cfset lcl.gzipStream.write(arguments.content.getBytes("utf-8")) >
+			<cfset lcl.gzipStream.close()>
+			<cfset lcl.bos.flush()>
+			<cfset lcl.bos.close()>
+			<cfreturn lcl.bos.toByteArray()>
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.GZConversionError"
@@ -324,10 +324,10 @@
 	</cffunction>
 
 	<cffunction name="getAvailableFonts" returntype="array" hint="Returns available fonts from JVM">
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cftry>
-			<cfset local.env = createObject("java", "java.awt.GraphicsEnvironment").getLocalGraphicsEnvironment() />
-			<cfreturn local.env.getAvailableFontFamilyNames() />
+			<cfset lcl.env = createObject("java", "java.awt.GraphicsEnvironment").getLocalGraphicsEnvironment() />
+			<cfreturn lcl.env.getAvailableFontFamilyNames() />
 			<cfcatch type="any">
 				<cfthrow
 					type="SysProxy.AvailableFontsError"
@@ -352,13 +352,13 @@
 		<cfargument name="name" required="true" type="string" hint="filename" />
 		<cfargument name="dir" required="false" type="string" default="" hint="path to file" />
 
-		<cfset var local = StructNew() />
-		<cfset local.stripped_name = REREplace(arguments.name, "^#arguments.dir#", "") />
-		<cfif local.stripped_name EQ "">
+		<cfset var lcl = StructNew() />
+		<cfset lcl.stripped_name = REREplace(arguments.name, "^#arguments.dir#", "") />
+		<cfif lcl.stripped_name EQ "">
 			<!--- dir is already fully included, bail out --->
 			<cfreturn arguments.name />
 		</cfif>
-		<cfset local.stripped_name = ListAppend(arguments.dir, local.stripped_name, "/") />
-		<cfreturn REREplace(local.stripped_name, "/{1,}", "/", "ALL") />
+		<cfset lcl.stripped_name = ListAppend(arguments.dir, lcl.stripped_name, "/") />
+		<cfreturn REREplace(lcl.stripped_name, "/{1,}", "/", "ALL") />
 	</cffunction>
 </cfcomponent>

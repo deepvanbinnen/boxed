@@ -298,36 +298,36 @@ DO NOT USE!
 		<cfargument name="extended"  type="boolean" required="false" default="false">
 		<cfargument name="delimiter"  type="string" required="false" default="#guessDelimiter(arguments.instring)#">
 
-		<cfset var local = StructNew()>
-		<cfset local.instring   = strip(arguments.instring)>
-		<cfset local.delimiter  = strip(arguments.delimiter)>
-		<cfset local.extended   = arguments.extended>
-		<cfset local.result     = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.instring   = strip(arguments.instring)>
+		<cfset lcl.delimiter  = strip(arguments.delimiter)>
+		<cfset lcl.extended   = arguments.extended>
+		<cfset lcl.result     = ArrayNew(1)>
 
-		<cfif local.instring eq "">
-			<cfreturn local.result>
+		<cfif lcl.instring eq "">
+			<cfreturn lcl.result>
 		</cfif>
 
-		<cfif local.delimiter eq "">
-			<cfset local.delimiter = CHR(10)>
+		<cfif lcl.delimiter eq "">
+			<cfset lcl.delimiter = CHR(10)>
 		</cfif>
 
-		<cfset local.pairs = ListToArray(local.instring, local.delimiter)>
-		<cfset local.it    = iterator(local.pairs)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset local.pair = ListToArray(local.it.current,"=")>
-			<cfset local.temp = StructNew()>
-			<cfset StructInsert(local.temp, "key",  TRIM(local.pair[1]))>
-			<cfset StructInsert(local.temp, "name", local.temp["key"])>
-			<cfset StructInsert(local.temp, "ispair", (Find("=", local.it.current)) GT 0)>
-			<cfset StructInsert(local.temp, "value",  "")>
-			<cfif (ArrayLen(local.pair) gt 1)>
-				<cfset StructUpdate(local.temp, "value",  TRIM(local.pair[2]))>
+		<cfset lcl.pairs = ListToArray(lcl.instring, lcl.delimiter)>
+		<cfset lcl.it    = iterator(lcl.pairs)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset lcl.pair = ListToArray(lcl.it.current,"=")>
+			<cfset lcl.temp = StructNew()>
+			<cfset StructInsert(lcl.temp, "key",  TRIM(lcl.pair[1]))>
+			<cfset StructInsert(lcl.temp, "name", lcl.temp["key"])>
+			<cfset StructInsert(lcl.temp, "ispair", (Find("=", lcl.it.current)) GT 0)>
+			<cfset StructInsert(lcl.temp, "value",  "")>
+			<cfif (ArrayLen(lcl.pair) gt 1)>
+				<cfset StructUpdate(lcl.temp, "value",  TRIM(lcl.pair[2]))>
 			</cfif>
-			<cfset ArrayAppend(local.result, local.temp)>
+			<cfset ArrayAppend(lcl.result, lcl.temp)>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="p2s" hint="pair2struct">
@@ -336,59 +336,59 @@ DO NOT USE!
 		<cfargument name="delimiter"  type="string" required="false" default="#guessDelimiter(arguments.instring)#">
 		<cfargument name="pairdelimiter"  type="string" required="false" default="=">
 
-		<cfset var local = StructNew()>
-		<cfset local.instring   = strip(arguments.instring)>
-		<cfset local.delimiter  = strip(arguments.delimiter)>
-		<cfset local.pairdelimiter  = strip(arguments.pairdelimiter)>
-		<cfset local.extended   = arguments.extended>
-		<cfset local.result     = StructNew()>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.instring   = strip(arguments.instring)>
+		<cfset lcl.delimiter  = strip(arguments.delimiter)>
+		<cfset lcl.pairdelimiter  = strip(arguments.pairdelimiter)>
+		<cfset lcl.extended   = arguments.extended>
+		<cfset lcl.result     = StructNew()>
 
-		<cfif local.instring eq "">
-			<cfreturn local.result>
+		<cfif lcl.instring eq "">
+			<cfreturn lcl.result>
 		</cfif>
 
-		<cfif local.delimiter eq "">
-			<cfset local.delimiter = CHR(10)>
+		<cfif lcl.delimiter eq "">
+			<cfset lcl.delimiter = CHR(10)>
 		</cfif>
 
-		<cfset local.it    = iterator( ListToArray(local.instring, local.delimiter))>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfset local.pair = ListToArray(local.it.current, local.pairdelimiter)>
-			<cfset local.key  = TRIM(local.pair[1])>
-			<cfset local.val  = "">
-			<cfif ArrayLen(local.pair) GT 1>
-				<cfset local.val  = TRIM(local.pair[2])>
+		<cfset lcl.it    = iterator( ListToArray(lcl.instring, lcl.delimiter))>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfset lcl.pair = ListToArray(lcl.it.current, lcl.pairdelimiter)>
+			<cfset lcl.key  = TRIM(lcl.pair[1])>
+			<cfset lcl.val  = "">
+			<cfif ArrayLen(lcl.pair) GT 1>
+				<cfset lcl.val  = TRIM(lcl.pair[2])>
 			</cfif>
 
-			<cfif local.extended>
-				<cfset StructInsert(local.result, "name", local.key)>
-				<cfset StructInsert(local.result, "ispair", (Find("=", local.it.current)) GT 0)>
-				<cfset StructInsert(local.result, "value",  local.val)>
+			<cfif lcl.extended>
+				<cfset StructInsert(lcl.result, "name", lcl.key)>
+				<cfset StructInsert(lcl.result, "ispair", (Find("=", lcl.it.current)) GT 0)>
+				<cfset StructInsert(lcl.result, "value",  lcl.val)>
 			<cfelse>
-				<cfset StructInsert(local.result, local.key, local.val)>
+				<cfset StructInsert(lcl.result, lcl.key, lcl.val)>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="d2a" output="yes" returntype="array">
 		<cfargument name="instring" type="string" required="true">
 		<cfargument name="delimiter" type="string" required="false" default="#guessDelimiter(arguments.instring)#">
 
-		<cfset var local = StructNew()>
-		<cfset local.instring  = TRIM(arguments.instring)>
-		<cfset local.delimiter = arguments.delimiter>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.instring  = TRIM(arguments.instring)>
+		<cfset lcl.delimiter = arguments.delimiter>
 
-		<cfset local.result    = ArrayNew(1)>
-		<cfif local.instring neq "">
-			<cfif local.delimiter eq "">
-				<cfset local.delimiter = CHR(10)>
+		<cfset lcl.result    = ArrayNew(1)>
+		<cfif lcl.instring neq "">
+			<cfif lcl.delimiter eq "">
+				<cfset lcl.delimiter = CHR(10)>
 			</cfif>
-			<cfset local.result = ListToArray(local.instring, local.delimiter)>
+			<cfset lcl.result = ListToArray(lcl.instring, lcl.delimiter)>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="a2s" output="No" returntype="struct">
@@ -396,47 +396,47 @@ DO NOT USE!
 		<cfargument name="inkeys"   type="string" required="true">
 		<cfargument name="instruct" type="struct" required="false" default="#StructNew()#">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.inarray  = arguments.inarray>
-		<cfset local.inkeys   = ListToArray(TRIM(arguments.inkeys))>
-		<cfset local.instruct = arguments.instruct>
+		<cfset lcl.inarray  = arguments.inarray>
+		<cfset lcl.inkeys   = ListToArray(TRIM(arguments.inkeys))>
+		<cfset lcl.instruct = arguments.instruct>
 
-		<cfif ArrayLen(local.inarray) gt ArrayLen(local.inkeys)>
-			<cfset local.maxiter = ArrayLen(local.inkeys)>
+		<cfif ArrayLen(lcl.inarray) gt ArrayLen(lcl.inkeys)>
+			<cfset lcl.maxiter = ArrayLen(lcl.inkeys)>
 		<cfelse>
-			<cfset local.maxiter = ArrayLen(local.inarray)>
+			<cfset lcl.maxiter = ArrayLen(lcl.inarray)>
 		</cfif>
 
-		<cfset local.it = iterator(local.inkeys)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfif local.it.index gt local.maxiter>
+		<cfset lcl.it = iterator(lcl.inkeys)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfif lcl.it.index gt lcl.maxiter>
 				<cfbreak>
 			</cfif>
-			<cfif StructKeyExists(local.instruct, local.it.current)>
-				<cfif IsSimpleValue(local.inarray[local.it.index]) AND strip(local.inarray[local.it.index]) neq "">
-					<cfset StructUpdate(local.instruct, local.it.current, local.inarray[local.it.index])>
+			<cfif StructKeyExists(lcl.instruct, lcl.it.current)>
+				<cfif IsSimpleValue(lcl.inarray[lcl.it.index]) AND strip(lcl.inarray[lcl.it.index]) neq "">
+					<cfset StructUpdate(lcl.instruct, lcl.it.current, lcl.inarray[lcl.it.index])>
 				</cfif>
 			<cfelse>
-				<cfset StructInsert(local.instruct, local.it.current, local.inarray[local.it.index])>
+				<cfset StructInsert(lcl.instruct, lcl.it.current, lcl.inarray[lcl.it.index])>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.instruct>
+		<cfreturn lcl.instruct>
 	</cffunction>
 
 	<cffunction name="guessDelimiter">
 		<cfargument name="instring" type="string" required="true">
 
-		<cfset var local = StructNew()>
-		<cfset local.DELIMITERS = "10,13,32,44,124,43"><!--- CR,SPACE,COMMA,PIPELINE,PLUS, --->
-		<cfset local.instring = TRIM(arguments.instring)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.DELIMITERS = "10,13,32,44,124,43"><!--- CR,SPACE,COMMA,PIPELINE,PLUS, --->
+		<cfset lcl.instring = TRIM(arguments.instring)>
 
-		<cfif local.instring neq "">
-			<cfloop from="1" to="#Len(arguments.instring)#" index="local.i">
-				<cfset local.value = ASC(MID(arguments.instring,local.i,1))>
-				<cfif ListFind(local.DELIMITERS, local.value)>
-					<cfreturn CHR(local.value)>
+		<cfif lcl.instring neq "">
+			<cfloop from="1" to="#Len(arguments.instring)#" index="lcl.i">
+				<cfset lcl.value = ASC(MID(arguments.instring,lcl.i,1))>
+				<cfif ListFind(lcl.DELIMITERS, lcl.value)>
+					<cfreturn CHR(lcl.value)>
 				</cfif>
 			</cfloop>
 		</cfif>
@@ -451,22 +451,22 @@ DO NOT USE!
 
 		<!--- FLAGS: COPY_EMPTY | --->
 
-		<cfset var local = StructNew()>
-		<cfset local.source         = arguments.source>
-		<cfset local.destination    = arguments.destination>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.source         = arguments.source>
+		<cfset lcl.destination    = arguments.destination>
 
-		<cfset local.it = iterator(local.source)>
-		<cfloop condition="#local.it.whileHasNext()#">
-			<cfif NOT StructKeyExists(local.destination,local.it.key)>
-				<cfset StructInsert(local.destination,local.it.key,local.it.current)>
+		<cfset lcl.it = iterator(lcl.source)>
+		<cfloop condition="#lcl.it.whileHasNext()#">
+			<cfif NOT StructKeyExists(lcl.destination,lcl.it.key)>
+				<cfset StructInsert(lcl.destination,lcl.it.key,lcl.it.current)>
 			<cfelse>
-				<cfif IsSimpleValue(local.destination[local.it.key]) AND TRIM(local.destination[local.it.key]) eq "">
-					<cfset StructUpdate(local.destination,local.it.key,local.it.current)>
+				<cfif IsSimpleValue(lcl.destination[lcl.it.key]) AND TRIM(lcl.destination[lcl.it.key]) eq "">
+					<cfset StructUpdate(lcl.destination,lcl.it.key,lcl.it.current)>
 				</cfif>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.destination>
+		<cfreturn lcl.destination>
 	</cffunction>
 
 

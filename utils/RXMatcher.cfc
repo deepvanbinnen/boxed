@@ -13,12 +13,12 @@
 
 	<cffunction name="getPattern" returntype="any" output="false" hint="adds pattern to known patterns">
 		<cfargument name="pattern" required="true"  type="string" hint="the pattern to get a compiled pattern for" />
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfif NOT hasPattern(arguments.pattern)>
 			<cfset addPattern(arguments.pattern) />
 		</cfif>
-		<cfset local.patterns = getPatterns() />
-		<cfreturn local.patterns[hash(arguments.pattern)] />
+		<cfset lcl.patterns = getPatterns() />
+		<cfreturn lcl.patterns[hash(arguments.pattern)] />
 	</cffunction>
 
 	<cffunction name="hasPattern" returntype="any" output="false" hint="adds pattern to known patterns">
@@ -55,16 +55,16 @@
 	<cffunction name="escapeRegexPattern" type="string" hint="Gets string with values escaped for regexp pattern">
 		<cfargument name="rx_string" type="string" required="true" hint="the regexp string to escape" />
 
-		<cfset var local = StructNew()>
-		<cfset local.str   = arguments.rx_string>
-		<cfset local.str = Replace(local.str, "$", "\$", "ALL")>
-		<cfset local.str = Replace(local.str, "{", "\{", "ALL")>
-		<cfset local.str = Replace(local.str, "}", "\}", "ALL")>
-		<cfset local.str = Replace(local.str, "|", "\|", "ALL")>
-		<cfset local.str = Replace(local.str, "[", "\[", "ALL")>
-		<cfset local.str = Replace(local.str, "]", "\]", "ALL")>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.str   = arguments.rx_string>
+		<cfset lcl.str = Replace(lcl.str, "$", "\$", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "{", "\{", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "}", "\}", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "|", "\|", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "[", "\[", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "]", "\]", "ALL")>
 
-		<cfreturn local.str />
+		<cfreturn lcl.str />
 	</cffunction>
 
 	<cffunction name="getMatcher" returntype="any" access="public" hint="Gets a new matcher for sniptext from compiled java regex pattern object">
@@ -78,33 +78,33 @@
 		<cfargument name="text"      type="string" required="true" hint="the text to match the pattern on" />
 
 		<cfset var local     = StructNew() />
-		<cfset local.matcher = getMatcher(arguments.pattern, arguments.text) />
-		<cfset local.result  = QueryNew("") />
+		<cfset lcl.matcher = getMatcher(arguments.pattern, arguments.text) />
+		<cfset lcl.result  = QueryNew("") />
 
-		<cfloop condition="local.matcher.Find()">
-			<cfset local.matchArgs = StructNew() />
-			<cfdump var="#local.matcher.groupCount()#">
-			<cfloop from="1" to="#local.matcher.groupCount()#" index="local.i">
-				<cfset StructInsert(local.matchArgs, "M#local.i#", local.matcher.Group(JavaCast("string", local.i)), true) />
+		<cfloop condition="lcl.matcher.Find()">
+			<cfset lcl.matchArgs = StructNew() />
+			<cfdump var="#lcl.matcher.groupCount()#">
+			<cfloop from="1" to="#lcl.matcher.groupCount()#" index="lcl.i">
+				<cfset StructInsert(lcl.matchArgs, "M#lcl.i#", lcl.matcher.Group(JavaCast("string", lcl.i)), true) />
 			</cfloop>
-			<cfset local.result = _addMatch(argumentCollection=local.matchArgs, query=local.result) />
+			<cfset lcl.result = _addMatch(argumentCollection=lcl.matchArgs, query=lcl.result) />
 		</cfloop>
 
-		<cfreturn local.result />
+		<cfreturn lcl.result />
 	</cffunction>
 
 	<cffunction name="_addMatch" returntype="any" access="private" hint="Adds match info to the match query">
 		<cfargument name="query" required="true" type="query" hint="the query to add the matches to" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 
 		<cfset QueryAddRow(arguments.query) />
-		<cfloop list="#StructKeyList(arguments)#" index="local.key">
-			<cfif local.key NEQ "query">
-				<cfif NOT ListFindNoCase(arguments.query.columnlist, local.key)>
-					<cfset QueryAddColumn(arguments.query, local.key, ArrayNew(1)) />
+		<cfloop list="#StructKeyList(arguments)#" index="lcl.key">
+			<cfif lcl.key NEQ "query">
+				<cfif NOT ListFindNoCase(arguments.query.columnlist, lcl.key)>
+					<cfset QueryAddColumn(arguments.query, lcl.key, ArrayNew(1)) />
 				</cfif>
-				<cfset QuerySetCell(arguments.query, local.key, arguments[local.key]) />
+				<cfset QuerySetCell(arguments.query, lcl.key, arguments[lcl.key]) />
 			</cfif>
 		</cfloop>
 

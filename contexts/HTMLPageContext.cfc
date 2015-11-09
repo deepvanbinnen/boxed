@@ -76,10 +76,10 @@
 	<cffunction name="addCSSFiles" hint="Add list of CSS files">
 		<cfargument name="cssfiles" required="true" type="array" hint="array with relative paths to css file" />
 
-		<cfset var local = StructNew()>
-		<cfset local.iter = iterator(arguments.cssfiles) />
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset addCSSFile(local.iter.getCurrent()) />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.iter = iterator(arguments.cssfiles) />
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset addCSSFile(lcl.iter.getCurrent()) />
 		</cfloop>
 	</cffunction>
 
@@ -117,11 +117,11 @@
 
 	<cffunction name="addJSFiles" hint="Add list of custom JS files">
 		<cfargument name="jsfiles" required="true" type="array" hint="array with relative paths to js file" />
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
-		<cfset local.iter = iterator(arguments.jsfiles) />
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset addJSFile(local.iter.getCurrent()) />
+		<cfset lcl.iter = iterator(arguments.jsfiles) />
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset addJSFile(lcl.iter.getCurrent()) />
 		</cfloop>
 	</cffunction>
 
@@ -135,14 +135,14 @@
 	</cffunction>
 
 	<cffunction name="getJSCacheID" output="false" hint="Caches content and returns the hash for it ">
-		<cfset var local = StructCreate( jqueryOnload="", js=_getJS().getBodyOnloadJS() ) />
-		<cfif NOT ise(local.js)>
-			<cfsavecontent variable="local.jqueryOnload"><cfoutput>
+		<cfset var lcl = StructCreate( jqueryOnload="", js=_getJS().getBodyOnloadJS() ) />
+		<cfif NOT ise(lcl.js)>
+			<cfsavecontent variable="lcl.jqueryOnload"><cfoutput>
 			jQuery(function($){
-				#local.js#
+				#lcl.js#
 			});
 			</cfoutput></cfsavecontent>
-			<cfset addJS(local.jqueryOnload) />
+			<cfset addJS(lcl.jqueryOnload) />
 		</cfif>
 		<cfreturn _getJS().getDynamicCacheID() />
 	</cffunction>

@@ -53,28 +53,28 @@
 		<cfargument name="attr" type="struct" required="false">
 		<cfargument name="textmode" type="string" required="false" default="prepend" hint="where to add the given extra text: prepend|append|flush">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 
 		<!--- set --->
-		<cfset local.tag = arguments.tag />
-		<cfset local.text = _getTagContent() />
+		<cfset lcl.tag = arguments.tag />
+		<cfset lcl.text = _getTagContent() />
 		<cfif StructKeyExists(arguments, "text")>
 			<cfswitch expression="#arguments.textmode#">
 				<cfcase value="prepend">
-					<cfset local.text = arguments.text & local.text />
+					<cfset lcl.text = arguments.text & lcl.text />
 				</cfcase>
 				<cfcase value="append">
-					<cfset local.text = local.text & arguments.text />
+					<cfset lcl.text = lcl.text & arguments.text />
 				</cfcase>
 				<cfcase value="flush">
-					<cfset local.text = "" />
+					<cfset lcl.text = "" />
 				</cfcase>
 			</cfswitch>
 		</cfif>
 		<cfif StructKeyExists(arguments, "attr")>
-			<cfset local.attr = arguments.attr />
+			<cfset lcl.attr = arguments.attr />
 		<cfelse>
-			<cfset local.attr =  getSelector() />
+			<cfset lcl.attr =  getSelector() />
 		</cfif>
 
 		<cfreturn super.get(argumentCollection = local) />
@@ -196,13 +196,13 @@
 	</cffunction>
 
 	<cffunction name="_getTagContent" returntype="string" output="false" hint=" Append the specified content to the specified element(s).">
-		<cfset var local = StructNew() />
-		<cfset local.str = _getTextArg(_getTagOutputBuffer()) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.str = _getTextArg(_getTagOutputBuffer()) />
 		<cfif needCDATA()>
-			<cfset local.str = getCDATA(local.str) />
+			<cfset lcl.str = getCDATA(lcl.str) />
 		</cfif>
 		<cfset _resetTagOutputBuffer() />
-		<cfreturn local.str />
+		<cfreturn lcl.str />
 	</cffunction>
 
 	<cffunction name="_getTagOutputBuffer" output="false" access="public" returntype="array" hint="Sets or appends the output ">

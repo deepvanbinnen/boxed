@@ -46,11 +46,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 
 	<cffunction name="getContext"  returntype="ebxContext" hint="get active context, allows resetting active context to empty context">
 		<cfargument name="reset" required="false" type="boolean" default="false" hint="reset active context to empty context">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif arguments.reset>
-			<cfset local.current = variables.current>
+			<cfset lcl.current = variables.current>
 			<cfset emptyCurrentContext()>
-			<cfreturn local.current>
+			<cfreturn lcl.current>
 		</cfif>
 		<cfreturn variables.current>
 	</cffunction>
@@ -77,14 +77,14 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 
 		<cfif NOT StructIsEmpty(arguments.params)>
 			<cfset variables.current.setAttributes(arguments.params)>
-			<cfset local.attr = variables.pi.getAttributes()>
-			<cfset local.copy = StructNew()>
-			<cfloop collection="#arguments.params#" item="local.item">
-				<cfif StructKeyExists(local.attr, local.item)>
-					<cfset StructInsert(local.copy, local.item, local.attr[local.item])>
+			<cfset lcl.attr = variables.pi.getAttributes()>
+			<cfset lcl.copy = StructNew()>
+			<cfloop collection="#arguments.params#" item="lcl.item">
+				<cfif StructKeyExists(lcl.attr, lcl.item)>
+					<cfset StructInsert(lcl.copy, lcl.item, lcl.attr[lcl.item])>
 				</cfif>
 			</cfloop>
-			<cfset variables.current.setOriginals(local.copy)>
+			<cfset variables.current.setOriginals(lcl.copy)>
 		</cfif>
 
 		<cfif arguments.contentvar neq "">

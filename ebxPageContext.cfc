@@ -30,38 +30,38 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="ebx_include" returntype="struct" hint="include template in the page">
 		<cfargument name="template" required="true" type="string" hint="full mapping path to the include file">
 
-		<cfset var local = StructNew()>
-		<cfset local.template = arguments.template>
-		<cfset local.output   = "">
-		<cfset local.errors   = false>
-		<cfset local.caught   = "">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.template = arguments.template>
+		<cfset lcl.output   = "">
+		<cfset lcl.errors   = false>
+		<cfset lcl.caught   = "">
 
 		<cfif NOT ListFind( "cfm,js,css", ListLast(arguments.template, ".") )>
-			<cfset local.template = local.template & ".cfm">
+			<cfset lcl.template = lcl.template & ".cfm">
 		</cfif>
 		<cftry>
-			<cfsavecontent variable="local.output">
+			<cfsavecontent variable="lcl.output">
 				<cftry>
-					<cfinclude template="#local.template#">
+					<cfinclude template="#lcl.template#">
 					<!--- <cfoutput><!-- DEBUG: #arguments.template# --></cfoutput> --->
 					<cfcatch type="any">
-						<cfset local.output = cfcatch.message & CHR(10) & cfcatch.detail>
-						<cfset local.errors = true>
-						<cfset local.caught = cfcatch>
+						<cfset lcl.output = cfcatch.message & CHR(10) & cfcatch.detail>
+						<cfset lcl.errors = true>
+						<cfset lcl.caught = cfcatch>
 					</cfcatch>
 				</cftry>
 			</cfsavecontent>
-			<cfset local.output = TRIM(local.output)>
+			<cfset lcl.output = TRIM(lcl.output)>
 			<cfcatch type="any">
-				<cfif NOT local.errors>
-					<cfset local.output = cfcatch.message & CHR(10) & cfcatch.detail>
-					<cfset local.errors = true>
-					<cfset local.caught = cfcatch>
+				<cfif NOT lcl.errors>
+					<cfset lcl.output = cfcatch.message & CHR(10) & cfcatch.detail>
+					<cfset lcl.errors = true>
+					<cfset lcl.caught = cfcatch>
 				</cfif>
 			</cfcatch>
 		</cftry>
 
-		<cfreturn local />
+		<cfreturn lcl />
 	</cffunction>
 
 	<cffunction name="ebx_write" returntype="ebxPageContext" hint="write output to the page">

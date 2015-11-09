@@ -165,20 +165,20 @@
 		<cfargument name="proxyMethod" type="any" required="true">
 		<cfargument name="proxyArguments" type="struct" required="false" default="#StructNew()#">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
-		<cfset local.result.errors = false>
-		<cfset local.result.args   = arguments>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
+		<cfset lcl.result.errors = false>
+		<cfset lcl.result.args   = arguments>
 
 		<cftry>
-			<cfinvoke component="#arguments.targetCFC#" method="#arguments.proxyMethod#" argumentcollection="#arguments.proxyArguments#" returnvariable="local.result.data"></cfinvoke>
+			<cfinvoke component="#arguments.targetCFC#" method="#arguments.proxyMethod#" argumentcollection="#arguments.proxyArguments#" returnvariable="lcl.result.data"></cfinvoke>
 			<cfcatch type="any">
-				<cfset local.result.errors = true>
-				<cfset local.result.data   = cfcatch>
+				<cfset lcl.result.errors = true>
+				<cfset lcl.result.data   = cfcatch>
 			</cfcatch>
 		</cftry>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_collectionObj" output="false" returntype="any" hint="creates a generic collection object for given data">
@@ -216,23 +216,23 @@
 		myMethod(31)           -> {foo : 31}
 		myMethod(baz=57)       -> {baz : 57}
 		 --->
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			  result = StructCreate()
 			, iter = iterator( arguments.argList )
 			, bnamed = NOT StructKeyExists(arguments.orgArgs, "1")
 		)>
 
-		<cfif local.bnamed>
-			<cfset StructAppend(local.result, arguments.orgArgs, true )>
+		<cfif lcl.bnamed>
+			<cfset StructAppend(lcl.result, arguments.orgArgs, true )>
 		<cfelse>
-			<cfloop condition="#local.iter.whileHasNext()#">
-				<cfif local.iter.getIndex() LTE ArrayLen(arguments.orgArgs)>
-					<cfset StructAppend(local.result, arguments.orgArgs["#local.iter.getIndex()#"], true)>
+			<cfloop condition="#lcl.iter.whileHasNext()#">
+				<cfif lcl.iter.getIndex() LTE ArrayLen(arguments.orgArgs)>
+					<cfset StructAppend(lcl.result, arguments.orgArgs["#lcl.iter.getIndex()#"], true)>
 				</cfif>
 			</cfloop>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_valueObj" access="public" output="false" returntype="any" hint="creates a value object from given data">
@@ -242,18 +242,18 @@
 
 	<!--- SUPER PRIVATE METHODS --->
 	<cffunction name="__args" output="false" hint="Returns all defined arguments as a struct. Keys with undefined values, which are rendered as [undefined element] by CFDUMP, are filtered by this method.">
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			  result = StructCreate()
 			, it = arguments.entrySet().iterator()
 		)>
-		<cfloop condition="local.it.hasNext()">
-			<cfset local.curr = local.it.next()>
-			<cfif local.curr.isdefined()>
-				<cfset StructInsert(local.result, local.curr.getKey(), local.curr.getValue())>
+		<cfloop condition="lcl.it.hasNext()">
+			<cfset lcl.curr = lcl.it.next()>
+			<cfif lcl.curr.isdefined()>
+				<cfset StructInsert(lcl.result, lcl.curr.getKey(), lcl.curr.getValue())>
 			</cfif>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="__CollectionFactory" access="public" output="false">

@@ -4,7 +4,7 @@
 		<cfargument name="cols" type="string" required="false">
 		<cfargument name="key"  type="string" required="false" default="">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif IsArray(arguments.data) AND ArrayLen(arguments.data) eq ListLen(arguments.cols)>
 			<cfset _setQueryRow(arguments.data, arguments.cols)>
@@ -20,7 +20,7 @@
 	<cffunction name="_addAll" output="false" hint="add all data to array">
 		<cfargument name="data" type="any" required="true">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif IsQuery(arguments.data)>
 			<cfloop query="arguments.data">
 				<cfset _setQueryRow(_queryAsQueryRowArrays(arguments.data, currentrow)) />
@@ -28,9 +28,9 @@
 		<cfelseif IsStruct(arguments.data)>
 			<cfset _add(arguments.data)>
 		<cfelseif IsArray(arguments.data) AND ArrayLen(arguments.data)>
-			<cfloop	from="1" to="#ArrayLen(arguments.data)#" index="local.i">
-				<cfif IsStruct(arguments.data[local.i])>
-					<cfset _add(arguments.data[local.i])>
+			<cfloop	from="1" to="#ArrayLen(arguments.data)#" index="lcl.i">
+				<cfif IsStruct(arguments.data[lcl.i])>
+					<cfset _add(arguments.data[lcl.i])>
 				</cfif>
 			</cfloop>
 		</cfif>
@@ -68,33 +68,33 @@
 		<cfargument name="indexkey" type="numeric" required="false" default="#size()#" hint="rownumber defaults to last row">
 		<cfargument name="keys"     type="any"     required="false" default="#getKeys()#" hint="list of columns or struct with columnnames mapped to aliasnames">
 
-		<cfset var local = StructCreate(result = "")>
+		<cfset var lcl = StructCreate(result = "")>
 		<cfif arguments.indexkey LTE size()>
-			<cfset local.iter = iterator(arguments.keys)>
-			<cfif local.iter.getLength() GT 1>
-				<cfset local.result = StructCreate()>
-				<cfloop condition="#local.iter.whileHasNext()#">
-					<cfset StructInsert(local.result, local.iter.getCurrent(), getCell(local.iter.getKey(), arguments.indexkey), TRUE)>
+			<cfset lcl.iter = iterator(arguments.keys)>
+			<cfif lcl.iter.getLength() GT 1>
+				<cfset lcl.result = StructCreate()>
+				<cfloop condition="#lcl.iter.whileHasNext()#">
+					<cfset StructInsert(lcl.result, lcl.iter.getCurrent(), getCell(lcl.iter.getKey(), arguments.indexkey), TRUE)>
 				</cfloop>
-				<cfif StructIsEmpty(local.result)>
-					<cfset local.result = "">
+				<cfif StructIsEmpty(lcl.result)>
+					<cfset lcl.result = "">
 				</cfif>
 			<cfelse>
-				<cfset local.result =  getCell(arguments.keys, arguments.indexkey)>
+				<cfset lcl.result =  getCell(arguments.keys, arguments.indexkey)>
 			</cfif>
 		</cfif>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_getCell" hint="gets a cell from the collection">
 		<cfargument name="column" required="true" type="string">
 		<cfargument name="row"    required="false" type="numeric" default="#size()#">
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 		<cfif arguments.row LTE size() AND hasKey(arguments.column)>
-			<cfset local.data = getData() />
-			<cfreturn local.data[arguments.column][arguments.row]>
+			<cfset lcl.data = getData() />
+			<cfreturn lcl.data[arguments.column][arguments.row]>
 		</cfif>
 		<cfreturn "" />
 	</cffunction>
@@ -154,7 +154,7 @@
 		<cfargument name="indexlist" type="string" required="true" hint="list of indexes to remove" />
 		<cfargument name="delimiter" type="string" required="false" default="," />
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<!---
 			Since the remove operation modifies the array
 			this might cause the index to be another element
@@ -180,10 +180,10 @@
 			3) thus destArr=['a','b','d','f'] is correct!
 
 		--->
-		<cfset local.list = ListSort(arguments.indexlist, "numeric", "desc", arguments.delimiter)>
-		<cfloop list="#local.list#" index="local.index">
-			<cfif IsNumeric(local.index) AND local.index GT 0 AND local.index LTE ArrayLen( getData() )>
-				<cfset ArrayDeleteAt( getData(), local.index )>
+		<cfset lcl.list = ListSort(arguments.indexlist, "numeric", "desc", arguments.delimiter)>
+		<cfloop list="#lcl.list#" index="lcl.index">
+			<cfif IsNumeric(lcl.index) AND lcl.index GT 0 AND lcl.index LTE ArrayLen( getData() )>
+				<cfset ArrayDeleteAt( getData(), lcl.index )>
 			</cfif>
 		</cfloop>
 
@@ -199,15 +199,15 @@
 		<cfargument name="indexlist" type="string" required="true" />
 		<cfargument name="delimiter" type="string" required="false" default="," />
 
-		<cfset var local = StructNew()>
-		<cfset local.arr = getData() />
-		<cfset local.retain = ArrayNew(1) />
-		<cfloop list="#local.indexlist#" index="local.index" delimiters="#arguments.delimiter#">
-			<cfif IsNumeric(local.index) AND local.index GT 0 AND local.index LTE ArrayLen( getData() )>
-				<cfset ArrayAppend(local.retain, local.arr[local.index] ) />
+		<cfset var lcl = StructNew()>
+		<cfset lcl.arr = getData() />
+		<cfset lcl.retain = ArrayNew(1) />
+		<cfloop list="#lcl.indexlist#" index="lcl.index" delimiters="#arguments.delimiter#">
+			<cfif IsNumeric(lcl.index) AND lcl.index GT 0 AND lcl.index LTE ArrayLen( getData() )>
+				<cfset ArrayAppend(lcl.retain, lcl.arr[lcl.index] ) />
 			</cfif>
 		</cfloop>
-		<cfset getData().retainAll(local.retain) />
+		<cfset getData().retainAll(lcl.retain) />
 		<cfreturn this>
 	</cffunction>
 
@@ -241,12 +241,12 @@
 		<cfargument name="start" required="false" type="numeric" default="0">
 		<cfargument name="end"   required="false" type="numeric" default="#ListLen(arguments.list)#">
 
-		<cfset var local = StructNew()>
-		<cfset local.arr = ListToArray(arguments.list)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.arr = ListToArray(arguments.list)>
 		<cfif arguments.end GT ListLen(arguments.list)>
-			<cfset arguments.end = ArrayLen(local.arr)>
+			<cfset arguments.end = ArrayLen(lcl.arr)>
 		</cfif>
-		<cfreturn ArrayToList(local.arr.subList(arguments.start, arguments.end))>
+		<cfreturn ArrayToList(lcl.arr.subList(arguments.start, arguments.end))>
 	</cffunction>
 
 	<cffunction name="_setQueryRow" output="false" hint="set query row">
@@ -260,11 +260,11 @@
 				<cfset arguments.row = getData().recordcount>
 			</cfif>
 			<cfif arguments.row LTE getData().recordcount>
-				<cfloop from="1" to="#ArrayLen(arguments.data)#" index="local.i">
-					<cfif NOT hasKey( arguments.cols[local.i] )>
-						<cfset QueryAddColumn(getData(), arguments.cols[local.i], ArrayNew(1))>
+				<cfloop from="1" to="#ArrayLen(arguments.data)#" index="lcl.i">
+					<cfif NOT hasKey( arguments.cols[lcl.i] )>
+						<cfset QueryAddColumn(getData(), arguments.cols[lcl.i], ArrayNew(1))>
 					</cfif>
-					<cfset QuerySetCell(getData(), arguments.cols[local.i], arguments.data[local.i], arguments.row)>
+					<cfset QuerySetCell(getData(), arguments.cols[lcl.i], arguments.data[lcl.i], arguments.row)>
 				</cfloop>
 			</cfif>
 		</cfif>
@@ -274,31 +274,31 @@
 		<cfargument name="data" type="query"  re quired="true">
 		<cfargument name="row"  type="numeric" required="true">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
-		<cfset local.result.data = ArrayNew(1)>
-		<cfset local.result.cols = ArrayNew(1)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
+		<cfset lcl.result.data = ArrayNew(1)>
+		<cfset lcl.result.cols = ArrayNew(1)>
 		<cfif arguments.row LTE arguments.data.recordcount AND arguments.row GT 0>
-			<cfloop collection="#arguments.data.columnlist#" item="local.key">
-				<cfset ArrayAppend(local.result.cols, local.key)>
-				<cfset ArrayAppend(local.result.data, arguments.data[local.key][arguments.row]) />
+			<cfloop collection="#arguments.data.columnlist#" item="lcl.key">
+				<cfset ArrayAppend(lcl.result.cols, lcl.key)>
+				<cfset ArrayAppend(lcl.result.data, arguments.data[lcl.key][arguments.row]) />
 			</cfloop>
 		</cfif>
 
-		<cfreturn local.result />
+		<cfreturn lcl.result />
 	</cffunction>
 
 	<cffunction name="_rowAsArray" output="false" hint="row as array usefull for duplicating">
 		<cfargument name="row"   type="numeric" required="true">
 		<cfargument name="query" type="query" required="false" default="#getData()#">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = ArrayNew(1)>
-		<cfloop list="#arguments.query.columnlist#" index="local.col">
-			<cfset ArrayAppend(local.result, arguments.query[local.col][arguments.row])>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = ArrayNew(1)>
+		<cfloop list="#arguments.query.columnlist#" index="lcl.col">
+			<cfset ArrayAppend(lcl.result, arguments.query[lcl.col][arguments.row])>
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 	<cffunction name="_rowAsStruct" output="false" hint="row as array">
@@ -306,34 +306,34 @@
 		<cfargument name="query" type="query" required="false">
 		<cfargument name="cols"  type="string" required="false">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
 		<cfif NOT StructKeyExists(arguments, "query")>
 			<cfset arguments.query = getData() />
 		</cfif>
 		<cfif NOT StructKeyExists(arguments, "cols")>
 			<cfset arguments.cols = arguments.query.columnlist />
 		</cfif>
-		<cfloop list="#arguments.cols#" index="local.col">
-			<cfset StructInsert(local.result, local.col, arguments.query[local.col][arguments.row], true) />
+		<cfloop list="#arguments.cols#" index="lcl.col">
+			<cfset StructInsert(lcl.result, lcl.col, arguments.query[lcl.col][arguments.row], true) />
 		</cfloop>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 	</cffunction>
 
 
 	<cffunction name="_structAsQueryRowArrays" output="false" hint="returns struct with keys and values as arrays. keys are in result.cols and values are in result.data">
 		<cfargument name="data" type="struct" required="true">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
-		<cfset local.result.data = ArrayNew(1)>
-		<cfset local.result.cols = ArrayNew(1)>
-		<cfloop collection="#arguments.data#" item="local.key">
-			<cfset ArrayAppend(local.result.cols, local.key)>
-			<cfset ArrayAppend(local.result.data, arguments.data[local.key])>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
+		<cfset lcl.result.data = ArrayNew(1)>
+		<cfset lcl.result.cols = ArrayNew(1)>
+		<cfloop collection="#arguments.data#" item="lcl.key">
+			<cfset ArrayAppend(lcl.result.cols, lcl.key)>
+			<cfset ArrayAppend(lcl.result.data, arguments.data[lcl.key])>
 		</cfloop>
 
-		<cfreturn local.result />
+		<cfreturn lcl.result />
 	</cffunction>
 </cfcomponent>

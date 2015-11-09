@@ -92,11 +92,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="gmime"       required="false" type="string"  default="#this.gmime#"  hint="set gzipmime ">
 		<cfargument name="debug"       required="false" type="boolean" default="#this.debug#"  hint="set debug flag">
 
-			<cfset var local = StructNew()>
+			<cfset var lcl = StructNew()>
 			<cfif StructKeyExists(arguments, "pc")>
-				<cfset local.pc = arguments.pc>
+				<cfset lcl.pc = arguments.pc>
 			<cfelse>
-				<cfset local.pc = createObject("component", "ebxPageContext")>
+				<cfset lcl.pc = createObject("component", "ebxPageContext")>
 			</cfif>
 
 			<cfset this.stream  = arguments.stream />
@@ -110,17 +110,17 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 			<cfset setExecParameters(arguments.scopecopy, arguments.nosettings, arguments.nolayout, arguments.flush, arguments.showerrors, arguments.view, arguments.useviews)>
 
 			<cfset variables.ebx = arguments.ebx>
-			<cfset variables.internalParser  = createObject("component", "ebxRuntime").init(this, arguments.attributes, local.pc)>
+			<cfset variables.internalParser  = createObject("component", "ebxRuntime").init(this, arguments.attributes, lcl.pc)>
 			<!---  --->
 			<cfset variables.internalParser.assignVariable(arguments.selfvar, this)>
-			<cfloop collection="#arguments.initvars#" item="local.varname">
-				<cfset variables.internalParser.assignVariable(local.varname, arguments.initvars[local.varname])>
+			<cfloop collection="#arguments.initvars#" item="lcl.varname">
+				<cfset variables.internalParser.assignVariable(lcl.varname, arguments.initvars[lcl.varname])>
 			</cfloop>
 			<cfset setSelf(arguments.self)>
 
 			<cfif getProperty("scopecopy") neq "">
-				<cfloop list="#getProperty("scopecopy")#" index="local.scope">
-					<cfset variables.internalParser.updateAttributes(variables.internalParser.getVar(local.scope, StructNew()))>
+				<cfloop list="#getProperty("scopecopy")#" index="lcl.scope">
+					<cfset variables.internalParser.updateAttributes(variables.internalParser.getVar(lcl.scope, StructNew()))>
 				</cfloop>
 			</cfif>
 
@@ -148,7 +148,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		- postplugin - get postplugins and execute them (happens only for maincontext)
 		- postprocess - if applicable parse layouts file and set final output
 		 --->
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cfif NOT getProperty("nosettings") AND NOT variables.settings_parsed>
 			<cfset parseSettings()>
@@ -185,7 +185,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="template"   required="false" type="string"  default="#getParameter('switchfile')#" hint="context template">
 		<cfargument name="type"       required="false" type="string"  default="request" hint="context type">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<!--- Check for max requests --->
 		<cfif NOT variables.internalParser.maxRequestsReached()>
 			<!--- convert named arguments to params --->
@@ -225,32 +225,32 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="params"     required="false" type="struct"  default="#StructNew()#" hint="local params">
 		<cfargument name="type"       required="false" type="string"  default="request" hint="context type">
 
-		<cfset var local = StructNew() />
-		<cfset local.out   = "" />
-		<cfset local.clean = false />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.out   = "" />
+		<cfset lcl.clean = false />
 		<cfif StructKeyExists(arguments, "action")>
 			<cfset do(argumentCollection = arguments, contentvar="_tmpebx") />
-			<cfset local.clean = true />
+			<cfset lcl.clean = true />
 		<cfelseif StructKeyExists(arguments, "template")>
 			<cfset include(argumentCollection = arguments, contentvar="_tmpebx") />
-			<cfset local.clean = true />
+			<cfset lcl.clean = true />
 		</cfif>
 
-		<cfif local.clean>
-			<cfset local.out = getEbxPageContext().ebx_get("_tmpebx") />
+		<cfif lcl.clean>
+			<cfset lcl.out = getEbxPageContext().ebx_get("_tmpebx") />
 			<cfset getEbxPageContext().ebx_unset("_tmpebx") />
 		</cfif>
 
-		<cfreturn local.out />
+		<cfreturn lcl.out />
 	</cffunction>
 
 	<cffunction name="setVars" returntype="any" hint="get variable value from pagecontext">
 		<cfargument name="varStruct"  type="struct" required="true" hint="variable name">
 
-		<cfset var local = StructNew() />
-		<cfset local.iter = iterator(arguments.varStruct) />
-		<cfloop condition="#local.iter.whileHasNext()#">
-			<cfset variables.internalParser.assignVariable( local.iter.getKey(), local.iter.getCurrent() ) />
+		<cfset var lcl = StructNew() />
+		<cfset lcl.iter = iterator(arguments.varStruct) />
+		<cfloop condition="#lcl.iter.whileHasNext()#">
+			<cfset variables.internalParser.assignVariable( lcl.iter.getKey(), lcl.iter.getCurrent() ) />
 		</cfloop>
 		<cfreturn this />
 	</cffunction>
@@ -298,11 +298,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="reset" type="boolean" default="true">
 
 
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			  out   = getOutput(arguments.raw)
 		)>
 
-		<cfif arguments.etag AND sys().etag( local.out )>
+		<cfif arguments.etag AND sys().etag( lcl.out )>
 			<!---
 			*** Checkpoint Charlie! ***
 			We have just sent a 304 response back to the client.
@@ -311,9 +311,9 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		</cfif>
 
 		<cfif arguments.gzip>
-			<cfset sys().gzStreamMimeContent(sys().getGZMime(arguments.mime), local.out, arguments.mime, arguments.reset) />
+			<cfset sys().gzStreamMimeContent(sys().getGZMime(arguments.mime), lcl.out, arguments.mime, arguments.reset) />
 		<cfelse>
-			<cfset sys().streamMimeContent(arguments.mime, local.out, arguments.reset) />
+			<cfset sys().streamMimeContent(arguments.mime, lcl.out, arguments.reset) />
 		</cfif>
 	</cffunction>
 	 --->
@@ -377,12 +377,12 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="executeMain" output="true" returntype="boolean" hint="create main context and execute it. Return true on successfull execution. Setting layout is handled in executeContext??">
-		<cfset var local = StructNew()>
-		<cfset local.req.action   = variables.internalParser.getMainAction()>
-		<cfset local.req.template = getParameter("switchfile")>
-		<cfset local.req.type     = "mainrequest">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req.action   = variables.internalParser.getMainAction()>
+		<cfset lcl.req.template = getParameter("switchfile")>
+		<cfset lcl.req.type     = "mainrequest">
 
-		<cfif getContext(argumentCollection=local.req)>
+		<cfif getContext(argumentCollection=lcl.req)>
 			<cfset variables.internalParser.updateParserFromContext("original")>
 			<cfset executeContext()>
 			<cfset executePostPlugins()>
@@ -395,22 +395,22 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="executeLayout" returntype="boolean" hint="create layout context and execute it. Return true on successfull execution">
 		<cfargument name="layoutfile" type="string" default="#getProperty('layoutfile')#">
 
-		<cfset var local = StructNew()>
-		<cfset local.req.action   = "internal.pathto.layout">
-		<cfset local.req.template = arguments.layoutfile>
-		<cfset local.req.type     = "layout">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req.action   = "internal.pathto.layout">
+		<cfset lcl.req.template = arguments.layoutfile>
+		<cfset lcl.req.type     = "layout">
 
-		<cfreturn do(argumentCollection=local.req)>
+		<cfreturn do(argumentCollection=lcl.req)>
 	</cffunction>
 
 	<cffunction name="executePlugin" returntype="boolean" hint="create plugin context and execute it. Return true on successfull execution">
 		<cfargument name="template"   required="true" type="string">
-		<cfset var local = StructNew()>
-		<cfset local.req.action   = "internal.pathto.plugins">
-		<cfset local.req.template = arguments.template>
-		<cfset local.req.type     = "plugin">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req.action   = "internal.pathto.plugins">
+		<cfset lcl.req.template = arguments.template>
+		<cfset lcl.req.type     = "plugin">
 
-		<cfreturn do(argumentCollection=local.req)>
+		<cfreturn do(argumentCollection=lcl.req)>
 	</cffunction>
 
 	<cffunction name="preContext" returntype="boolean" hint="prepend the stack with context, update the parser and customise attributes. Always return true.">
@@ -448,15 +448,15 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="executePostPlugins" output="true" returntype="boolean" hint="loop parsers current postplugin property, validate against defined plugins and execute plugin. Return true on successfull execution.">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 
 		<cftry>
-			<!--- <cfset local.known_plugins = variables.ebx.getProperty('plugins')>
-			<cfset local.plugins = getProperty('postPlugins')>
+			<!--- <cfset lcl.known_plugins = variables.ebx.getProperty('plugins')>
+			<cfset lcl.plugins = getProperty('postPlugins')>
 
-			<cfloop from="1" to="#ArrayLen(local.plugins)#" index="local.i">
-				<cfif StructKeyExists(local.known_plugins, local.plugins[local.i])>
-					<cfset executePlugin(local.known_plugins[local.plugins[local.i]])>
+			<cfloop from="1" to="#ArrayLen(lcl.plugins)#" index="lcl.i">
+				<cfif StructKeyExists(lcl.known_plugins, lcl.plugins[lcl.i])>
+					<cfset executePlugin(lcl.known_plugins[lcl.plugins[lcl.i]])>
 				</cfif>
 			</cfloop> --->
 
@@ -468,29 +468,29 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	</cffunction>
 
 	<cffunction name="parseSettings" returntype="boolean" hint="create settings context and execute it. Return true on successfull execution">
-		<cfset var local = StructNew()>
-		<cfset local.req.action   = "internal.pathto.settings">
-		<cfset local.req.template = getParameter("settingsfile")>
-		<cfset local.req.type     = "include">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req.action   = "internal.pathto.settings">
+		<cfset lcl.req.template = getParameter("settingsfile")>
+		<cfset lcl.req.type     = "include">
 
 		<cfset variables.settings_parsed = true>
-		<cfreturn do(argumentCollection=local.req)>
+		<cfreturn do(argumentCollection=lcl.req)>
 	</cffunction>
 
 	<cffunction name="parseLayouts" returntype="boolean" hint="create layouts context and execute it. Return true on successfull execution">
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif NOT getProperty("useviews")>
-			<cfset local.req.action   = "internal.pathto.layouts">
-			<cfset local.req.template = getParameter("layoutsfile")>
-			<cfset local.req.type     = "include">
-			<cfreturn do(argumentCollection=local.req)>
+			<cfset lcl.req.action   = "internal.pathto.layouts">
+			<cfset lcl.req.template = getParameter("layoutsfile")>
+			<cfset lcl.req.type     = "include">
+			<cfreturn do(argumentCollection=lcl.req)>
 		<cfelse>
 			<cftry>
-				<cfset local.v = getView()>
-				<cfif getEbx().hasLayout(local.v)>
-					<cfreturn executeLayout(getLayoutView(local.v)) />
+				<cfset lcl.v = getView()>
+				<cfif getEbx().hasLayout(lcl.v)>
+					<cfreturn executeLayout(getLayoutView(lcl.v)) />
 				<cfelse>
-					<cfset createErrorContext("Error executing layout, does the view '#local.v#' exist?") />
+					<cfset createErrorContext("Error executing layout, does the view '#lcl.v#' exist?") />
 					<cfreturn false />
 				</cfif>
 				<cfcatch type="any">
@@ -659,11 +659,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 	<cffunction name="addCircuits"  returntype="any" hint="return true if adding circuit succeeds">
 		<cfargument name="circuits" required="false" type="struct" default="#StructCreate()#" hint="circuit to add">
 
-		<cfset var local = StructCreate(circuits = arguments.circuits)>
+		<cfset var lcl = StructCreate(circuits = arguments.circuits)>
 		<cfset StructDelete(arguments, "circuits") />
-		<cfset StructAppend(local.circuits, arguments, true) />
+		<cfset StructAppend(lcl.circuits, arguments, true) />
 
-		<cfset variables.ebx.addCircuits(circuits = local.circuits) />
+		<cfset variables.ebx.addCircuits(circuits = lcl.circuits) />
 
 		<cfreturn this />
 	</cffunction>
@@ -710,11 +710,11 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 			<cfset arguments.argcollection.params = StructNew()>
 		</cfif>
 
-		<cfloop collection="#arguments.argcollection#" item="local.key">
-			<cfif local.key neq "params" AND NOT ListFindNoCase(arguments.excludekeys, local.key)>
+		<cfloop collection="#arguments.argcollection#" item="lcl.key">
+			<cfif lcl.key neq "params" AND NOT ListFindNoCase(arguments.excludekeys, lcl.key)>
 				<!--- Insert named argument to parameter --->
-				<cfset StructInsert(arguments.argcollection.params, local.key, arguments.argcollection[local.key], true)>
-				<cfset StructDelete(arguments.argcollection, local.key)>
+				<cfset StructInsert(arguments.argcollection.params, lcl.key, arguments.argcollection[lcl.key], true)>
+				<cfset StructDelete(arguments.argcollection, lcl.key)>
 			</cfif>
 		</cfloop>
 
@@ -757,16 +757,16 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="action" type="string" required="false" default="#arguments.name#" hint="action for xfa defaults to name">
 		<cfargument name="self"   type="string" required="false" hint="value for self defaults to getSelf()" default="#getSelf()#">
 
-		<cfset var local = StructNew()>
-		<cfset local.req = _createXFA(argumentCollection = arguments)>
-		<cfif NOT StructIsEmpty(local.req)>
-			<cfset StructInsert(variables.xfa, arguments.name, local.req, true)>
-			<cfset StructInsert(local.req, "href", getXFA(arguments.name), true)>
-			<cfset variables.internalParser.assignVariable(contentvar="xfa.#arguments.name#", value=local.req.href) />
-			<!--- <cfset getEbxPageContext().assignVariable(name="xfa.#arguments.name#", value=local.req.href) /> --->
+		<cfset var lcl = StructNew()>
+		<cfset lcl.req = _createXFA(argumentCollection = arguments)>
+		<cfif NOT StructIsEmpty(lcl.req)>
+			<cfset StructInsert(variables.xfa, arguments.name, lcl.req, true)>
+			<cfset StructInsert(lcl.req, "href", getXFA(arguments.name), true)>
+			<cfset variables.internalParser.assignVariable(contentvar="xfa.#arguments.name#", value=lcl.req.href) />
+			<!--- <cfset getEbxPageContext().assignVariable(name="xfa.#arguments.name#", value=lcl.req.href) /> --->
 		</cfif>
 
-		<cfreturn local.req>
+		<cfreturn lcl.req>
 		<!--- --->
 	</cffunction>
 
@@ -776,19 +776,19 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="self"   type="string" required="false" hint="value for self defaults to getSelf()" default="#getSelf()#">
 
 
-		<cfset var local = StructNew()>
-		<cfset local.result = StructNew()>
-		<cfset local.req = getParsedAction(arguments.action)>
-		<cfif NOT StructIsEmpty(local.req)>
-			<cfset local.result.action = local.req.action>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = StructNew()>
+		<cfset lcl.req = getParsedAction(arguments.action)>
+		<cfif NOT StructIsEmpty(lcl.req)>
+			<cfset lcl.result.action = lcl.req.action>
 		<cfelse>
-			<cfset local.result.action = arguments.action>
+			<cfset lcl.result.action = arguments.action>
 		</cfif>
 		<cfset StructDelete(arguments, "action")>
 		<cfset StructDelete(arguments, "name")>
-		<cfset StructAppend(local.result, arguments, false)>
+		<cfset StructAppend(lcl.result, arguments, false)>
 
-		<cfreturn local.result>
+		<cfreturn lcl.result>
 		<!--- --->
 	</cffunction>
 
@@ -802,18 +802,18 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="action" type="string" required="false" default="#arguments.name#" hint="action for xfa default to name">
 		<cfargument name="self"   type="string" required="false" hint="the self-parameter used" default="#getSelf()#">
 
-		<cfset var local = StructNew()>
+		<cfset var lcl = StructNew()>
 		<cfif StructKeyExists(variables.xfa, arguments.name)>
-			<cfset local.xfa = variables.xfa[arguments.name]>
+			<cfset lcl.xfa = variables.xfa[arguments.name]>
 			<cfset StructDelete(arguments, "name")>
 			<cfset StructDelete(arguments, "action")>
 			<cfset StructDelete(arguments, "self")>
-			<cfset StructAppend(local.xfa, arguments, true)>
+			<cfset StructAppend(lcl.xfa, arguments, true)>
 		<cfelse>
-			<cfset local.xfa = _createXFA(argumentCollection = arguments)>
+			<cfset lcl.xfa = _createXFA(argumentCollection = arguments)>
 		</cfif>
 
-		<cfreturn parseXFA(local.xfa)>
+		<cfreturn parseXFA(lcl.xfa)>
 		<!--- --->
 	</cffunction>
 
@@ -822,19 +822,19 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="action" type="string" required="false" default="#arguments.name#" hint="action for xfa default to name">
 		<cfargument name="self"   type="string" required="false" hint="the self-parameter used" default="#getSelf()#">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = "">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = "">
 		<cfif StructKeyExists(variables.xfa, arguments.name)>
-			<cfset local.xfa = variables.xfa[arguments.name]>
+			<cfset lcl.xfa = variables.xfa[arguments.name]>
 			<cfset StructDelete(arguments, "name")>
 			<cfset StructDelete(arguments, "action")>
 			<cfset StructDelete(arguments, "self")>
-			<cfset StructAppend(local.xfa, arguments, true)>
+			<cfset StructAppend(lcl.xfa, arguments, true)>
 		<cfelse>
-			<cfset local.xfa = _createXFA(argumentCollection = arguments)>
+			<cfset lcl.xfa = _createXFA(argumentCollection = arguments)>
 		</cfif>
 
-		<cfreturn parseXFA(local.xfa, "&")>
+		<cfreturn parseXFA(lcl.xfa, "&")>
 		<!--- --->
 	</cffunction>
 
@@ -842,20 +842,20 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="xfa"         type="struct" required="true" hint="xfa struct">
 		<cfargument name="qsdelimiter" type="string" required="false" default="&amp;" hint="delimiter used for querystring variables (for XHTML compliancy)">
 
-		<cfset var local = StructNew()>
-		<cfset local.result = "">
-		<cfset local.xfa = arguments.xfa>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result = "">
+		<cfset lcl.xfa = arguments.xfa>
 
-		<cfset local.result = local.xfa.self & "?" & getParameter("actionvar") & "=" & local.xfa.action>
-		<cfloop list="#StructKeyList(local.xfa)#" index="local.key">
-			<cfif NOT ListFindNoCase("self,action,href", local.key)>
+		<cfset lcl.result = lcl.xfa.self & "?" & getParameter("actionvar") & "=" & lcl.xfa.action>
+		<cfloop list="#StructKeyList(lcl.xfa)#" index="lcl.key">
+			<cfif NOT ListFindNoCase("self,action,href", lcl.key)>
 				<!--- Convert to wddx if value is complex?? --->
-				<cfif IsSimpleValue(local.xfa[local.key])>
-					<cfset local.result = local.result & arguments.qsdelimiter & LCASE(local.key) & "=" & URLEncodedFormat(local.xfa[local.key])>
+				<cfif IsSimpleValue(lcl.xfa[lcl.key])>
+					<cfset lcl.result = lcl.result & arguments.qsdelimiter & LCASE(lcl.key) & "=" & URLEncodedFormat(lcl.xfa[lcl.key])>
 				</cfif>
 			</cfif>
 		</cfloop>
-		<cfreturn TRIM(local.result)>
+		<cfreturn TRIM(lcl.result)>
 		<!--- --->
 	</cffunction>
 
@@ -864,13 +864,13 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="self"   type="string" required="false" hint="the self-parameter used" default="#getSelf()#">
 		<cfargument name="attrlist"   type="string" required="false" hint="attributes order" default="">
 
-		<cfset var local = StructCreate(
+		<cfset var lcl = StructCreate(
 			 keys = ListDeleteList(StructKeyList(arguments), "action,self,attrlist")
 		)>
-		<cfset local.keys = ListDeleteList(local.keys, arguments.attrlist)>
-		<cfset local.keys = ListPrepend(local.keys, arguments.attrlist)>
+		<cfset lcl.keys = ListDeleteList(lcl.keys, arguments.attrlist)>
+		<cfset lcl.keys = ListPrepend(lcl.keys, arguments.attrlist)>
 		<cftry>
-			<cfset local.attr = IndexedStructCreate(arguments, local.keys)>
+			<cfset lcl.attr = IndexedStructCreate(arguments, lcl.keys)>
 			<cfcatch type="any">
 				<cfdump var="#arguments#">
 				<cfdump var="#local#">
@@ -879,7 +879,7 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 			</cfcatch>
 		</cftry>
 
-		<cfreturn createObject("component", "ebxXFA").init(this, arguments.action, arguments.self, local.attr)>
+		<cfreturn createObject("component", "ebxXFA").init(this, arguments.action, arguments.self, lcl.attr)>
 	</cffunction>
 
 	<cffunction name="each" output="true" returntype="any" hint="execute action or template for each item in collection">
@@ -890,29 +890,29 @@ Project info: http://code.google.com/p/dbseries/wiki/ebx
 		<cfargument name="params"     type="struct"  required="false" default="#StructNew()#" hint="parameters for do">
 		<cfargument name="append"     type="boolean" required="false" default="true" hint="append flag for do">
 
-		<cfset var local = StructNew()>
-		<cfset local.result     = "">
-		<cfset local.req        = variables.internalParser.getParsedAction(arguments.action)>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.result     = "">
+		<cfset lcl.req        = variables.internalParser.getParsedAction(arguments.action)>
 
-		<cfif NOT StructIsEmpty(local.req)>
-			<cfset local.itervar    = arguments.itervar>
-			<cfset local.contentvar = arguments.contentvar>
-			<cfset local.append     = arguments.append>
+		<cfif NOT StructIsEmpty(lcl.req)>
+			<cfset lcl.itervar    = arguments.itervar>
+			<cfset lcl.contentvar = arguments.contentvar>
+			<cfset lcl.append     = arguments.append>
 
 			<cfset _setParamsFromArgs(arguments, "collection,action,contentvar,append,itervar")>
-			<cfset local.params = arguments.params>
+			<cfset lcl.params = arguments.params>
 
-			<cfset local.iter = iterator(arguments.collection)>
-			<cfloop condition="#local.iter.whileHasNext()#">
-				<cfset StructInsert(local.params, local.itervar, local.iter, true) />
-				<cfif IsStruct(local.iter.getCurrent())>
-					<cfset StructAppend(local.params, local.iter.getCurrent(), true) />
+			<cfset lcl.iter = iterator(arguments.collection)>
+			<cfloop condition="#lcl.iter.whileHasNext()#">
+				<cfset StructInsert(lcl.params, lcl.itervar, lcl.iter, true) />
+				<cfif IsStruct(lcl.iter.getCurrent())>
+					<cfset StructAppend(lcl.params, lcl.iter.getCurrent(), true) />
 				</cfif>
 				<cfset do(
-					  action     = local.req.action
-					, params     = local.params
-					, contentvar = local.contentvar
-					, append     = local.append
+					  action     = lcl.req.action
+					, params     = lcl.params
+					, contentvar = lcl.contentvar
+					, append     = lcl.append
 				)>
 			</cfloop>
 		</cfif>

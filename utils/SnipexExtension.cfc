@@ -13,19 +13,19 @@
 		<cfargument name="sniptext"  type="string" required="true" hint="the snippet string to parse" />
 		<cfargument name="form_action" type="string" required="false" default="" hint="the action for the form" />
 
-		<cfset var local = StructNew()>
-		<cfset local.q = getMatches(arguments.sniptext) />
-		<cfif local.q.recordcount>
-			<cfsavecontent variable="local.string">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.q = getMatches(arguments.sniptext) />
+		<cfif lcl.q.recordcount>
+			<cfsavecontent variable="lcl.string">
 				<cfoutput>
 					<form method="post" action="#arguments.form_action#">
 						<input type="hidden" name="sniptext" value="#URLEncodedFormat(arguments.sniptext)#">
-						<cfloop query="local.q">
+						<cfloop query="lcl.q">
 							<label for="#name#">#label#</label>
 							<cfif ListLen(value,'|') GT 1>
 								<select id="#name#" name="#name#">
-									<cfloop list="#value#" index="local.opt" delimiters="|">
-										<option value="#opt#">#local.opt#</option>
+									<cfloop list="#value#" index="lcl.opt" delimiters="|">
+										<option value="#opt#">#lcl.opt#</option>
 									</cfloop>
 								</select>
 							<cfelse>
@@ -37,29 +37,29 @@
 				</cfoutput>
 			</cfsavecontent>
 		<cfelse>
-			<cfset local.string = arguments.sniptext />
+			<cfset lcl.string = arguments.sniptext />
 		</cfif>
 
-		<cfreturn local.string />
+		<cfreturn lcl.string />
 	</cffunction>
 
 	<cffunction name="getReplacedSnippet" type="string" output="false" access="remote" hint="Gets the snippet with replaced values from a struct (most likely the form)">
 		<cfargument name="sniptext" type="string" required="true"  hint="the snippet string to parse" />
 		<cfargument name="struct"   type="struct" required="false" default="#StructNew()#" hint="the replacement values" />
 
-		<cfset var local = StructNew()>
-		<cfset local.str = URLDecode(arguments.sniptext) />
-		<cfset local.q   = getMatches(URLDecode(arguments.sniptext)) />
-		<cfif local.q.recordcount>
-			<cfloop query="local.q">
+		<cfset var lcl = StructNew()>
+		<cfset lcl.str = URLDecode(arguments.sniptext) />
+		<cfset lcl.q   = getMatches(URLDecode(arguments.sniptext)) />
+		<cfif lcl.q.recordcount>
+			<cfloop query="lcl.q">
 				<cfif StructKeyExists(arguments.struct, name)>
-					<cfset local.str = local.str.replaceAll("(" & escapeRegexPattern(orgmatch) & ")", arguments.struct[name]) />
+					<cfset lcl.str = lcl.str.replaceAll("(" & escapeRegexPattern(orgmatch) & ")", arguments.struct[name]) />
 				<cfelse>
-					<cfset local.str = local.str.replaceAll("(" & escapeRegexPattern(orgmatch) & ")", value) />
+					<cfset lcl.str = lcl.str.replaceAll("(" & escapeRegexPattern(orgmatch) & ")", value) />
 				</cfif>
 			</cfloop>
 		</cfif>
-		<cfreturn local.str />
+		<cfreturn lcl.str />
 	</cffunction>
 
 	<cffunction name="getMatches" returntype="query" access="remote" output="false" hint="Gets query containing match info">
@@ -82,20 +82,20 @@
 		<cfargument name="sniptext" type="string" required="true" hint="the snippet string to parse" />
 
 		<cfset var local     = StructNew() />
-		<cfset local.result  = StructNew() />
-		<cfset local.matcher = _getMatcher(arguments.sniptext) />
+		<cfset lcl.result  = StructNew() />
+		<cfset lcl.matcher = _getMatcher(arguments.sniptext) />
 
-		<cfloop condition="local.matcher.Find()">
-			<cfif local.matcher.groupCount() eq 4>
-				<cfset local.orgmatch = local.matcher.Group(JavaCast("string", 1)) />
-				<cfset local.label    = local.matcher.Group(JavaCast("string", 3)) />
-				<cfset local.name     = REReplace("[\t\s\n\r]+", local.label, "_", "ALL") />
+		<cfloop condition="lcl.matcher.Find()">
+			<cfif lcl.matcher.groupCount() eq 4>
+				<cfset lcl.orgmatch = lcl.matcher.Group(JavaCast("string", 1)) />
+				<cfset lcl.label    = lcl.matcher.Group(JavaCast("string", 3)) />
+				<cfset lcl.name     = REReplace("[\t\s\n\r]+", lcl.label, "_", "ALL") />
 
 				<cfset _addMatch(
-					  name     = local.name
-					, value    = REReplace(local.orgmatch, "^(.*?)\:(.*?)\}", "\2")
-					, label    = local.label
-					, orgmatch = local.orgmatch
+					  name     = lcl.name
+					, value    = REReplace(lcl.orgmatch, "^(.*?)\:(.*?)\}", "\2")
+					, label    = lcl.label
+					, orgmatch = lcl.orgmatch
 				) />
 			</cfif>
 		</cfloop>
@@ -109,11 +109,11 @@
 		<cfargument name="label" required="false" type="string" default="" hint="the default value" />
 		<cfargument name="orgmatch" required="false" type="string" default="" hint="the original match" />
 
-		<cfset var local = StructNew() />
+		<cfset var lcl = StructNew() />
 
 		<cfset QueryAddRow(getMatches()) />
-		<cfloop list="#StructKeyList(arguments)#" index="local.key">
-			<cfset QuerySetCell(getMatches(), local.key, arguments[local.key]) />
+		<cfloop list="#StructKeyList(arguments)#" index="lcl.key">
+			<cfset QuerySetCell(getMatches(), lcl.key, arguments[lcl.key]) />
 		</cfloop>
 
 		<cfreturn this />
@@ -122,15 +122,15 @@
 	<cffunction name="escapeRegexPattern" type="string" hint="Gets string with values escaped for regexp pattern">
 		<cfargument name="rx_string" type="string" required="true" hint="the regexp string to escape" />
 
-		<cfset var local = StructNew()>
-		<cfset local.str   = arguments.rx_string>
-		<cfset local.str = Replace(local.str, "$", "\$", "ALL")>
-		<cfset local.str = Replace(local.str, "{", "\{", "ALL")>
-		<cfset local.str = Replace(local.str, "}", "\}", "ALL")>
-		<cfset local.str = Replace(local.str, "|", "\|", "ALL")>
-		<cfset local.str = Replace(local.str, "[", "\[", "ALL")>
-		<cfset local.str = Replace(local.str, "]", "\]", "ALL")>
+		<cfset var lcl = StructNew()>
+		<cfset lcl.str   = arguments.rx_string>
+		<cfset lcl.str = Replace(lcl.str, "$", "\$", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "{", "\{", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "}", "\}", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "|", "\|", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "[", "\[", "ALL")>
+		<cfset lcl.str = Replace(lcl.str, "]", "\]", "ALL")>
 
-		<cfreturn local.str />
+		<cfreturn lcl.str />
 	</cffunction>
 </cfcomponent>
